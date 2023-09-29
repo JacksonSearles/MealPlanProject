@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Meal Plan Tracker</title>
+</head>
+<body>
+	<h1>Login to see meal plan info</h1>
+	<form method="post" action="/logged_in">
+		<label for="username">Username</label><br>
+		<input type="text" placeholder="username" id="username" name="username"><br>
+		<label for="password">Password</label><br>
+		<input type="password" placeholder="password" id="password" name="password"><br>
+		<input type="submit" value="Login">
+	</form>
+
+	<p>{{ message }}</p>
+	
+</body>
+</html>
