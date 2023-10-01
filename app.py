@@ -1,26 +1,32 @@
-from flask import Flask, render_template, redirect, url_for, request, abort
+from flask import Flask, render_template, redirect, url_for, request, abort, session
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options 
+from selenium.common.exceptions import NoSuchElementException
 import time
 
 app = Flask(__name__, template_folder='templates')
 
 @app.route('/')
+@app.route('/home')
 def login():
 	return render_template('index.html')
 
 @app.route('/error')
 def error():
-	return render_template('error.html')
+	message = "Incorrect username or password"
+	return render_template('index.html', message=message)
 
-
-@app.route('/logged_in', methods = ['POST', 'GET'])
+@app.route('/logged_in', methods = ['POST', 'GET', 'PUT'])
 def logged_in():
+
 	if request.method == 'POST' :
 		username = request.form.get('username')
 		password = request.form.get('password')
+
+	if request.method == "PUT" :
+		return redirect(url_for('login'))
 	
 	options = webdriver.ChromeOptions()
 	options.add_argument("--headless")
@@ -38,15 +44,18 @@ def logged_in():
 	elem = browser.find_element(By.NAME, 'password')  # Find the password box
 	elem.send_keys(password + Keys.RETURN)   # enter password then press return 
 
-	if browser.find_element(By.ID, 'welcome') :
-		return render_template('userPage.html', username=username)
-	else:
-		abort(400)
-	
+	message = username
 
+	try :
+		if browser.find_element(By.ID, 'welcome') :
+			return render_template('userPage.html', username=username, message=message)
+	except NoSuchElementException : 
+			return redirect(url_for('error'))
 	
-if __name__ == "__main__" :
-	app.run(debug=True)
+	
+if __name__ == '__main__':
+    app.debug = True
+    app.run()
 
 
 
