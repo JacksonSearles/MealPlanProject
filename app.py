@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options 
 from selenium.common.exceptions import NoSuchElementException
+from datetime import datetime
 import time
 
 app = Flask(__name__, template_folder='templates')
@@ -52,7 +53,17 @@ def logged_in():
 	except NoSuchElementException : 
 			return redirect(url_for('error'))
 	
-	
+# Assuming balance will be passed in
+def calculate_daily_spending(balance):
+    curr_date = datetime.now() 
+    if 8 <= curr_date.month <= 12:  
+        end_date = datetime(curr_date.year, 12, 31) # Fall semester
+    else:
+        end_date = datetime(curr_date.year, 5, 31) # Spring semester 
+    days_left = (end_date - curr_date).days + 1 
+    daily_limit = balance / days_left 
+    return daily_limit
+
 if __name__ == '__main__':
     app.debug = True
     app.run()
