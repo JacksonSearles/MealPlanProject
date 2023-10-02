@@ -5,6 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options 
 from selenium.common.exceptions import NoSuchElementException
 from datetime import datetime
+from bs4 import BeautifulSoup
 import time
 
 app = Flask(__name__, template_folder='templates')
@@ -35,6 +36,7 @@ def logged_in():
 	browser = webdriver.Chrome(options=options)
 	browser.get('https://bing.campuscardcenter.com/ch/login.html')
 
+
 	# *** no clue what this does 
 	#assert 'Youtube' in browser.title
 
@@ -53,6 +55,32 @@ def logged_in():
 	except NoSuchElementException : 
 			return redirect(url_for('error'))
 	
+	html = browser.page_source
+
+	soup = BeautifulSoup(html, features="html5lib")
+	elements = soup.find_all(align = "right")
+	amount = 0
+
+	for e in elements:
+
+		if "$" in str(e):
+			e_string = str(e) 
+			sub1 = """<div align="right">"""
+			sub2 = "</div>"
+
+			# getting index of substrings
+			idx1 = e_string.index(sub1)
+			idx2 = e_string.index(sub2)
+
+			
+			result = e_string[idx1 + len(sub1) + 3: idx2]
+		amount += float(result)
+	
+	#idk how you would wanna use the variable itself
+	calculate_daily_spending(result)
+
+
+		
 # Assuming balance will be passed in
 def calculate_daily_spending(balance):
     curr_date = datetime.now() 
