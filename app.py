@@ -8,6 +8,8 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 import time
 
+meal_plan_balance = 0
+daily_spending_limit = 0
 app = Flask(__name__, template_folder='templates')
 
 @app.route('/')
@@ -22,7 +24,6 @@ def error():
 
 @app.route('/logged_in', methods = ['POST', 'GET', 'PUT'])
 def logged_in():
-
 	if request.method == 'POST' :
 		username = request.form.get('username')
 		password = request.form.get('password')
@@ -32,21 +33,14 @@ def logged_in():
 	
 	options = webdriver.ChromeOptions()
 	options.add_argument("--headless")
-
 	browser = webdriver.Chrome(options=options)
 	browser.get('https://bing.campuscardcenter.com/ch/login.html')
-
-
-	# *** no clue what this does 
-	#assert 'Youtube' in browser.title
 
 	# *** we'll probably use these to enter the username and password 
 	elem = browser.find_element(By.NAME, 'username')  # Find the username box
 	elem.send_keys(username)  # enter username
-
 	elem = browser.find_element(By.NAME, 'password')  # Find the password box
 	elem.send_keys(password + Keys.RETURN)   # enter password then press return 
-
 	message = username
 
 	try :
@@ -59,10 +53,7 @@ def logged_in():
 
 	soup = BeautifulSoup(html, features="html5lib")
 	elements = soup.find_all(align = "right")
-	amount = 0
-
 	for e in elements:
-
 		if "$" in str(e):
 			e_string = str(e) 
 			sub1 = """<div align="right">"""
@@ -71,26 +62,18 @@ def logged_in():
 			# getting index of substrings
 			idx1 = e_string.index(sub1)
 			idx2 = e_string.index(sub2)
-
-			
 			result = e_string[idx1 + len(sub1) + 3: idx2]
-		amount += float(result)
+		meal_plan_balance += float(result)
 	
-	#idk how you would wanna use the variable itself
-	calculate_daily_spending(result)
-
-
-		
 # Assuming balance will be passed in
-def calculate_daily_spending(balance):
+def calculate_daily_spending():
     curr_date = datetime.now() 
     if 8 <= curr_date.month <= 12:  
         end_date = datetime(curr_date.year, 12, 31) # Fall semester
     else:
         end_date = datetime(curr_date.year, 5, 31) # Spring semester 
     days_left = (end_date - curr_date).days + 1 
-    daily_limit = balance / days_left 
-    return daily_limit
+    daily_spending_limit = meal_plan_balance / days_left 
 
 if __name__ == '__main__':
     app.debug = True
