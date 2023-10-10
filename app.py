@@ -48,6 +48,7 @@ def logged_in():
 
 	try :
 		if browser.find_element(By.ID, 'welcome') :
+			result = '0'
 			html = browser.page_source
 			soup = BeautifulSoup(html, "html.parser")
 			elements = soup.find_all(align = "right")
@@ -59,12 +60,9 @@ def logged_in():
 					# getting index of substrings
 					idx1 = e_string.index(sub1)
 					idx2 = e_string.index(sub2)
-					result = e_string[idx1 + len(sub1) + 3: idx2]
+					result = str(float(result) + float(e_string[idx1 + len(sub1) + 3: idx2]))
 			meal_plan_balance = float(result)
 			calculate_daily_spending()
-			print(meal_plan_balance)
-			print(days_left)
-			print(daily_budget)
 			return render_template('userPage.html', username=username, message=message, balance = meal_plan_balance, 
 						  days = days_left, budget = daily_budget)
 	except NoSuchElementException : 
@@ -80,7 +78,7 @@ def calculate_daily_spending():
 	else:
 		end_date = datetime(curr_date.year, 5, 31) # Spring semester 
 	days_left = (end_date - curr_date).days + 1 
-	daily_budget = meal_plan_balance / days_left
+	daily_budget = round(meal_plan_balance / days_left, 2)
 
 if __name__ == '__main__':
     app.debug = True
