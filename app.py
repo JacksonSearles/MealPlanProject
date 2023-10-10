@@ -77,7 +77,7 @@ def logged_in():
     except NoSuchElementException:
         return redirect(url_for('error'))
 
-<<<<<<< HEAD
+
 def calculate_daily_spending():
     global days_left
     global daily_budget
@@ -88,7 +88,7 @@ def calculate_daily_spending():
         end_date = datetime(curr_date.year, 5, 31) 
     days_left = (end_date - curr_date).days + 1 
     daily_budget = meal_plan_balance / days_left
-=======
+
 	try :
 		if browser.find_element(By.ID, 'welcome') :
 			result = '0'
@@ -122,7 +122,7 @@ def calculate_daily_spending():
 		end_date = datetime(curr_date.year, 5, 31) # Spring semester 
 	days_left = (end_date - curr_date).days + 1 
 	daily_budget = round(meal_plan_balance / days_left, 2)
->>>>>>> f0b56317b030ec3b7a76efaaa9817a13f9f9053c
+
 
 if __name__ == '__main__':
     app.debug = True
