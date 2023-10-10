@@ -77,6 +77,7 @@ def logged_in():
     except NoSuchElementException:
         return redirect(url_for('error'))
 
+<<<<<<< HEAD
 def calculate_daily_spending():
     global days_left
     global daily_budget
@@ -87,6 +88,41 @@ def calculate_daily_spending():
         end_date = datetime(curr_date.year, 5, 31) 
     days_left = (end_date - curr_date).days + 1 
     daily_budget = meal_plan_balance / days_left
+=======
+	try :
+		if browser.find_element(By.ID, 'welcome') :
+			result = '0'
+			html = browser.page_source
+			soup = BeautifulSoup(html, "html.parser")
+			elements = soup.find_all(align = "right")
+			for e in elements:
+				if "$" in str(e):
+					e_string = str(e) 
+					sub1 = """<div align="right">"""
+					sub2 = "</div>"
+					# getting index of substrings
+					idx1 = e_string.index(sub1)
+					idx2 = e_string.index(sub2)
+					result = str(float(result) + float(e_string[idx1 + len(sub1) + 3: idx2]))
+			meal_plan_balance = float(result)
+			calculate_daily_spending()
+			return render_template('userPage.html', username=username, message=message, balance = meal_plan_balance, 
+						  days = days_left, budget = daily_budget)
+	except NoSuchElementException : 
+			return redirect(url_for('error'))
+	
+# Assuming balance will be passed in
+def calculate_daily_spending():
+	global days_left
+	global daily_budget
+	curr_date = datetime.now() 
+	if 8 <= curr_date.month <= 12:  
+		end_date = datetime(curr_date.year, 12, 31) # Fall semester
+	else:
+		end_date = datetime(curr_date.year, 5, 31) # Spring semester 
+	days_left = (end_date - curr_date).days + 1 
+	daily_budget = round(meal_plan_balance / days_left, 2)
+>>>>>>> f0b56317b030ec3b7a76efaaa9817a13f9f9053c
 
 if __name__ == '__main__':
     app.debug = True
