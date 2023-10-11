@@ -89,5 +89,4 @@ def calculate_daily_spending():
     daily_budget = meal_plan_balance / days_left
 
 if __name__ == '__main__':
-    app.debug = True
     app.run()
