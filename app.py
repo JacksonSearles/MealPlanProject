@@ -88,5 +88,6 @@ def calculate_daily_spending():
     days_left = (end_date - curr_date).days + 1 
     daily_budget = meal_plan_balance / days_left
 
-if __name__ == '__main__':
-    app.run()
+if __name__ == "__main__":
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8080)
