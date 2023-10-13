@@ -89,8 +89,8 @@ def calculate_daily_spending():
     daily_budget = meal_plan_balance / days_left
 
 def create_app():
-    app = Flask(__name__)
-    return app
+    application = Flask(__name__)
+    return application
 
 # if __name__ == "__main__":
 #     app.run(debug=True)
