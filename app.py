@@ -37,6 +37,8 @@ def logged_in():
 
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
     browser = webdriver.Chrome(options=options)
     browser.get('https://bing.campuscardcenter.com/ch/login.html')
 
