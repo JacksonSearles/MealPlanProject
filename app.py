@@ -82,11 +82,15 @@ def calculate_daily_spending():
     global daily_budget
     curr_date = datetime.now() 
     if 8 <= curr_date.month <= 12:  
-        end_date = datetime(curr_date.year, 12, 31)
+        end_date = datetime(curr_date.year, 12, 15)
     else:
         end_date = datetime(curr_date.year, 5, 31) 
     days_left = (end_date - curr_date).days + 1 
     daily_budget = meal_plan_balance / days_left
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+def create_app():
+    app = Flask(__name__)
+    return app
+
+# if __name__ == "__main__":
+#     app.run(debug=True)
