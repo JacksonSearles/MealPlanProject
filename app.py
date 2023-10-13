@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, abort, session
+from flask import Flask, render_template, redirect, url_for, request
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -6,7 +6,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from datetime import datetime
 from bs4 import BeautifulSoup
-import time
 
 meal_plan_balance = 0
 days_left = 0
