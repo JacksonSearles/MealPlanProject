@@ -24,10 +24,10 @@ def error():
 
 @app.route('/logged_in', methods=['POST', 'GET', 'PUT'])
 def logged_in():
-    global meal_plan_balance 
+    global meal_plan_balance
     global days_left
     global daily_budget
-
+    meal_plan_balance = 0
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -47,10 +47,13 @@ def logged_in():
     elem = browser.find_element(By.NAME, 'password')
     elem.send_keys(password + Keys.RETURN)
 
-    try:
+    try:      
         if browser.find_element(By.ID, 'welcome'):
             html = browser.page_source
             soup = BeautifulSoup(html, "html.parser")
+
+            words = soup.label.text
+            first_name = words.split()
             
             target_strings = ["Resident Holding - Carryover", "BUCS", "Meal Plan C"]
             body_content = soup.find("body").get_text()
@@ -74,7 +77,7 @@ def logged_in():
                     i += 1
 
             calculate_daily_spending()
-            return render_template('userPage.html', username=username, balance=meal_plan_balance, days=days_left, budget=daily_budget)
+            return render_template('userPage.html', first_name = first_name[2], balance=meal_plan_balance, days=days_left, budget=daily_budget)
     except NoSuchElementException:
         return redirect(url_for('error'))
 
@@ -85,9 +88,9 @@ def calculate_daily_spending():
     if 8 <= curr_date.month <= 12:  
         end_date = datetime(curr_date.year, 12, 15)
     else:
-        end_date = datetime(curr_date.year, 5, 31) 
+        end_date = datetime(curr_date.year, 5, 15) 
     days_left = (end_date - curr_date).days + 1 
-    daily_budget = meal_plan_balance / days_left
+    daily_budget = round((meal_plan_balance / days_left), 2)
 
 # def create_app():
 #     application = Flask(__name__)
