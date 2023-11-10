@@ -53,12 +53,12 @@ def logged_in():
             soup = BeautifulSoup(html, "html.parser")
 
             words = soup.label.text
-            first_name = words.split()
-            
+            first_name = words.split()  
+
             target_strings = ["Resident Holding - Carryover", "BUCS", "Meal Plan C"]
             body_content = soup.find("body").get_text()
-
             positions = {target: body_content.find(target) for target in target_strings}
+
             sorted_targets = sorted(positions.keys(), key=lambda x: positions[x])
             order = [sorted_targets.index(target) for target in target_strings]
 
@@ -75,7 +75,6 @@ def logged_in():
                     if i == order[0] or i == order[2]:
                         meal_plan_balance += float(result)
                     i += 1
-
             calculate_daily_spending()
             return render_template('userPage.html', first_name = first_name[2], balance=meal_plan_balance, days=days_left, budget=daily_budget)
     except NoSuchElementException:
