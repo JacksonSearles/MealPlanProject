@@ -15,21 +15,52 @@
 			margin: auto;
 			padding: 10px;
 			}
+		html{
+			background-image: url(https://www.usatoday.com/gcdn/-mm-/50cf5bbf732a4dc596a6cd2b25c2d55faffc0cbe/c=0-198-3888-2395/local/-/media/2015/10/07/CNYGroup/Binghamton/635798431224650549-BGMBrd-04-28-2015-Daily-1-A003--2015-04-27-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-L602622216-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-1-.jpg?width=3200&height=1809&fit=crop&format=pjpg&auto=webp);
+			background-size: cover;
+			background-repeat: no-repeat;
+			background-attachment: fixed;
+		}
+		#version{
+			font-size: 12px;
+		}
+		.image{
+			width: 100px;
+			height: 100px;
+		}
+		.center{
+			display: block;
+  			margin-left: auto;
+  			margin-right: auto;
+		}
+		@media only screen and (max-width: 600px) {
+  			#create_account {
+    			font-size: 10px;
+  			}
+			#version{
+				font-size: 7px;
+			}
+
+}
 	</style>
 </head>
 <body class="has-text-centered">
-	<h2 class="title is-2 center m-3">Binghamton Meal Plan Calculator</h2><br>
-	<div class="columns is-mobile is-centered">
-		<form method="post" action="/logged_in" class=".text-center">
-			<input class="input center" type="text" placeholder="username" id="username" name="username"><br><br>
-			<input class="input center" type="password" placeholder="password" id="password" name="password"><br><br>
-			<input class="button is-success" type="submit" value="Login" onclick="showDiv()">
-		</form>	
+	<div class="columns is-mobile is-centered" >
+		<div class="box is-one-third is-mobile m-6">
+			<h2 class="title is-3 m-3 is-dark is-mobile">Binghamton Meal Plan Calculator</h2>
+			<img src="https://static.wixstatic.com/media/7383ad_635e426608944acd83c1538cca35af9c~mv2_d_1500_1500_s_2.png/v1/fill/w_1500,h_1500,al_c/Binghamton.png" alt="broke" class="image center">
+			<form method="post" action="/logged_in" class="">
+				<input class="input" type="text" placeholder="username" id="username" name="username"><br><br>
+				<input class="input" type="password" placeholder="password" id="password" name="password"><br><br>
+				<input class="button is-success m-2" type="submit" value="Login" onclick="showDiv()">
+				<div class="loader" id="welcomeDiv"  style="display:none;"></div>
+				<p class="m-2" id="create_account">Don't have a BUDS account? Click <a href="https://bing.campuscardcenter.com/ch/register/register_Id.html" target="_blank">here</a> to create one</p>
+				<div class="columns is-centered mt-3">
+					<strong><p class="has-text-danger">{{message}}</p></strong>
+				</div>
+				<p class="m-2" id="version">Version 1.0</p>
+			</form>	
+		</div>
 	</div>
-	<div class="columns is-centered mt-3">
-		<strong><p class="has-text-danger">{{message}}</p></strong>
-	</div>
-	<div class="loader" id="welcomeDiv"  style="display:none;"></div>
-	<footer>Version 1.0</footer>
 </body>
 </html>
