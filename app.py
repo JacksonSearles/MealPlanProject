@@ -28,24 +28,33 @@ def logged_in():
     global days_left
     global daily_budget
     meal_plan_balance = 0
+
+    #######################################
+    #When login button is clicked on sign in page, stores username and password from form element in html. 
+    #When you click login button, celenium code in next block executes.
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
 
+    
     if request.method == "PUT":
         return redirect(url_for('login'))
+    #######################################
 
+    #######################################
+    #Celenium opens headless incognito browser withe the url of mealplan site
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
-    options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     browser = webdriver.Chrome(options=options)
     browser.get('https://bing.campuscardcenter.com/ch/login.html')
 
+    #Takes username and password gathered from Flask POST method, and sends keys to actual mealplan Binghamton site
     elem = browser.find_element(By.NAME, 'username')
     elem.send_keys(username)
     elem = browser.find_element(By.NAME, 'password')
     elem.send_keys(password + Keys.RETURN)
+    #########################################
 
     try:      
         if browser.find_element(By.ID, 'welcome'):
