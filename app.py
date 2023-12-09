@@ -28,12 +28,16 @@ def logged_in():
     global days_left
     global daily_budget
     meal_plan_balance = 0
+    ###########################################iables
+    #Uses Flask POST and PUT commands
+    #Takes username and password from login page and stores in username and password var
     if request.method == 'POST': 
         username = request.form.get('username')
         password = request.form.get('password')
 
     if request.method == "PUT":
         return redirect(url_for('login'))
+    ############################################
 
     #######################################
     #Selenium opens headless incognito browser withe the url of mealplan site
@@ -48,7 +52,7 @@ def logged_in():
     elem.send_keys(username)
     elem = browser.find_element(By.NAME, 'password')
     elem.send_keys(password + Keys.RETURN)
-
+    #######################################
     try:      
         if browser.find_element(By.ID, 'welcome'):
             #################################
@@ -59,12 +63,16 @@ def logged_in():
             words = soup.label.text
             first_name = words.split()  
             #################################
+
+            ###########################################################################
             #Problem: Website formats the balances in different order for different people
             #This block determines the order of the mealplan balances for the user, so it knows which balances to accumulate
             target_strings = ["Resident Holding - Carryover", "BUCS", "Meal Plan C"] 
             body_content = soup.find("body").get_text() 
             positions = {target: body_content.find(target) for target in target_strings} 
             sorted_targets = sorted(positions.keys(), key=lambda x: positions[x]) 
+            ###########################################################################
+
             ###########################################################################
             #Reason for Code: WEbsite formats balances in different order for different people
             #Determines order of mealplan balances for the user to determine location of relevant 
