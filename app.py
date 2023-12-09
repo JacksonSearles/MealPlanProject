@@ -35,22 +35,15 @@ def logged_in():
     if request.method == "PUT":
         return redirect(url_for('login'))
 
-<<<<<<< Updated upstream
-=======
     #######################################
     #Selenium opens headless incognito browser withe the url of mealplan site
->>>>>>> Stashed changes
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     browser = webdriver.Chrome(options=options)
     browser.get('https://bing.campuscardcenter.com/ch/login.html')
-<<<<<<< Updated upstream
-
-=======
     #Takes username and password gathered from Flask POST method, and sends keys to actual mealplan Binghamton site
->>>>>>> Stashed changes
     elem = browser.find_element(By.NAME, 'username')
     elem.send_keys(username)
     elem = browser.find_element(By.NAME, 'password')
@@ -66,16 +59,12 @@ def logged_in():
             words = soup.label.text
             first_name = words.split()  
             #################################
-
-<<<<<<< Updated upstream
             #Problem: Website formats the balances in different order for different people
             #This block determines the order of the mealplan balances for the user, so it knows which balances to accumulate
             target_strings = ["Resident Holding - Carryover", "BUCS", "Meal Plan C"] 
             body_content = soup.find("body").get_text() 
             positions = {target: body_content.find(target) for target in target_strings} 
-
             sorted_targets = sorted(positions.keys(), key=lambda x: positions[x]) 
-=======
             ###########################################################################
             #Reason for Code: WEbsite formats balances in different order for different people
             #Determines order of mealplan balances for the user to determine location of relevant 
@@ -84,7 +73,6 @@ def logged_in():
             body_content = soup.find("body").get_text()
             positions = {target: body_content.find(target) for target in target_strings}
             sorted_targets = sorted(positions.keys(), key=lambda x: positions[x])
->>>>>>> Stashed changes
             order = [sorted_targets.index(target) for target in target_strings]
             elements = soup.find_all(align="right")
             ###########################################################################
