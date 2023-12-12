@@ -1,7 +1,6 @@
-
 .loader{
-	margin: auto;
-	padding: 10px;
+    margin: auto;
+    padding: 10px;
 }
 
 html{
@@ -9,7 +8,7 @@ html{
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-position: center;
+    background-position:  center;
 }
 
 #version{
@@ -23,8 +22,8 @@ html{
 
 .center{
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+      margin-left: auto;
+      margin-right: auto;
 }
 
 @media only screen and (max-width: 600px) {
@@ -34,5 +33,5 @@ html{
     #version{
         font-size: 7px;
     }
-
+    
 }
