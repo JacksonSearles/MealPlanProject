@@ -35,10 +35,8 @@ def logged_in():
     #Takes username and password from login page and stores in username and 
     #password variables using Flask POST method
     if request.method == 'POST': 
-        #username = request.form.get('username')
-        #password = request.form.get('password')
-        username = 'ndenobrega'
-        password = '21Velocity21@'
+        username = request.form.get('username')
+        password = request.form.get('password')
     ##############################################################################
 
     ##############################################################################
