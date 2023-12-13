@@ -58,14 +58,7 @@ def logged_in():
     mealplan_balance = scrape_mealplan_balance(soup)
     days_left, daily_budget = calculate_daily_spending(mealplan_balance)
     dates, locations, prices = scrape_recent_transactions(soup, browser)
-    
-    # Call calculate_average_spending and then print out the averages 
-    # Just proof of concept. 
-    # not printing the dates in order because theyre just dummy dates real ones will always be chronological
-    totals_by_date = calculate_total_spent_daily()
-    for date, total_spent in totals_by_date.items():
-        print("Total spent on", f'{date}: ${total_spent}')
-
+    totals_by_date = calculate_total_spent_daily(dates, prices)
     return render_template('userPage.html', first_name=first_name, mealplan_balance=mealplan_balance,
                 days_left=days_left, daily_budget=daily_budget, dates=dates, locations=locations, prices=prices)
     ############################################################################
@@ -177,7 +170,7 @@ def scrape_recent_transactions(soup, browser):
                 price = contents[9].div.text.strip().replace('(', '').replace(')', '')
                 dates.append(date)
                 locations.append(location)
-                prices.append(price)
+                prices.append(float(price))
             except NoSuchElementException:
                 print("Element not found. Check the HTML structure.")
         cur_page += 1
@@ -193,11 +186,11 @@ def scrape_recent_transactions(soup, browser):
 # Loops through the dates and sums up their spending 
 # Adds the total and its date to the 'total_spent_dict' dictionary
 # Returns 'total_spent_dict'
-def calculate_total_spent_daily():
+def calculate_total_spent_daily(dates, prices):
     # dummy arrays, just delete these and pass in the real ones
-   # !!! will run into problems if the length of dates and prices dont match... is that possible?
-    dates =  ['Jul 1st, 2023:', 'Jul 1st, 2023', 'Jul 1st, 2023', 'Jul 8th, 2023', 'Jul 8th, 2023', 'Jul 10th, 2023', 'Jul 11th, 2023', 'Jul 11th, 2023', 'Jul 12th, 2023', 'Jul 14th, 2023', 'Jul 15th, 2023', 'Jul 15th, 2023', 'Jul 15th, 2023', 'Jul 1st, 2099', 'Jul 1st, 2203', 'Jul 1st, 2303', 'Jul 1st, 2203', 'Jul 1st, 2213', 'Oct 10th, 2023', 'Oct 10th, 2023', 'Oct 10th, 2023']
-    prices = [12.42, 10.99, 7, 11.33, 3, 18, 15.25, 12.42, 10.99, 7, 11.33, 3, 18, 150.25, 111, 99, 777, .01, 11.11, 99.82, .01]
+    # !!! will run into problems if the length of dates and prices dont match... is that possible?
+    #dates =  ['Jul 1st, 2023:', 'Jul 1st, 2023', 'Jul 1st, 2023', 'Jul 8th, 2023', 'Jul 8th, 2023', 'Jul 10th, 2023', 'Jul 11th, 2023', 'Jul 11th, 2023', 'Jul 12th, 2023', 'Jul 14th, 2023', 'Jul 15th, 2023', 'Jul 15th, 2023', 'Jul 15th, 2023', 'Jul 1st, 2099', 'Jul 1st, 2203', 'Jul 1st, 2303', 'Jul 1st, 2203', 'Jul 1st, 2213', 'Oct 10th, 2023', 'Oct 10th, 2023', 'Oct 10th, 2023']
+    #prices = [12.42, 10.99, 7, 11.33, 3, 18, 15.25, 12.42, 10.99, 7, 11.33, 3, 18, 150.25, 111, 99, 777, .01, 11.11, 99.82, .01]
 
     # Sets how many dates' averages you want to get 
     totals_to_find = 90
@@ -209,13 +202,12 @@ def calculate_total_spent_daily():
 
     # Creating a dictionary to store total spent on each date
     total_spent_dict = {}
-
     # Creating a counter to keep track of how many dates we've gone over
     totals_counter = 0
     # Iterate through unique dates and calculate total spent per day
     for unique_date in df['Date'].unique():
         # df[df['Date'] == unique_date] -> Filters the DataFrame so it is only rows with the a Date column equal to the 'unique_date' variable
-        # ['Price'].sum()           -> Looks at the price column of the newly filtered DataFrame, and sums up the column
+        # ['Price'].sum() -> Looks at the price column of the newly filtered DataFrame, and sums up the column
         total_spent = round(df[df['Date'] == unique_date]['Price'].sum(), 2)
         # Adds total_spent to the corresponding unique_date in the dict
         total_spent_dict[unique_date] = total_spent
@@ -225,6 +217,10 @@ def calculate_total_spent_daily():
         if totals_counter == totals_to_find:
             break
 
+        #Display the total spent for each date
+        for date, total_spent in total_spent_dict.items():
+            print("Total spent on", f'{date}: ${total_spent}')
+        
     # Return the dict with the totals and their corresponding dates
     return total_spent_dict
 #########################################################################
