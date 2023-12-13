@@ -66,7 +66,7 @@ def logged_in():
     return render_template('userPage.html', first_name=first_name, mealplan_balance=mealplan_balance,
                 days_left=days_left, daily_budget=daily_budget, dates=dates, locations=locations, prices=prices)
     ############################################################################
-    
+
 def launch_selenium_browser(username, password):
     ###########################################################################
     #Selenium opens headless incognito browser withe the url of mealplan site
@@ -141,12 +141,32 @@ def scrape_recent_transactions(soup, browser):
     locations = []
     prices = []
     ###########################################################################
-    #Finds href link of the recent transactions page using BeautifulSoup, and 
-    #updates the Selenium browser to open transactions page. Since all
-    #transaction are split between multiple pages, the current page and total 
-    #page amounts are scraped and stored in page numbers[] array. This is so we 
-    #can loop through all pages to scrape every transactions
-    transactions_href = soup.find('table', {'width': '500', 'border': '0'}).find('a', href=True).get('href', None)
+    #Finds href link of the recent transactions page using BeautifulSoup by 
+    #searching for all meal plan accounts(tr_elements). Then we loop through
+    #each account, and check if it is the Meal Plan account A,B, or C. If
+    #it is the Meal Plan account, we scrape the href of the transactions page
+    #associated with that account, and store in transactions_href. If there is
+    #no Meal Plan account, we just scrape the href of the first account listed.
+    transactions_href = None
+    accounts_table = soup.find('table', {'width': '500', 'border': '0'})
+    tr_elements = accounts_table.find_all('tr')
+    for tr in tr_elements:
+        meal_plan_td = tr.find('td', string= 'Meal Plan A')
+        meal_plan_td1 = tr.find('td', string= 'Meal Plan B')
+        meal_plan_td2 = tr.find('td', string= 'Meal Plan C')
+
+        if meal_plan_td or meal_plan_td1 or meal_plan_td2:
+            transactions_href = tr.find('a')['href']
+    
+    if transactions_href is None:
+         transactions_href = accounts_table.find('a', href=True).get('href', None)
+    ##########################################################################
+
+    ##########################################################################
+    #Updates the Selenium browser to open transactions page. Since all 
+    #transactions are split between multiple pages, the current page and 
+    #total page amounts are scraped and stored in page numbers[] array. 
+    #This is so we can loop through all pages to scrape every transactions
     browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}")
     soup = BeautifulSoup(browser.page_source, "html.parser")
     page_numbers = soup.find('td', align='center', colspan='7').get_text(strip=True).replace(">>>", '').split(' ')[1].split('/')
@@ -158,8 +178,8 @@ def scrape_recent_transactions(soup, browser):
     #Loops through every page of transactions using curr_page and total_page 
     #which were scraped earlier. Scrapes transactions page using BeautifulSoup, 
     #stores each transactions date in dates[] array, location in locations[] 
-    #array, and stores transaction price in prices[] array. Then, iterateso next 
-    #page by updating Selenium browser with href for next page and repeats.
+    #array, and stores transaction price in prices[] array. Then, iterate to 
+    #next page by updating Selenium browser with href for next page and repeat.
     while cur_page <= total_page:      
         entry_rows = soup.find_all('tr', {'id': 'EntryRow'})
         for entry_row in entry_rows:
