@@ -57,7 +57,7 @@ def logged_in():
     first_name = soup.label.text.split()[2]
     mealplan_balance = scrape_mealplan_balance(soup)
     days_left, daily_budget = calculate_daily_spending(mealplan_balance)
-    dates, prices = scrape_recent_transactions(soup, browser)
+    dates, locations, prices = scrape_recent_transactions(soup, browser)
     
     # Call calculate_average_spending and then print out the averages 
     # Just proof of concept. 
@@ -67,7 +67,7 @@ def logged_in():
         print("Total spent on", f'{date}: ${total_spent}')
 
     return render_template('userPage.html', first_name=first_name, mealplan_balance=mealplan_balance,
-                days_left=days_left, daily_budget=daily_budget, dates=dates, prices=prices)
+                days_left=days_left, daily_budget=daily_budget, dates=dates, locations=locations, prices=prices)
     ############################################################################
     
 def launch_selenium_browser(username, password):
@@ -141,6 +141,7 @@ def calculate_daily_spending(meal_plan_balance):
 
 def scrape_recent_transactions(soup, browser):
     dates = []
+    locations = []
     prices = []
     ###########################################################################
     #Finds href link of the recent transactions page using BeautifulSoup, and 
@@ -159,8 +160,8 @@ def scrape_recent_transactions(soup, browser):
     ##########################################################################
     #Loops through every page of transactions using curr_page and total_page 
     #which were scraped earlier. Scrapes transactions page using BeautifulSoup, 
-    #stores each transactions date and location in dates[] array and stores 
-    #transaction price in prices array. Then, iterateso next page by updating 
+    #stores each transactions date in dates[] array, location in locations[] array, and stores 
+    #transaction price in prices[] array. Then, iterateso next page by updating 
     #Selenium browser with href for next page and repeats.
     while cur_page <= total_page:      
         entry_rows = soup.find_all('tr', {'id': 'EntryRow'})
@@ -168,20 +169,21 @@ def scrape_recent_transactions(soup, browser):
             try:
                 contents = entry_row.contents
                 date = contents[3].text.strip()
-                dining_hall = contents[7].text.strip()
+                location = contents[7].text.strip()
                 #This condition occurs when money is added to mealplan, 
                 #so its skipped
-                if not dining_hall:
+                if not location:
                     continue
                 price = contents[9].div.text.strip().replace('(', '').replace(')', '')
-                dates.append(f"{date}: {dining_hall}")
-                prices.append(f"${price}")
+                dates.append(date)
+                locations.append(location)
+                prices.append(price)
             except NoSuchElementException:
                 print("Element not found. Check the HTML structure.")
         cur_page += 1
         browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={cur_page}")
         soup = BeautifulSoup(browser.page_source, "html.parser")
-    return dates, prices
+    return dates, locations, prices
     #########################################################################
 
 #########################################################################
@@ -194,26 +196,14 @@ def scrape_recent_transactions(soup, browser):
 def calculate_total_spent_daily():
     # dummy arrays, just delete these and pass in the real ones
    # !!! will run into problems if the length of dates and prices dont match... is that possible?
-    dates =  ['Jul 1st, 2023: Hinman', 'Jul 1st, 2023: Hinman', 'Jul 1st, 2023: College in The Woods', 'Jul 8th, 2023: C4', 'Jul 8th, 2023: Hinman', 'Jul 10th, 2023: Hinman', 'Jul 11th, 2023: Hinman', 'Jul 11th, 2023: Hinman', 'Jul 12th, 2023: Hinman', 'Jul 14th, 2023: College in The Woods', 'Jul 15th, 2023: C4', 'Jul 15th, 2023: Hinman', 'Jul 15th, 2023: Hinman', 'Jul 1st, 2099: Hinman', 'Jul 1st, 2203: Hinman', 'Jul 1st, 2303: Hinman', 'Jul 1st, 2203: Hinman', 'Jul 1st, 2213: Hinman', 'Oct 10th, 2023: Hinman', 'Oct 10th, 2023: Hinman', 'Oct 10th, 2023: Hinman']
+    dates =  ['Jul 1st, 2023:', 'Jul 1st, 2023', 'Jul 1st, 2023', 'Jul 8th, 2023', 'Jul 8th, 2023', 'Jul 10th, 2023', 'Jul 11th, 2023', 'Jul 11th, 2023', 'Jul 12th, 2023', 'Jul 14th, 2023', 'Jul 15th, 2023', 'Jul 15th, 2023', 'Jul 15th, 2023', 'Jul 1st, 2099', 'Jul 1st, 2203', 'Jul 1st, 2303', 'Jul 1st, 2203', 'Jul 1st, 2213', 'Oct 10th, 2023', 'Oct 10th, 2023', 'Oct 10th, 2023']
     prices = [12.42, 10.99, 7, 11.33, 3, 18, 15.25, 12.42, 10.99, 7, 11.33, 3, 18, 150.25, 111, 99, 777, .01, 11.11, 99.82, .01]
-
-    # Will hold just the dates after they are spliced out of the 'dates' array
-    just_dates = []
 
     # Sets how many dates' averages you want to get 
     totals_to_find = 90
-
-   # !!! This loop just goes through all the dates. Even if totals_to_find = 2 and theres 100 dates, itll still go through all of them... not efficient 
-   # !!! this might not be needed. might not even need a 'just_dates' array and just use the given 'dates' array and splice out the date as you go... idk
-    # Loops through the dates array and pulls out just the dates, creating a new array of just_dates
-    for element in dates:
-        # Extract the date using string slicing
-        date_part = element.split(":")[0].strip()
-        # Add the date to the just_dates array
-        just_dates.append(date_part)
     
     # Creating a dictionary with the dates and prices arrays as the keys
-    data = {'Date': just_dates, 'Price': prices}
+    data = {'Date': dates, 'Price': prices}
     # Creating a Pandas DataFrame using the 'data' dictionary
     df = pd.DataFrame(data)
 
