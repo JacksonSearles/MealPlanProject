@@ -148,18 +148,18 @@ def scrape_recent_transactions(soup, browser):
     #associated with that account, and store in transactions_href. If there is
     #no Meal Plan account, we just scrape the href of the first account listed.
     transactions_href = None
-    accounts_table = soup.find('table', {'width': '500', 'border': '0'})
-    tr_elements = accounts_table.find_all('tr')
-    for tr in tr_elements:
-        meal_plan_td = tr.find('td', string= 'Meal Plan A')
-        meal_plan_td1 = tr.find('td', string= 'Meal Plan B')
-        meal_plan_td2 = tr.find('td', string= 'Meal Plan C')
+    mealplan_accounts_table = soup.find('table', {'width': '500', 'border': '0'})
+    mealplan_accounts = mealplan_accounts_table.find_all('tr')
+    for account in mealplan_accounts:
+        meal_plan_a = account.find('td', string= 'Meal Plan A')
+        meal_plan_b = account.find('td', string= 'Meal Plan B')
+        meal_plan_c = account.find('td', string= 'Meal Plan C')
 
-        if meal_plan_td or meal_plan_td1 or meal_plan_td2:
-            transactions_href = tr.find('a')['href']
+        if meal_plan_a or meal_plan_b or meal_plan_c:
+            transactions_href = account.find('a')['href']
     
     if transactions_href is None:
-         transactions_href = accounts_table.find('a', href=True).get('href', None)
+         transactions_href = mealplan_accounts_table.find('a', href=True).get('href', None)
     ##########################################################################
 
     ##########################################################################
