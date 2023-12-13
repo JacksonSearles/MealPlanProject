@@ -193,7 +193,7 @@ def calculate_total_spent_daily(dates, prices):
     #prices = [12.42, 10.99, 7, 11.33, 3, 18, 15.25, 12.42, 10.99, 7, 11.33, 3, 18, 150.25, 111, 99, 777, .01, 11.11, 99.82, .01]
 
     # Sets how many dates' averages you want to get 
-    totals_to_find = 90
+    totals_to_find = 1000
     
     # Creating a dictionary with the dates and prices arrays as the keys
     data = {'Date': dates, 'Price': prices}
@@ -202,14 +202,15 @@ def calculate_total_spent_daily(dates, prices):
 
     # Creating a dictionary to store total spent on each date
     total_spent_dict = {}
-    # Creating a counter to keep track of how many dates we've gone over
+
+    #WE DONT NEED THIS
     totals_counter = 0
     # Iterate through unique dates and calculate total spent per day
     for unique_date in df['Date'].unique():
         # df[df['Date'] == unique_date] -> Filters the DataFrame so it is only rows with the a Date column equal to the 'unique_date' variable
         # ['Price'].sum() -> Looks at the price column of the newly filtered DataFrame, and sums up the column
         total_spent = round(df[df['Date'] == unique_date]['Price'].sum(), 2)
-        
+
         # df.groupby('Date')['Price'].sum(). --> Groups the DataFrame by 'Date' column 
         #       and selects 'Price' column, calculates the sum for every date in the df 
         # loc[unique_date]                   --> uses .loc[unique_date] to only look at the 'unique_date's sum
@@ -217,10 +218,12 @@ def calculate_total_spent_daily(dates, prices):
 
         # Adds total_spent to the corresponding unique_date in the dict
         total_spent_dict[unique_date] = total_spent
+
+        #WE DONT NEED THIS
         # Increment the counter and check to see if we've found the needed amount of totals
-        totals_counter+=1
-        if totals_counter >= totals_to_find:
-            break
+        #totals_counter+=1
+        #if totals_counter >= totals_to_find:
+            #break
 
     #Display the total spent for each date
     for date, total_spent in total_spent_dict.items():
