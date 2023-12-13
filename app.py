@@ -62,9 +62,9 @@ def logged_in():
     # Call calculate_average_spending and then print out the averages 
     # Just proof of concept. 
     # not printing the dates in order because theyre just dummy dates real ones will always be chronological
-    averages = calculate_average_spending()
-    for date, average_spending in averages.items():
-        print("Average spent on", f'{date}: ${average_spending}')
+    totals_by_date = calculate_total_spent_daily()
+    for date, total_spent in totals_by_date.items():
+        print("Total spent on", f'{date}: ${total_spent}')
 
     return render_template('userPage.html', first_name=first_name, mealplan_balance=mealplan_balance,
                 days_left=days_left, daily_budget=daily_budget, dates=dates, prices=prices)
@@ -185,15 +185,13 @@ def scrape_recent_transactions(soup, browser):
     #########################################################################
 
 #########################################################################
-# !!! This is just grabbing all of the averages. not sure how to control how many actual dates were 
-
-# Function that calculates average spending for given dates. 
-# loops through given 'dates' array and parses out just the date into new 'just_dates' array
+# Function that calculates the total amount spent for given dates. 
+# Loops through given 'dates' array and parses out just the date into new 'just_dates' array
 # Creates a Pandas DataFrame made up of 'just_dates' and 'prices'. Basically conjoining the two original arrays
-# Loops through the dates and averages out their spending 
-# Adds the average and its date to the 'average_spending_dict' dictionary
-# returns 'average_spending_dict'
-def calculate_average_spending():
+# Loops through the dates and sums up their spending 
+# Adds the total and its date to the 'total_spent_dict' dictionary
+# Returns 'total_spent_dict'
+def calculate_total_spent_daily():
     # dummy arrays, just delete these and pass in the real ones
    # !!! will run into problems if the length of dates and prices dont match... is that possible?
     dates =  ['Jul 1st, 2023: Hinman', 'Jul 1st, 2023: Hinman', 'Jul 1st, 2023: College in The Woods', 'Jul 8th, 2023: C4', 'Jul 8th, 2023: Hinman', 'Jul 10th, 2023: Hinman', 'Jul 11th, 2023: Hinman', 'Jul 11th, 2023: Hinman', 'Jul 12th, 2023: Hinman', 'Jul 14th, 2023: College in The Woods', 'Jul 15th, 2023: C4', 'Jul 15th, 2023: Hinman', 'Jul 15th, 2023: Hinman', 'Jul 1st, 2099: Hinman', 'Jul 1st, 2203: Hinman', 'Jul 1st, 2303: Hinman', 'Jul 1st, 2203: Hinman', 'Jul 1st, 2213: Hinman', 'Oct 10th, 2023: Hinman', 'Oct 10th, 2023: Hinman', 'Oct 10th, 2023: Hinman']
@@ -203,42 +201,42 @@ def calculate_average_spending():
     just_dates = []
 
     # Sets how many dates' averages you want to get 
-    averages_to_find = 90
+    totals_to_find = 90
 
-   # !!! This loop just goes through all the dates. Even if averages_to_find = 2 and theres 100 dates, itll still go through all of them... not efficient 
+   # !!! This loop just goes through all the dates. Even if totals_to_find = 2 and theres 100 dates, itll still go through all of them... not efficient 
    # !!! this might not be needed. might not even need a 'just_dates' array and just use the given 'dates' array and splice out the date as you go... idk
     # Loops through the dates array and pulls out just the dates, creating a new array of just_dates
     for element in dates:
         # Extract the date using string slicing
         date_part = element.split(":")[0].strip()
-        # add the date to the just_dates array
+        # Add the date to the just_dates array
         just_dates.append(date_part)
     
     # Creating a dictionary with the dates and prices arrays as the keys
     data = {'Date': just_dates, 'Price': prices}
-    # Creating a Pandas DataFrame using the data dictionary
+    # Creating a Pandas DataFrame using the 'data' dictionary
     df = pd.DataFrame(data)
 
-    # Creating a dictionary to store average spending for each date
-    average_spending_dict = {}
+    # Creating a dictionary to store total spent on each date
+    total_spent_dict = {}
 
     # Creating a counter to keep track of how many dates we've gone over
-    unique_dates_counter = 0
-    # Iterate through unique dates and calculate average spending
+    totals_counter = 0
+    # Iterate through unique dates and calculate total spent per day
     for unique_date in df['Date'].unique():
-        # Only select the rows of the df with the given unique_date, then
-        # selects 'price' column from df, then calculates mean of the prices, and then round it to 2 decimal places
-        average_spending = round(df[df['Date'] == unique_date]['Price'].mean(), 2)
-        # Adds average_spending to the corresponding unique_dates in the dict
-        average_spending_dict[unique_date] = average_spending
+        # df[df['Date'] == unique_date] -> Filters the DataFrame so it is only rows with the a Date column equal to the 'unique_date' variable
+        # ['Price'].sum()           -> Looks at the price column of the newly filtered DataFrame, and sums up the column
+        total_spent = round(df[df['Date'] == unique_date]['Price'].sum(), 2)
+        # Adds total_spent to the corresponding unique_date in the dict
+        total_spent_dict[unique_date] = total_spent
         
-        # Increment the counter and check to see if we've found the needed amount of averages
-        unique_dates_counter+=1
-        if unique_dates_counter >= averages_to_find:
+        # Increment the counter and check to see if we've found the needed amount of totals
+        totals_counter+=1
+        if totals_counter == totals_to_find:
             break
 
-    # Return the dict with the averages and their corresponding dates
-    return average_spending_dict
+    # Return the dict with the totals and their corresponding dates
+    return total_spent_dict
 #########################################################################
 
 if __name__ == "__main__":
