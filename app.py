@@ -219,12 +219,12 @@ def calculate_total_spent_daily(dates, prices):
         total_spent_dict[unique_date] = total_spent
         # Increment the counter and check to see if we've found the needed amount of totals
         totals_counter+=1
-        if totals_counter == totals_to_find:
+        if totals_counter >= totals_to_find:
             break
 
-        #Display the total spent for each date
-        for date, total_spent in total_spent_dict.items():
-            print("Total spent on", f'{date}: ${total_spent}')
+    #Display the total spent for each date
+    for date, total_spent in total_spent_dict.items():
+        print("Total spent on", f'{date}: ${total_spent}')
         
     # Return the dict with the totals and their corresponding dates
     return total_spent_dict
