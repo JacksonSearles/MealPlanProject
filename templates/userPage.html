@@ -29,14 +29,14 @@
 								<thead>
 									<tr>
 										<th>Date</th>
-										<th>Price</th>
+										<th>Price($)</th>
 									</tr>
 								</thead>
 								<tbody>
 									{% for i in range(dates|length) %}
 										<tr>
-											<td>{{ dates[i] }}</td>
-											<td>{{ prices[i] }}</td>
+											<td>{{dates[i]}}: {{locations[i]}}</td>
+											<td>${{prices[i]}}</td>
 										</tr>
 									{% endfor %}
 								</tbody>
