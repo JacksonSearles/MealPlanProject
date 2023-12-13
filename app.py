@@ -224,12 +224,12 @@ def calculate_total_spent_daily():
     totals_counter = 0
     # Iterate through unique dates and calculate total spent per day
     for unique_date in df['Date'].unique():
-        # df[df['Date'] == unique_date] -> Filters the DataFrame so it is only rows with the a Date column equal to the 'unique_date' variable
-        # ['Price'].sum()           -> Looks at the price column of the newly filtered DataFrame, and sums up the column
-        total_spent = round(df[df['Date'] == unique_date]['Price'].sum(), 2)
+        # df.groupby('Date')['Price'].sum(). --> Groups the DataFrame by 'Date' column 
+        #       and selects 'Price' column, calculates the sum for every date in the df 
+        # loc[unique_date]                   --> uses .loc[unique_date] to only look at the 'unique_date's sum
+        total_spent = round(df.groupby('Date')['Price'].sum().loc[unique_date], 2)
         # Adds total_spent to the corresponding unique_date in the dict
         total_spent_dict[unique_date] = total_spent
-        
         # Increment the counter and check to see if we've found the needed amount of totals
         totals_counter+=1
         if totals_counter == totals_to_find:
