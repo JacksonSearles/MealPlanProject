@@ -6,8 +6,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from datetime import datetime
 from bs4 import BeautifulSoup
+import pandas as pd
 
-#Libraries Used: Flask, Selenium, BeautifulSoup
+#Libraries Used: Flask, Selenium, BeautifulSoup, Pandas
 #Selenium: Opens private incognito browser used for scraping data from
 #          mealplan site, workaround due to Binghamton Mealplan site
 #          detecting multiple logins 
@@ -16,6 +17,8 @@ from bs4 import BeautifulSoup
 #BeautifulSoup: Used for scraping HTML code from websites launched in
 #               Selenium browser. I.E, how we scrape the balance and 
 #               transactions from the Binghamton mealplan site
+#Pandas:    Used to create a DataFrame of prices and dates. Uses the
+#           DataFrame to calculate the average spent per date
 
 app = Flask(__name__, template_folder='templates')
 
@@ -55,6 +58,14 @@ def logged_in():
     mealplan_balance = scrape_mealplan_balance(soup)
     days_left, daily_budget = calculate_daily_spending(mealplan_balance)
     dates, prices = scrape_recent_transactions(soup, browser)
+    
+    # Call calculate_average_spending and then print out the averages 
+    # Just proof of concept. 
+    # not printing the dates in order because theyre just dummy dates real ones will always be chronological
+    averages = calculate_average_spending()
+    for date, average_spending in averages.items():
+        print("Average spent on", f'{date}: ${average_spending}')
+
     return render_template('userPage.html', first_name=first_name, mealplan_balance=mealplan_balance,
                 days_left=days_left, daily_budget=daily_budget, dates=dates, prices=prices)
     ############################################################################
@@ -172,6 +183,63 @@ def scrape_recent_transactions(soup, browser):
         soup = BeautifulSoup(browser.page_source, "html.parser")
     return dates, prices
     #########################################################################
+
+#########################################################################
+# !!! This is just grabbing all of the averages. not sure how to control how many actual dates were 
+
+# Function that calculates average spending for given dates. 
+# loops through given 'dates' array and parses out just the date into new 'just_dates' array
+# Creates a Pandas DataFrame made up of 'just_dates' and 'prices'. Basically conjoining the two original arrays
+# Loops through the dates and averages out their spending 
+# Adds the average and its date to the 'average_spending_dict' dictionary
+# returns 'average_spending_dict'
+def calculate_average_spending():
+    # dummy arrays, just delete these and pass in the real ones
+   # !!! will run into problems if the length of dates and prices dont match... is that possible?
+    dates =  ['Jul 1st, 2023: Hinman', 'Jul 1st, 2023: Hinman', 'Jul 1st, 2023: College in The Woods', 'Jul 8th, 2023: C4', 'Jul 8th, 2023: Hinman', 'Jul 10th, 2023: Hinman', 'Jul 11th, 2023: Hinman', 'Jul 11th, 2023: Hinman', 'Jul 12th, 2023: Hinman', 'Jul 14th, 2023: College in The Woods', 'Jul 15th, 2023: C4', 'Jul 15th, 2023: Hinman', 'Jul 15th, 2023: Hinman', 'Jul 1st, 2099: Hinman', 'Jul 1st, 2203: Hinman', 'Jul 1st, 2303: Hinman', 'Jul 1st, 2203: Hinman', 'Jul 1st, 2213: Hinman', 'Oct 10th, 2023: Hinman', 'Oct 10th, 2023: Hinman', 'Oct 10th, 2023: Hinman']
+    prices = [12.42, 10.99, 7, 11.33, 3, 18, 15.25, 12.42, 10.99, 7, 11.33, 3, 18, 150.25, 111, 99, 777, .01, 11.11, 99.82, .01]
+
+    # Will hold just the dates after they are spliced out of the 'dates' array
+    just_dates = []
+
+    # Sets how many dates' averages you want to get 
+    averages_to_find = 90
+
+   # !!! This loop just goes through all the dates. Even if averages_to_find = 2 and theres 100 dates, itll still go through all of them... not efficient 
+   # !!! this might not be needed. might not even need a 'just_dates' array and just use the given 'dates' array and splice out the date as you go... idk
+    # Loops through the dates array and pulls out just the dates, creating a new array of just_dates
+    for element in dates:
+        # Extract the date using string slicing
+        date_part = element.split(":")[0].strip()
+        # add the date to the just_dates array
+        just_dates.append(date_part)
+    
+    # Creating a dictionary with the dates and prices arrays as the keys
+    data = {'Date': just_dates, 'Price': prices}
+    # Creating a Pandas DataFrame using the data dictionary
+    df = pd.DataFrame(data)
+
+    # Creating a dictionary to store average spending for each date
+    average_spending_dict = {}
+
+    # Creating a counter to keep track of how many dates we've gone over
+    unique_dates_counter = 0
+    # Iterate through unique dates and calculate average spending
+    for unique_date in df['Date'].unique():
+        # Only select the rows of the df with the given unique_date, then
+        # selects 'price' column from df, then calculates mean of the prices, and then round it to 2 decimal places
+        average_spending = round(df[df['Date'] == unique_date]['Price'].mean(), 2)
+        # Adds average_spending to the corresponding unique_dates in the dict
+        average_spending_dict[unique_date] = average_spending
+        
+        # Increment the counter and check to see if we've found the needed amount of averages
+        unique_dates_counter+=1
+        if unique_dates_counter >= averages_to_find:
+            break
+
+    # Return the dict with the averages and their corresponding dates
+    return average_spending_dict
+#########################################################################
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
