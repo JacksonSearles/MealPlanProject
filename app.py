@@ -157,9 +157,11 @@ def scrape_recent_transactions(soup, browser):
         meal_plan_d = account.find('td', string= 'Meal Plan D')
         meal_plan_e = account.find('td', string= 'Meal Plan E')
         meal_plan_f = account.find('td', string= 'Meal Plan F')
-        
+        meal_plan_25 = account.find('td', string= 'The 25.00 Plan')
+        meal_plan_semester = account.find('td', string= 'Commuter Semester')
+        meal_plan_annual = account.find('td', string= 'Commuter Annual')
 
-        if meal_plan_a or meal_plan_b or meal_plan_c or meal_plan_d or meal_plan_e or meal_plan_f:
+        if meal_plan_a or meal_plan_b or meal_plan_c or meal_plan_d or meal_plan_e or meal_plan_f or meal_plan_25 or meal_plan_semester or meal_plan_annual:
             transactions_href = account.find('a')['href']
     
     
