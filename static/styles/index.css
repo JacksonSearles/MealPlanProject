@@ -22,14 +22,24 @@ html{
 
 .center{
     display: block;
-      margin-left: auto;
-      margin-right: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.account-note{
+    display: block; 
+    font-weight: bold; 
 }
 
 @media only screen and (max-width: 600px) {
     #create_account {
         font-size: 10px;
     }
+    
+    .account-note{
+        font-size: 10px;
+    }
+
     #version{
         font-size: 7px;
     }
