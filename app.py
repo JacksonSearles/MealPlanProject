@@ -9,16 +9,20 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 #Libraries Used: Flask, Selenium, BeautifulSoup, Pandas
-#Selenium: Opens private incognito browser used for scraping data from
-#          mealplan site, workaround due to Binghamton Mealplan site
-#          detecting multiple logins 
-#Flask: Allows for data to be passed in from Python file to HTML, using
-#       methods such as POST, PUT, etc
+
+#Selenium:      Opens private incognito browser used for scraping data from
+#               mealplan site, workaround due to Binghamton Mealplan site
+#               detecting multiple logins 
+
+#Flask:         Allows for data to be passed in from Python file to HTML, using
+#               methods such as POST, PUT, etc
+
 #BeautifulSoup: Used for scraping HTML code from websites launched in
 #               Selenium browser. I.E, how we scrape the balance and 
 #               transactions from the Binghamton mealplan site
-#Pandas:    Used to create a DataFrame of prices and dates. Uses the
-#           DataFrame to calculate the average spent per date
+
+#Pandas:        Used to create a DataFrame of prices and dates. Uses the
+#               DataFrame to calculate the total spent per date
 
 app = Flask(__name__, template_folder='templates')
 
@@ -153,9 +157,9 @@ def scrape_recent_transactions(soup, browser):
     ##########################################################################
     #Loops through every page of transactions using curr_page and total_page 
     #which were scraped earlier. Scrapes transactions page using BeautifulSoup, 
-    #stores each transactions date in dates[] array, location in locations[] array, and stores 
-    #transaction price in prices[] array. Then, iterateso next page by updating 
-    #Selenium browser with href for next page and repeats.
+    #stores each transactions date in dates[] array, location in locations[] 
+    #array, and stores transaction price in prices[] array. Then, iterateso next 
+    #page by updating Selenium browser with href for next page and repeats.
     while cur_page <= total_page:      
         entry_rows = soup.find_all('tr', {'id': 'EntryRow'})
         for entry_row in entry_rows:
@@ -179,44 +183,27 @@ def scrape_recent_transactions(soup, browser):
     return dates, locations, prices
     #########################################################################
 
-#########################################################################
+#############################################################################
 # Function that calculates the total amount spent for given dates. 
-# Loops through given 'dates' array and parses out just the date into new 'just_dates' array
-# Creates a Pandas DataFrame made up of 'just_dates' and 'prices'. Basically conjoining the two original arrays
-# Loops through the dates and sums up their spending 
-# Adds the total and its date to the 'total_spent_dict' dictionary
-# Returns 'total_spent_dict'
+# Creates a Pandas DataFrame made up of 'dates' and 'prices'. Basically 
+# conjoining the two original arrays.Loops through the dates and sums up 
+# their spending. Adds the total and its date to the 'total_spent_dict' 
+# dictionary. Returns 'total_spent_dict'
 def calculate_total_spent_daily(dates, prices):
-    # dummy arrays, just delete these and pass in the real ones
-    # !!! will run into problems if the length of dates and prices dont match... is that possible?
-    #dates =  ['Jul 1st, 2023:', 'Jul 1st, 2023', 'Jul 1st, 2023', 'Jul 8th, 2023', 'Jul 8th, 2023', 'Jul 10th, 2023', 'Jul 11th, 2023', 'Jul 11th, 2023', 'Jul 12th, 2023', 'Jul 14th, 2023', 'Jul 15th, 2023', 'Jul 15th, 2023', 'Jul 15th, 2023', 'Jul 1st, 2099', 'Jul 1st, 2203', 'Jul 1st, 2303', 'Jul 1st, 2203', 'Jul 1st, 2213', 'Oct 10th, 2023', 'Oct 10th, 2023', 'Oct 10th, 2023']
-    #prices = [12.42, 10.99, 7, 11.33, 3, 18, 15.25, 12.42, 10.99, 7, 11.33, 3, 18, 150.25, 111, 99, 777, .01, 11.11, 99.82, .01]
-    
-    # Creating a dictionary with the dates and prices arrays as the keys
     data = {'Date': dates, 'Price': prices}
-    # Creating a Pandas DataFrame using the 'data' dictionary
     df = pd.DataFrame(data)
-
-    # Creating a dictionary to store total spent on each date
     total_spent_dict = {}
-
-    # Iterate through unique dates and calculate total spent per day
     for unique_date in df['Date'].unique():
-        # df.groupby('Date')['Price'].sum(). --> Groups the DataFrame by 'Date' column 
-        #       and selects 'Price' column, calculates the sum for every date in the df 
+        # df.groupby('Date')['Price'].sum(). --> Groups the DataFrame by 'Date' column and selects 'Price' column, calculates the sum for every date in the df 
         # loc[unique_date]                   --> uses .loc[unique_date] to only look at the 'unique_date's sum
         total_spent = round(df.groupby('Date')['Price'].sum().loc[unique_date], 2)
-
-        # Adds total_spent to the corresponding unique_date in the dict
         total_spent_dict[unique_date] = total_spent
 
-    #Display the total spent for each date
     for date, total_spent in total_spent_dict.items():
         print("Total spent on", f'{date}: ${total_spent}')
         
-    # Return the dict with the totals and their corresponding dates
     return total_spent_dict
-#########################################################################
+##########################################################################
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
