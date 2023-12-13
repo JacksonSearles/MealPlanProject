@@ -29,16 +29,24 @@
 								<thead>
 									<tr>
 										<th>Date</th>
-										<th>Price($)</th>
+										<th>Price</th>
 									</tr>
 								</thead>
 								<tbody>
-									{% for i in range(dates|length) %}
+									{% if dates %}
+										{# The 'dates' list is not empty #}
+										{% for i in range(dates|length) %}
+											<tr>
+												<td>{{ dates[i] }}: {{ locations[i] }}</td>
+												<td>${{ prices[i] }}</td>
+											</tr>
+										{% endfor %}
+									{% else %}
+										{# The 'dates' list is empty #}
 										<tr>
-											<td>{{dates[i]}}: {{locations[i]}}</td>
-											<td>${{prices[i]}}</td>
+											<td colspan="2">No recent transactions</td>
 										</tr>
-									{% endfor %}
+									{% endif %}
 								</tbody>
 							</table>
 						</div>
