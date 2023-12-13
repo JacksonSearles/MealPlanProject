@@ -191,9 +191,6 @@ def calculate_total_spent_daily(dates, prices):
     # !!! will run into problems if the length of dates and prices dont match... is that possible?
     #dates =  ['Jul 1st, 2023:', 'Jul 1st, 2023', 'Jul 1st, 2023', 'Jul 8th, 2023', 'Jul 8th, 2023', 'Jul 10th, 2023', 'Jul 11th, 2023', 'Jul 11th, 2023', 'Jul 12th, 2023', 'Jul 14th, 2023', 'Jul 15th, 2023', 'Jul 15th, 2023', 'Jul 15th, 2023', 'Jul 1st, 2099', 'Jul 1st, 2203', 'Jul 1st, 2303', 'Jul 1st, 2203', 'Jul 1st, 2213', 'Oct 10th, 2023', 'Oct 10th, 2023', 'Oct 10th, 2023']
     #prices = [12.42, 10.99, 7, 11.33, 3, 18, 15.25, 12.42, 10.99, 7, 11.33, 3, 18, 150.25, 111, 99, 777, .01, 11.11, 99.82, .01]
-
-    # Sets how many dates' averages you want to get 
-    totals_to_find = 1000
     
     # Creating a dictionary with the dates and prices arrays as the keys
     data = {'Date': dates, 'Price': prices}
