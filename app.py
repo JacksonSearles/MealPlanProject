@@ -153,7 +153,7 @@ def scrape_mealplan_transactions(transactions_href, browser):
             try:
                 contents = entry_row.contents
                 date = contents[3].text.strip()
-                location = contents[7].text.strip()
+                location = contents[7].text.strip().replace('Dining', '')
                 #This condition occurs when money is added to mealplan, 
                 #so its skipped
                 if not location:
