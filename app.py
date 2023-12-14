@@ -172,9 +172,9 @@ def calculate_daily_spending(meal_plan_balance):
     #that person can spend until end of semeseter
     curr_date = datetime.now()
     if 8 <= curr_date.month <= 12:
-        end_date = datetime(curr_date.year, 12, 15)
+        end_date = datetime(curr_date.year, 12, 16)
     else:
-        end_date = datetime(curr_date.year, 5, 15)
+        end_date = datetime(curr_date.year, 5, 16)
     days_left = (end_date - curr_date).days + 1
     daily_budget = round((meal_plan_balance / days_left), 2)
     return days_left, daily_budget
