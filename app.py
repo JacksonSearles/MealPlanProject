@@ -47,10 +47,14 @@ def logged_in():
     ##############################################################################
 
     ##############################################################################
-    #Launches Selenium browser using launch_selenium_browser, and uses BeautifulSoup 
+    #Launches Selenium browser using launch_selenium_browser, with the url of the
+    #Binghamton mealplan site. If the user was logged in succesfully, 
+    #borwser.find element will return true, and the rest of the program will run.
+    #If login failed, the user is prompted to login again. We use BeautifulSoup 
     #to get HTML code of Binghamton mealplan site. From this, we scrape the name of
-    #the user, mealplan type, mealplan balance, all recent transaction prices and 
-    #dates with scrape_mealplan_data. Then we calculate the daily budget based on 
+    #the user, mealplan type, mealplan balance, and the link for the transactions page
+    #with scrape_mealplan_data. Then we scrape all recent transaction prices and 
+    #dates with scrape_recent_transactions. Then we calculate the daily budget based on 
     #balance using calculate_daily_spending, and also calculate the total spending
     #for each day using calculate_total_spent_daily. Finally, we launch the HTML 
     #landing page and pass values through using Flask render_template.    
@@ -59,13 +63,12 @@ def logged_in():
         browser.find_element(By.ID, 'welcome')
     except NoSuchElementException:
         return redirect(url_for('error'))
-    soup = BeautifulSoup(browser.page_source, "html.parser")
-    first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(soup)
-    dates, locations, prices = scrape_recent_transactions(transactions_href, browser)
+    first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
+    dates, locations, prices = scrape_mealplan_transactions(transactions_href, browser)
     days_left, daily_budget = calculate_daily_spending(mealplan_balance)
     totals_by_date = calculate_total_spent_daily(dates, prices)
     return render_template('userPage.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
-                days_left=days_left, daily_budget=daily_budget, dates=dates, locations=locations, prices=prices)
+                dates=dates, locations=locations, prices=prices, days_left=days_left, daily_budget=daily_budget)
     ############################################################################
 
 def launch_selenium_browser(username, password):
@@ -89,7 +92,7 @@ def launch_selenium_browser(username, password):
     ############################################################################
     return browser
 
-def scrape_mealplan_data(soup):
+def scrape_mealplan_data(browser):
     ###########################################################################
     #Scrapes the first name of the user. Then finds the table element that holds 
     #all mealplan accounts(mealplan_accounts_table). Then finds all the tr elements
@@ -98,9 +101,10 @@ def scrape_mealplan_data(soup):
     #mealplan_accounts, and search to see if this mealplan account is one of 
     #the mealplans listed in mealplans[] array. If it isnt, we continue to the
     #next account. If it is, we store the name of the meal plan account found in
-    #mealplan_name, then scrape the href that holds the link to the full transactions 
-    #page and store in transactions_href, and scrape the balance of the account 
-    #found and store in mealplan_balance.
+    #mealplan_name, then scrape the href that holds the link to the full 
+    #transactions page and store in transactions_href, and scrape the balance of 
+    #the account found and store in mealplan_balance.
+    soup = BeautifulSoup(browser.page_source, "html.parser")
     first_name = soup.label.text.split()[2]
     transactions_href = None
     mealplan_name = None
@@ -116,12 +120,12 @@ def scrape_mealplan_data(soup):
                 mealplan_balance = float(account.find('div', {'align': 'right'}).text.strip().replace('$', '').replace('  ', ''))
                 mealplan_name = mealplan
                 break
-        if mealplan_name:
+        if transactions_href:
             break
     return first_name, mealplan_name, mealplan_balance, transactions_href
     ##########################################################################
 
-def scrape_recent_transactions(transactions_href, browser):
+def scrape_mealplan_transactions(transactions_href, browser):
     ##########################################################################
     #Updates the Selenium browser to open transactions page. Since all 
     #transactions are split between multiple pages, the current page and 
@@ -195,10 +199,6 @@ def calculate_total_spent_daily(dates, prices):
         # loc[unique_date]                   --> uses .loc[unique_date] to only look at the 'unique_date's sum
         total_spent = round(df.groupby('Date')['Price'].sum().loc[unique_date], 2)
         total_spent_dict[unique_date] = total_spent
-
-    for date, total_spent in total_spent_dict.items():
-        print("Total spent on", f'{date}: ${total_spent}')
-        
     return total_spent_dict
 ##########################################################################
 
