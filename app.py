@@ -180,7 +180,10 @@ def calculate_daily_spending(meal_plan_balance):
     else:
         end_date = datetime(curr_date.year, 5, 16)
     days_left = (end_date - curr_date).days + 1
-    daily_budget = round((meal_plan_balance / days_left), 2)
+    try:
+        daily_budget = round((meal_plan_balance / days_left), 2)
+    except ZeroDivisionError:
+        daily_budget = meal_plan_balance
     return days_left, daily_budget
     #########################################################################
 
