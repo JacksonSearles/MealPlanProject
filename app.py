@@ -7,7 +7,6 @@ from selenium.common.exceptions import NoSuchElementException
 from datetime import datetime
 from bs4 import BeautifulSoup
 
-
 ###############################################################
 #Creates a Transaction "object", which is used when we are
 #scraping transactions from mealplan site. Each Transaction 
