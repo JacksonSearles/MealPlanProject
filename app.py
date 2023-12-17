@@ -7,26 +7,17 @@ from selenium.common.exceptions import NoSuchElementException
 from datetime import datetime
 from bs4 import BeautifulSoup
 
-#Libraries Used: Flask, Selenium, BeautifulSoup, Pandas
 
-#Selenium:      Opens private incognito browser used for scraping data from
-#               mealplan site, workaround due to Binghamton Mealplan site
-#               detecting multiple logins 
-
-#Flask:         Allows for data to be passed in from Python file to HTML, using
-#               methods such as POST, PUT, etc
-
-#BeautifulSoup: Used for scraping HTML code from websites launched in
-#               Selenium browser. I.E, how we scrape the balance and 
-#               transactions from the Binghamton mealplan site
-
-#Creates a Transaction "object", which is used when we are scraping transactions
-#from mealplan site. Each Transaction object holds a date, location, and price.
+###############################################################
+#Creates a Transaction "object", which is used when we are
+#scraping transactions from mealplan site. Each Transaction 
+#object holds a date, location, and price.
 class Transaction:
     def __init__(self, date, location, price):
         self.date = date
         self.location = location
         self.price = float(price)
+##############################################################
 
 app = Flask(__name__, template_folder='templates')
 
