@@ -172,11 +172,13 @@ def calculate_daily_spending(meal_plan_balance):
         end_date = datetime(curr_date.year, 12, 16)
     else:
         end_date = datetime(curr_date.year, 5, 16)
+
     days_left = (end_date - curr_date).days + 1
     if days_left > 0:
         daily_budget = round((meal_plan_balance / days_left), 2)
     else:
         daily_budget = meal_plan_balance
+        days_left = 0
     return days_left, daily_budget
     #########################################################################
 
