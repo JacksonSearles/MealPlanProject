@@ -6,10 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from datetime import datetime
 from bs4 import BeautifulSoup
-import plotly.graph_objects as go
 import pandas as pd
-
-
 
 #Libraries Used: Flask, Selenium, BeautifulSoup, Pandas
 
@@ -32,6 +29,7 @@ class Transaction:
         self.date = date
         self.location = location
         self.price = float(price)
+##############################################################
 
 app = Flask(__name__, template_folder='templates')
 
@@ -151,9 +149,10 @@ def scrape_mealplan_transactions(transactions_href, browser):
     ##########################################################################
     #Loops through every page of transactions using curr_page and total_page 
     #which were scraped earlier. Scrapes transactions page using BeautifulSoup, 
-    #stores each transactions date in dates[] array, location in locations[] 
-    #array, and stores transaction price in prices[] array. Then, iterate to 
-    #next page by updating Selenium browser with href for next page and repeat.
+    #creates a Transaction object and adds the date, location, and price to the
+    #Transaction object, and adds that object to transactions[] array, Then, 
+    #iterate to next page by updating Selenium browser with href for next page 
+    #and repeat.
     transactions = []
     while cur_page <= total_page:      
         entry_rows = soup.find_all('tr', {'id': 'EntryRow'})
@@ -177,20 +176,27 @@ def calculate_daily_spending(meal_plan_balance):
         end_date = datetime(curr_date.year, 12, 16)
     else:
         end_date = datetime(curr_date.year, 5, 16)
+
     days_left = (end_date - curr_date).days + 1
-    try:
+    if days_left > 0:
         daily_budget = round((meal_plan_balance / days_left), 2)
-    except ZeroDivisionError:
+    else:
         daily_budget = meal_plan_balance
+        days_left = 0
     return days_left, daily_budget
     #########################################################################
 
 #############################################################################
 # Function that calculates the total amount spent for given dates. 
-# Creates a Pandas DataFrame made up of 'dates' and 'prices'. Basically 
-# conjoining the two original arrays.Loops through the dates and sums up 
-# their spending. Adds the total and its date to the 'total_spent_dict' 
-# dictionary. Returns 'total_spent_dict'
+# Creates a dictionary total_spent_dict. Within the dictionary, it will have
+# a key:value pair of date:total_spent. First loops through each transaction
+# in transactions[] array. For each transaction, we check if the location is 
+# "Added Funds". In this case, we dont consider this transaction because money
+# was added to account, not spent, so we use "continue" to skip this transaction
+# . Then we check if the current transaction's date is in the dictionary already. 
+# If it isnt, we add it to the dictionary. Finally, we add the the current 
+# transactions price to its corresponding date into the dictionary, and move on
+# to next transaction.
 def calculate_total_spent_daily(transactions):
     total_spent_dict = {}
     for transaction in transactions:
