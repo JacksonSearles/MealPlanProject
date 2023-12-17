@@ -6,7 +6,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from datetime import datetime
 from bs4 import BeautifulSoup
+import plotly.graph_objects as go
 import pandas as pd
+
 
 #Libraries Used: Flask, Selenium, BeautifulSoup, Pandas
 
