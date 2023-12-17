@@ -24,6 +24,12 @@ import pandas as pd
 #Pandas:        Used to create a DataFrame of prices and dates. Uses the
 #               DataFrame to calculate the total spent per date
 
+class Transaction:
+    def __init__(self, date, location, price):
+        self.date = date
+        self.location = location
+        self.price = float(price)
+
 app = Flask(__name__, template_folder='templates')
 
 @app.route('/')
@@ -64,11 +70,11 @@ def logged_in():
     except NoSuchElementException:
         return redirect(url_for('error'))
     first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
-    dates, locations, prices = scrape_mealplan_transactions(transactions_href, browser)
+    transactions = scrape_mealplan_transactions(transactions_href, browser)
     days_left, daily_budget = calculate_daily_spending(mealplan_balance)
-    totals_by_date = calculate_total_spent_daily(dates, prices)
+    totals_by_date = calculate_total_spent_daily(transactions)
     return render_template('userPage.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
-                dates=dates, locations=locations, prices=prices, days_left=days_left, daily_budget=daily_budget)
+                transactions=transactions, days_left=days_left, daily_budget=daily_budget)
     ############################################################################
 
 def launch_selenium_browser(username, password):
@@ -131,9 +137,6 @@ def scrape_mealplan_transactions(transactions_href, browser):
     #transactions are split between multiple pages, the current page and 
     #total page amounts are scraped and stored in page numbers[] array. 
     #This is so we can loop through all pages to scrape every transactions
-    dates = []
-    locations = []
-    prices = []
     browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}")
     soup = BeautifulSoup(browser.page_source, "html.parser")
     page_numbers = soup.find('td', align='center', colspan='7').get_text(strip=True).replace(">>>", '').split(' ')[1].split('/')
@@ -147,27 +150,18 @@ def scrape_mealplan_transactions(transactions_href, browser):
     #stores each transactions date in dates[] array, location in locations[] 
     #array, and stores transaction price in prices[] array. Then, iterate to 
     #next page by updating Selenium browser with href for next page and repeat.
+    transactions = []
     while cur_page <= total_page:      
         entry_rows = soup.find_all('tr', {'id': 'EntryRow'})
         for entry_row in entry_rows:
-            try:
-                contents = entry_row.contents
-                date = contents[3].text.strip()
-                location = contents[7].text.strip().replace('Dining', '')
-                #This condition occurs when money is added to mealplan, 
-                #so its skipped
-                if not location:
-                    continue
-                price = contents[9].div.text.strip().replace('(', '').replace(')', '')
-                dates.append(date)
-                locations.append(location)
-                prices.append(float(price))
-            except NoSuchElementException:
-                print("Element not found. Check the HTML structure.")
+            date = entry_row.contents[3].text.strip()
+            location = entry_row.contents[7].text.strip().replace('Dining', '')
+            price = entry_row.contents[9].div.text.strip().replace('(', '').replace(')', '')
+            transactions.append(Transaction(date, location if location else "Added Funds", price))
         cur_page += 1
         browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={cur_page}")
         soup = BeautifulSoup(browser.page_source, "html.parser")
-    return dates, locations, prices
+    return transactions
     #########################################################################
 
 def calculate_daily_spending(meal_plan_balance):
@@ -193,15 +187,15 @@ def calculate_daily_spending(meal_plan_balance):
 # conjoining the two original arrays.Loops through the dates and sums up 
 # their spending. Adds the total and its date to the 'total_spent_dict' 
 # dictionary. Returns 'total_spent_dict'
-def calculate_total_spent_daily(dates, prices):
-    data = {'Date': dates, 'Price': prices}
-    df = pd.DataFrame(data)
+def calculate_total_spent_daily(transactions):
     total_spent_dict = {}
-    for unique_date in df['Date'].unique():
-        # df.groupby('Date')['Price'].sum(). --> Groups the DataFrame by 'Date' column and selects 'Price' column, calculates the sum for every date in the df 
-        # loc[unique_date]                   --> uses .loc[unique_date] to only look at the 'unique_date's sum
-        total_spent = round(df.groupby('Date')['Price'].sum().loc[unique_date], 2)
-        total_spent_dict[unique_date] = total_spent
+    for transaction in transactions:
+        if transaction.location == "Added Funds":
+            continue
+        if transaction.date not in total_spent_dict:
+            total_spent_dict[transaction.date] = 0
+        total_spent_dict[transaction.date] += transaction.price
+    total_spent_dict = {date: round(total, 2) for date, total in total_spent_dict.items()}
     return total_spent_dict
 ##########################################################################
 
