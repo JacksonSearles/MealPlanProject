@@ -76,9 +76,10 @@ def logged_in():
     transactions = scrape_mealplan_transactions(transactions_href, browser)
     days_left, daily_budget = calculate_daily_spending(mealplan_balance)
     totals_by_date = calculate_total_spent_daily(transactions)
-    create_spending_graph(totals_by_date)
+    graph_html = create_spending_graph(totals_by_date)
+    
     return render_template('userPage.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
-                transactions=transactions, days_left=days_left, daily_budget=daily_budget)
+                transactions=transactions, days_left=days_left, daily_budget=daily_budget, graph_html = graph_html)
     ############################################################################
 
 def launch_selenium_browser(username, password):
@@ -260,10 +261,12 @@ def create_spending_graph(total_spent_dict):
 
     # CREATE THE GRAPH OUT OF THE LINE AND THE LAYOUT
     fig = go.Figure(data=[line], layout=layout)
+    graph_html = fig.to_html(full_html=False)
+    return graph_html
 
-    fig.show()                                          # <------- Delete this to stop the graph from heing opened in a new window
+#    fig.show()                                          # <------- Delete this to stop the graph from heing opened in a new window
 
-    fig.write_html('spending_graph.html')               
+#    fig.write_html('spending_graph.html')               
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

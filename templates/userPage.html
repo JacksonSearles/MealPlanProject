@@ -8,59 +8,80 @@
 	<title>{{message}} Home</title>
 </head>
 <body class="binghamton-green">
+	
 	<img src="{{ url_for('static', filename='BU_Logo.png') }}" alt="Binghamton University Logo">
 	<section class="hero is-fullheight is-default is-bold">
-		<div class="hero-body" style="align-items: start;">
-			<div class="container">
-				<h1 class="binghamton-white">Welcome, {{first_name}}</h1>
-				<div class="columns is-centered is-mobile">
-					<div class="box column is-half m-3 p-5">
-						<h1 class="binghamton-black">Your Meal Plan Overview</h3>
-						<p class="has-text-centered">Meal Plan Name: <strong>{{mealplan_name}}</strong> </p>
-						<p class="has-text-centered">Meal Plan Balance: <strong>${{mealplan_balance}}</strong> </p>
-						<p class="has-text-centered">Days Left in Semester: <strong>{{days_left}}</strong> </p>
-						<p class="has-text-centered">Daily Budget: <strong>${{daily_budget}}</strong> </p>
-						<p class="has-text-centered add-funds">Running Low? <strong>Click <a href="https://bing.campuscardcenter.com/ch/add_value.html" target="_blank">Here</a> to Add Funds</strong></p>
-					</div>
-				</div>
-				<div class="columns is-centered is-mobile">
-					<div class = "transactions-container">
-						<h1 class="binghamton-white">Recent Transactions</h3>
-						<div class="table-container">
-							<table>
-								<thead>
-									<tr>
-										<th>Date</th>
-										<th>Amount</th>
-									</tr>
-								</thead>
-								<tbody>
-									{% if transactions %}
-										{# The 'transactions' list is not empty #}
-										{% for transaction in transactions %}
+        <div class="hero-body" style="align-items: start;">
+            <div class="container">
+                <h1 class="binghamton-white">Welcome, {{first_name}}</h1>
+                
+        
+				
+				<!-- Meal Plan Overview and Transactions with Graph Below -->
+			<div class="columns is-multiline">
+				<!-- Meal Plan Overview and Transactions in One Box -->
+				<div class="column is-12">
+					<div class="box">
+						<div class="columns">
+							<!-- Meal Plan Overview Column -->
+							<div class="column">
+								<h2 class="binghamton-black">Your Meal Plan Overview</h2>
+								<p class="has-text-centered">Meal Plan Name: <strong>{{ mealplan_name }}</strong> </p>
+								<p class="has-text-centered">Meal Plan Balance: <strong>${{ mealplan_balance }}</strong> </p>
+								<p class="has-text-centered">Days Left in Semester: <strong>{{ days_left }}</strong> </p>
+								<p class="has-text-centered">Daily Budget: <strong>${{ daily_budget }}</strong> </p>
+								<p class="has-text-centered add-funds">Running Low? <strong>Click <a href="https://bing.campuscardcenter.com/ch/add_value.html" target="_blank">Here</a> to Add Funds</strong></p>
+							</div>
+							<!-- Transactions Column -->
+							<div class="column">
+								<h2 class="binghamton-black">Recent Transactions</h2>
+								<div class="table-container">
+									<table>
+										<thead>
 											<tr>
-												<td>{{ transaction.date }}: {{ transaction.location }}</td>
-												<td>${{ transaction.price }}</td>
+												<th>Date</th>
+												<th>Amount</th>
 											</tr>
-										{% endfor %}
-									{% else %}
-										{# The 'dates' list is empty #}
-										<tr>
-											<td colspan="2">No recent transactions</td>
-										</tr>
-									{% endif %}
-								</tbody>
-							</table>
-						</div>
+										</thead>
+										<tbody>
+											{% if transactions %}
+												{# The 'transactions' list is not empty #}
+												{% for transaction in transactions %}
+													<tr>
+														<td>{{ transaction.date }}: {{ transaction.location }}</td>
+														<td>${{ transaction.price }}</td>
+													</tr>
+												{% endfor %}
+											{% else %}
+												{# The 'dates' list is empty #}
+												<tr>
+													<td colspan="2">No recent transactions</td>
+												</tr>
+											{% endif %}
+										</tbody>
+									</table>
+								</div>	
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				<!-- Graph Column -->
+				<div class="column is-12">
+					<div class="graph-container box">
+						<h2 class="binghamton-black"></h2>
+						{{ graph_html|safe }}
 					</div>
 				</div>
-				<div class="columns is-centered is-mobile">
-					<form action="/" method="put">
-						<input class="button is-danger button is-centered" type="submit" value="Logout" >
-					</form>
-				</div>
-			</div>
-		</div>
-	</section>
+                <!-- Logout Button -->
+                <div class="columns">
+                    <div class="column is-centered">
+                        <form action="/" method="put">
+                            <input class="button is-danger button is-centered" type="submit" value="Logout">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
 </html>
