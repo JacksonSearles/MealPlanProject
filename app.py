@@ -6,7 +6,10 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from datetime import datetime
 from bs4 import BeautifulSoup
+import plotly.graph_objects as go
 import pandas as pd
+
+
 
 #Libraries Used: Flask, Selenium, BeautifulSoup, Pandas
 
@@ -73,6 +76,7 @@ def logged_in():
     transactions = scrape_mealplan_transactions(transactions_href, browser)
     days_left, daily_budget = calculate_daily_spending(mealplan_balance)
     totals_by_date = calculate_total_spent_daily(transactions)
+    create_spending_graph(totals_by_date)
     return render_template('userPage.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
                 transactions=transactions, days_left=days_left, daily_budget=daily_budget)
     ############################################################################
@@ -198,6 +202,60 @@ def calculate_total_spent_daily(transactions):
     total_spent_dict = {date: round(total, 2) for date, total in total_spent_dict.items()}
     return total_spent_dict
 ##########################################################################
+
+
+
+
+        # not done yet, lots to tweak
+            # theme
+            # colors
+            # font sizes, fonts
+            # bar graph might be better
+            # more info?
+            # line shape
+            # prevent panning past graph?
+            # padding for titles
+
+        # comment things
+        # comment plotly import 
+
+def create_spending_graph(total_spent_dict):
+    df = pd.DataFrame(list(total_spent_dict.items()), columns=['Date', 'Price'])
+    # Convert 'Date' column to datetime format
+    df['Date'] = pd.to_datetime(df['Date'])
+    # Sort the dates
+    df = df.sort_values(by='Date', ascending=True)
+
+    # CREATE THE HOVER TEXT
+    hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
+
+    # CREATE THE LINE
+    # Create a scatter trace with no markers and use custom hover text
+    line = go.Scatter(x=df['Date'], y=df['Price'], mode='lines', text=hover_text, hoverinfo='text', line=dict(shape='spline'))
+    # bar = go.Bar(x=df['Date'], y=df['Price'], text=df['Price'], hoverinfo='text')
+
+    # Create layout
+    layout = go.Layout(
+        title='Your Spending Over Time',
+        xaxis=dict(
+            type='date',  # Use type='date' for date values
+            showgrid=True,  
+            tickformat='%b %Y',
+            tickfont=dict(size=15)
+        ),
+        yaxis=dict(title='Total Spent', title_font=dict(size=30), tickprefix='$', tickfont=dict(size=15)),  # Add tickprefix to include '$'
+        hovermode='x',
+        template='plotly_dark',
+        title_x=0.5, 
+        titlefont=dict(size=50),
+    )
+
+    # CREATE THE GRAPH OUT OF THE LINE AND THE LAYOUT
+    fig = go.Figure(data=[line], layout=layout)
+
+    fig.show()                                          # <------- Delete this to stop the graph from heing opened in a new window
+
+    fig.write_html('spending_graph.html')               
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
