@@ -75,11 +75,11 @@ def logged_in():
     first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
     transactions = scrape_mealplan_transactions(transactions_href, browser)
     days_left, daily_budget = calculate_daily_spending(mealplan_balance)
-    totals_by_date = calculate_total_spent_daily(transactions)
+    totals_by_date, funds_added = calculate_total_spent_daily(transactions)
     graph_html = create_spending_graph(totals_by_date)
     
     return render_template('userPage.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
-                transactions=transactions, days_left=days_left, daily_budget=daily_budget, graph_html = graph_html)
+                transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html = graph_html)
     ############################################################################
 
 def launch_selenium_browser(username, password):
@@ -201,15 +201,25 @@ def calculate_daily_spending(meal_plan_balance):
 # transactions price to its corresponding date into the dictionary, and move on
 # to next transaction.
 def calculate_total_spent_daily(transactions):
+    fundsAdded = 0
+    isFirstAddedFundsTransaction = True
     total_spent_dict = {}
+
     for transaction in transactions:
         if transaction.location == "Added Funds":
-            continue
-        if transaction.date not in total_spent_dict:
-            total_spent_dict[transaction.date] = 0
-        total_spent_dict[transaction.date] += transaction.price
+            if isFirstAddedFundsTransaction:
+                isFirstAddedFundsTransaction = False
+                continue  # Skip this transaction
+            else:
+                fundsAdded += transaction.price  # Add subsequent "Added Funds"
+        else:
+            if transaction.date not in total_spent_dict:
+                total_spent_dict[transaction.date] = 0
+            total_spent_dict[transaction.date] += transaction.price
+
+    # Round the totals for each day
     total_spent_dict = {date: round(total, 2) for date, total in total_spent_dict.items()}
-    return total_spent_dict
+    return total_spent_dict, round(fundsAdded, 2)
 ##########################################################################
 
 
