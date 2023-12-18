@@ -26,6 +26,8 @@ import requests
 #Pandas:        Used to create a DataFrame of prices and dates. Uses the
 #               DataFrame to calculate the total spent per date
 
+#Plotly:        Used to create an interactive graph of the users spending over time
+
 ##############################################################
 #Creates a 'Transaction' object, which holds a date, location,
 #and price. This object is used when scraping transactions from
@@ -83,7 +85,7 @@ def logged_in():
     graph_html = create_spending_graph(totals_by_date)
     
     return render_template('userPage.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
-                transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html = graph_html, totals_by_date=totals_by_date)
+                transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html = graph_html)
     ############################################################################
 
 def launch_selenium_browser(username, password):
