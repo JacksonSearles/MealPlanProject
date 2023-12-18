@@ -204,7 +204,6 @@ def calculate_total_spent_daily(transactions):
     fundsAdded = 0
     isFirstAddedFundsTransaction = True
     total_spent_dict = {}
-
     for transaction in transactions:
         if transaction.location == "Added Funds":
             if isFirstAddedFundsTransaction:
@@ -246,7 +245,7 @@ def create_spending_graph(total_spent_dict):
     # CREATE THE HOVER TEXT
     hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
     # CREATE THE LINE
-    line = go.Scatter(x=df['Date'], y=df['Price'], mode='lines', text=hover_text, hoverinfo='text', line=dict(shape='spline'))
+    line = go.Scatter(x=df['Date'], y=df['Price'], mode='lines', text=hover_text, hoverinfo='text', line=dict(shape='spline', color='#006747'))
     # CREATE THE LAYOUT
     layout = go.Layout(
         xaxis=dict(
@@ -263,8 +262,9 @@ def create_spending_graph(total_spent_dict):
         ),
         hovermode='x',
         template='plotly_dark',
-        title_x=0.5, 
-        titlefont=dict(size=50),
+        paper_bgcolor='white',  # Set the background color to white
+        plot_bgcolor='white',   # Set the plot area background color to white
+        font=dict(color='black')  # Set the text color to black
     )
     fig = go.Figure(data=[line], layout=layout)
     fig.update_layout(modebar_remove=['zoom', 'resetScale2d', 'toImage'])
