@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
-from datetime import date
+from datetime import date, timedelta
 from bs4 import BeautifulSoup
 import plotly.graph_objects as go
 import pandas as pd
@@ -82,8 +82,8 @@ def logged_in():
     transactions = scrape_mealplan_transactions(transactions_href, browser)
     days_left, daily_budget = calculate_daily_spending(mealplan_balance)
     totals_by_date, funds_added = calculate_total_spent_daily(transactions)
-    graph_html = create_spending_graph(totals_by_date)
-    
+    fall_end_day, spring_end_day, fall_start_day, spring_start_day = academic_calander()
+    graph_html = create_spending_graph(totals_by_date, fall_end_day, spring_end_day, fall_start_day, spring_start_day)
     return render_template('userPage.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
                 transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html = graph_html, totals_by_date=totals_by_date)
     ############################################################################
@@ -281,15 +281,44 @@ def calculate_total_spent_daily(transactions):
 # A Plotly Layout object is created, customizing the appearance of the graph
 # A Plotly Figure is created out of the Bar and Layout object
 # The Figure is then returned as an HTML string to be displayed on the website
-def create_spending_graph(total_spent_dict):
+def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_start_day, spring_start_day):
     # Create Pandas DataFrame out of input dict, then sort dates in chronological order
     df = pd.DataFrame(list(total_spent_dict.items()), columns=['Date', 'Price'])
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.sort_values(by='Date', ascending=True)
+
     # Create hover box text
     hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
+
     # Create the bar graph data
     bar = go.Bar(x=df['Date'], y=df['Price'], text=hover_text, hoverinfo='text', textposition="none", marker_color='#006747')
+
+    # !!! can get rid of this if we want
+    year = date.today().year
+
+    rangebuttons = [                                      
+                
+                # if in fall semester -> [date(year, 8, fall_start_day), date(year+1, 5, spring_end_day)] works well
+
+                # if in spring semester, dates need to be:
+                    # start dates = last years start dates
+                    # end dates = current years end dates
+            dict(label="School Year", method="relayout", args=[{"xaxis.range": [date(year, 8, fall_start_day), date(year+1, 5, spring_end_day)]}]),
+
+                # if in fall semester -> [date(year, 8, fall_start_day), date(year, 12, fall_end_day)] works well
+
+                # if in spring semester, dates need to be:
+                    # start dates = last yeras start dates 
+                    # end dates = last years end dates
+            dict(label="Fall Semester", method="relayout", args=[{"xaxis.range": [date(year, 8, fall_start_day), date(year, 12, fall_end_day)]}]),
+
+                # maybe dont show this button if youre in the fall semester? 
+            dict(label="Spring Semester", method="relayout", args=[{"xaxis.range": [date(year, 12, spring_start_day), date(year, 12, spring_end_day)]}]),
+
+                # good
+            dict(label="Month", method="relayout", args=[{"xaxis.range": [date.today() - timedelta(days=30), date.today()]  } ]),
+    ]
+
     # Create the layout of the graph
     layout = go.Layout(
         xaxis=dict(
@@ -298,7 +327,7 @@ def create_spending_graph(total_spent_dict):
             type='date', 
             showgrid=True,  
             tickformat='%b %Y',
-            tickfont=dict(size=15)
+            tickfont=dict(size=15),
         ),
         yaxis=dict(
             title='<b>Total Spent</b>', 
@@ -310,12 +339,16 @@ def create_spending_graph(total_spent_dict):
         template='plotly_dark',
         paper_bgcolor='white',
         plot_bgcolor='white',   
-        font=dict(color='black', family='Arial, sans-serif')  
+        font=dict(color='black', family='Arial, sans-serif'),
+        updatemenus=[
+            dict(type="buttons", direction="right", x=0.7, y=1.2, showactive=False, buttons=rangebuttons)    # <----- buttons 
+        ] 
     )
+
     # Create the graph out of the bar data and layout
     fig = go.Figure(data=[bar], layout=layout)
     fig.update_layout(
-        modebar_remove=['zoom', 'resetScale2d', 'toImage'],
+        modebar_remove=['zoom', 'resetScale2d', 'pan', 'select2d', 'lasso', 'zoomIn', 'zoomOut', 'autoScale'],
         margin=dict(l=20,r=20,t=20,b=20))
     return fig.to_html(fig, full_html=False)           
 ##########################################################################
