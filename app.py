@@ -179,7 +179,7 @@ def scrape_mealplan_transactions(transactions_href, browser):
 #that person can spend until end of semeseter
 def calculate_daily_spending(meal_plan_balance):
     fall_end_day, spring_end_day,fall_start_day, spring_start_day = academic_calander()
-    curr_date = date(2024, 1, 14)
+    curr_date = date.today()
     end_date = date.today()
     year = curr_date.year
     if date(year, 8, fall_start_day) <= curr_date <= date(year, 12, fall_end_day):
