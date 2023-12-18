@@ -83,7 +83,7 @@ def logged_in():
     graph_html = create_spending_graph(totals_by_date)
     
     return render_template('userPage.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
-                transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html = graph_html)
+                transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html = graph_html, totals_by_date=totals_by_date)
     ############################################################################
 
 def launch_selenium_browser(username, password):

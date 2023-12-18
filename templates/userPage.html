@@ -63,8 +63,36 @@
 					<!-- Graph Column -->
 					<div class="column is-12">
 						<div class="graph-container box">
-							<h2 class="binghamton-black"></h2>
-							{{ graph_html|safe }}
+							<h2 class="binghamton-black">Daily Spending</h2>
+							<div class="switch-container">
+								<p>Graph Format</p>
+								<label class="switch">
+									<input type="checkbox" id="toggleSwitch">
+									<span class="slider round"></span>
+								</label>
+								<p>Table Format</p>
+							</div>
+							<div class="hideable-graph">
+								{{ graph_html|safe }}
+							</div>
+							<div class="hideable-table">
+                <table class="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Total Spent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for date, total in totals_by_date.items() %}
+                            <tr>
+                                <td>{{date}}</td>
+                                <td>{{total}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+							</div>
 						</div>
 					</div>
         	<!-- Logout Button -->
@@ -79,5 +107,24 @@
 			</div>
     </div>
   </section>
+
+	<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toggleSwitch = document.getElementById('toggleSwitch');
+        var hideableGraph = document.querySelector('.hideable-graph');
+        var hideableTable = document.querySelector('.hideable-table');
+
+        // Initial state
+        hideableGraph.style.display = toggleSwitch.checked ? 'none' : 'block';
+        hideableTable.style.display = toggleSwitch.checked ? 'block' : 'none';
+
+        // Toggle visibility on checkbox change
+        toggleSwitch.addEventListener('change', function () {
+            hideableGraph.style.display = this.checked ? 'none' : 'block';
+            hideableTable.style.display = this.checked ? 'block' : 'none';
+        });
+    });
+</script>
+
 </body>
 </html>
