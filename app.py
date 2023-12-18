@@ -240,43 +240,35 @@ def calculate_total_spent_daily(transactions):
 
 def create_spending_graph(total_spent_dict):
     df = pd.DataFrame(list(total_spent_dict.items()), columns=['Date', 'Price'])
-    # Convert 'Date' column to datetime format
     df['Date'] = pd.to_datetime(df['Date'])
-    # Sort the dates
     df = df.sort_values(by='Date', ascending=True)
 
     # CREATE THE HOVER TEXT
     hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
-
     # CREATE THE LINE
-    # Create a scatter trace with no markers and use custom hover text
     line = go.Scatter(x=df['Date'], y=df['Price'], mode='lines', text=hover_text, hoverinfo='text', line=dict(shape='spline'))
-    # bar = go.Bar(x=df['Date'], y=df['Price'], text=df['Price'], hoverinfo='text')
-
-    # Create layout
+    # CREATE THE LAYOUT
     layout = go.Layout(
-        title='Your Spending Over Time',
         xaxis=dict(
             type='date',  # Use type='date' for date values
             showgrid=True,  
             tickformat='%b %Y',
             tickfont=dict(size=15)
         ),
-        yaxis=dict(title='Total Spent', title_font=dict(size=30), tickprefix='$', tickfont=dict(size=15)),  # Add tickprefix to include '$'
+        yaxis=dict(
+            title='Total Spent', 
+            title_font=dict(size=30), 
+            tickprefix='$', 
+            tickfont=dict(size=15)
+        ),
         hovermode='x',
         template='plotly_dark',
         title_x=0.5, 
         titlefont=dict(size=50),
     )
-
-    # CREATE THE GRAPH OUT OF THE LINE AND THE LAYOUT
     fig = go.Figure(data=[line], layout=layout)
-    graph_html = fig.to_html(full_html=False)
-    return graph_html
-
-#    fig.show()                                          # <------- Delete this to stop the graph from heing opened in a new window
-
-#    fig.write_html('spending_graph.html')               
+    fig.update_layout(modebar_remove=['zoom', 'resetScale2d', 'toImage'])
+    return fig.to_html(fig, full_html=False)              
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
