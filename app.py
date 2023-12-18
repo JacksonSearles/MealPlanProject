@@ -4,10 +4,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
-from datetime import datetime
+from datetime import date
 from bs4 import BeautifulSoup
 import plotly.graph_objects as go
 import pandas as pd
+import requests
 
 
 #Libraries Used: Flask, Selenium, BeautifulSoup, Pandas
@@ -174,13 +175,16 @@ def calculate_daily_spending(meal_plan_balance):
     #########################################################################
     #Takes in scraped meaplan balance, and calculates the daily budget
     #that person can spend until end of semeseter
-    curr_date = datetime.now()
-    if 8 <= curr_date.month <= 12:
-        end_date = datetime(curr_date.year, 12, 16)
-    else:
-        end_date = datetime(curr_date.year, 5, 16)
+    fall_end_day, spring_end_day,fall_start_day, spring_start_day = academic_calander()
+    curr_date = date.today()
+    end_date = date.today()
+    year = curr_date.year
+    if date(year, 8, fall_start_day) <= curr_date <= date(year, 12, fall_end_day):
+        end_date = date(year, 12, fall_end_day)
+    elif date(year, 1, spring_start_day) <= curr_date <= date(year, 5, spring_end_day):
+        end_date = date(year, 5, spring_end_day)
 
-    days_left = (end_date - curr_date).days + 1
+    days_left = (end_date - curr_date).days
     if days_left > 0:
         daily_budget = round((meal_plan_balance / days_left), 2)
     else:
@@ -268,7 +272,49 @@ def create_spending_graph(total_spent_dict):
     )
     fig = go.Figure(data=[line], layout=layout)
     fig.update_layout(modebar_remove=['zoom', 'resetScale2d', 'toImage'])
-    return fig.to_html(fig, full_html=False)              
+    return fig.to_html(fig, full_html=False)  
+
+    ##########################################################################
+# This function below scrapes the binghamton university academic calander for the end and start dates of both the fall and spring semesters.
+# It looks for the specific text provided and searches for the date corelated with in in the previous tables box.
+# It then splits the text, only getting the day and returns it as an int
+
+def academic_calander():
+    url = 'https://www.binghamton.edu/academics/academic-calendar.html'
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    dorms_open_fall = soup.find_all('td', text='New Student Move-in and Welcome Program')
+    dorm_open_spring = soup.find_all('td', text='Resident Halls Open for Returning Students at 9am')
+    dorms_closed_fall = soup.find_all('td', text='Residence halls close at 10 a.m.')
+    dorms_closed_spring = soup.find_all('td', text='Residence halls close for non-seniors at 10 a.m.')
+
+    if len(dorms_closed_fall) >= 1:
+        end_of_fall_semester = dorms_closed_fall[1]
+        fall_date = end_of_fall_semester.find_previous_sibling('td')
+        full_date_fall = fall_date.text.split()
+        fall_end_day = full_date_fall[-1]
+
+    if len(dorms_closed_spring) >= 1:
+        end_of_spring_semester = dorms_closed_spring[0]
+        spring_date = end_of_spring_semester.find_previous_sibling('td')
+        full_date_spring = spring_date.text.split()
+        spring_end_day = full_date_spring[-1]
+
+    if len(dorms_open_fall) >= 1:
+        start_of_fall_semester = dorms_open_fall[0]
+        dorm_open_date_fall = start_of_fall_semester.find_previous_sibling('td')
+        full_date_fall_open = dorm_open_date_fall.text.split()
+        fall_start_day = full_date_fall_open[-1]
+
+    if len(dorm_open_spring) >= 1:
+        start_of_spring_semester = dorm_open_spring[0]
+        dorm_open_date_spring = start_of_spring_semester.find_previous_sibling('td')
+        full_date_spring_open = dorm_open_date_spring.text.split()
+        spring_start_day = full_date_spring_open[-1]
+
+    return int(fall_end_day), int(spring_end_day), int(fall_start_day), int(spring_start_day)
+##########################################################################             
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
