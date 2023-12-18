@@ -85,7 +85,7 @@ def logged_in():
     graph_html = create_spending_graph(totals_by_date)
     
     return render_template('userPage.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
-                transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html = graph_html)
+                transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html = graph_html, totals_by_date=totals_by_date)
     ############################################################################
 
 def launch_selenium_browser(username, password):
@@ -293,26 +293,30 @@ def create_spending_graph(total_spent_dict):
     # Create the layout of the graph
     layout = go.Layout(
         xaxis=dict(
+            title="<b>Date</b>",
+            title_font=dict(size=30),
             type='date', 
             showgrid=True,  
             tickformat='%b %Y',
             tickfont=dict(size=15)
         ),
         yaxis=dict(
-            title='Total Spent', 
+            title='<b>Total Spent</b>', 
             title_font=dict(size=30), 
             tickprefix='$', 
-            tickfont=dict(size=15)
+            tickfont=dict(size=15, family="Arial Black, sans-serif")
         ),
         hovermode='x',
         template='plotly_dark',
         paper_bgcolor='white',
         plot_bgcolor='white',   
-        font=dict(color='black')  
+        font=dict(color='black', family='Arial, sans-serif')  
     )
     # Create the graph out of the bar data and layout
     fig = go.Figure(data=[bar], layout=layout)
-    fig.update_layout(modebar_remove=['zoom', 'resetScale2d', 'toImage'])
+    fig.update_layout(
+        modebar_remove=['zoom', 'resetScale2d', 'toImage'],
+        margin=dict(l=20,r=20,t=20,b=20))
     return fig.to_html(fig, full_html=False)           
 ##########################################################################
 
