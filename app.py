@@ -270,31 +270,28 @@ def calculate_total_spent_daily(transactions):
     return total_spent_dict, round(fundsAdded, 2)
 ##########################################################################
 
-# not done yet, lots to tweak
-    # theme
-    # colors
-    # font sizes, fonts
-    # bar graph might be better
-    # more info?
-    # line shape
-    # prevent panning past graph?
-    # padding for titles
-
-# comment things
-    # comment plotly import 
+##########################################################################
+# This function creates an interactive graph out of the users recent transactions.
+# Accepts total_spent_dict from the calculate_total_spent_daily function.
+# The dict is turned into a Pandas DataFrame consisting of a column of Dates and 
+# a column of Price (amount spent on that date)
+# A Plotly Bar object is created out of the data from the DataFrame
+# A Plotly Layout object is created, customizing the appearance of the graph
+# A Plotly Figure is created out of the Bar and Layout object
+# The Figure is then returned as an HTML string to be displayed on the website
 def create_spending_graph(total_spent_dict):
+    # Create Pandas DataFrame out of input dict, then sort dates in chronological order
     df = pd.DataFrame(list(total_spent_dict.items()), columns=['Date', 'Price'])
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.sort_values(by='Date', ascending=True)
-
-    # CREATE THE HOVER TEXT
+    # Create hover box text
     hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
-    # CREATE THE LINE
-    line = go.Scatter(x=df['Date'], y=df['Price'], mode='lines', text=hover_text, hoverinfo='text', line=dict(shape='spline', color='#006747'))
-    # CREATE THE LAYOUT
+    # Create the bar graph data
+    bar = go.Bar(x=df['Date'], y=df['Price'], text=hover_text, hoverinfo='text', textposition="none", marker_color='#006747')
+    # Create the layout of the graph
     layout = go.Layout(
         xaxis=dict(
-            type='date',  # Use type='date' for date values
+            type='date', 
             showgrid=True,  
             tickformat='%b %Y',
             tickfont=dict(size=15)
@@ -311,9 +308,11 @@ def create_spending_graph(total_spent_dict):
         plot_bgcolor='white',   
         font=dict(color='black')  
     )
-    fig = go.Figure(data=[line], layout=layout)
+    # Create the graph out of the bar data and layout
+    fig = go.Figure(data=[bar], layout=layout)
     fig.update_layout(modebar_remove=['zoom', 'resetScale2d', 'toImage'])
     return fig.to_html(fig, full_html=False)           
+##########################################################################
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
