@@ -10,7 +10,6 @@ import plotly.graph_objects as go
 import pandas as pd
 import requests
 
-
 #Libraries Used: Flask, Selenium, BeautifulSoup, Pandas
 
 #Selenium:      Opens private incognito browser used for scraping data from
@@ -27,6 +26,10 @@ import requests
 #Pandas:        Used to create a DataFrame of prices and dates. Uses the
 #               DataFrame to calculate the total spent per date
 
+##############################################################
+#Creates a 'Transaction' object, which holds a date, location,
+#and price. This object is used when scraping transactions from
+#mealplan site
 class Transaction:
     def __init__(self, date, location, price):
         self.date = date
@@ -171,12 +174,12 @@ def scrape_mealplan_transactions(transactions_href, browser):
     return transactions
     #########################################################################
 
+#########################################################################
+#Takes in scraped meaplan balance, and calculates the daily budget
+#that person can spend until end of semeseter
 def calculate_daily_spending(meal_plan_balance):
-    #########################################################################
-    #Takes in scraped meaplan balance, and calculates the daily budget
-    #that person can spend until end of semeseter
     fall_end_day, spring_end_day,fall_start_day, spring_start_day = academic_calander()
-    curr_date = date.today()
+    curr_date = date(2024, 1, 14)
     end_date = date.today()
     year = curr_date.year
     if date(year, 8, fall_start_day) <= curr_date <= date(year, 12, fall_end_day):
@@ -191,94 +194,13 @@ def calculate_daily_spending(meal_plan_balance):
         daily_budget = meal_plan_balance
         days_left = 0
     return days_left, daily_budget
-    #########################################################################
+#########################################################################
 
-#############################################################################
-# Function that calculates the total amount spent for given dates. 
-# Creates a dictionary total_spent_dict. Within the dictionary, it will have
-# a key:value pair of date:total_spent. First loops through each transaction
-# in transactions[] array. For each transaction, we check if the location is 
-# "Added Funds". In this case, we dont consider this transaction because money
-# was added to account, not spent, so we use "continue" to skip this transaction
-# . Then we check if the current transaction's date is in the dictionary already. 
-# If it isnt, we add it to the dictionary. Finally, we add the the current 
-# transactions price to its corresponding date into the dictionary, and move on
-# to next transaction.
-def calculate_total_spent_daily(transactions):
-    fundsAdded = 0
-    isFirstAddedFundsTransaction = True
-    total_spent_dict = {}
-    for transaction in transactions:
-        if transaction.location == "Added Funds":
-            if isFirstAddedFundsTransaction:
-                isFirstAddedFundsTransaction = False
-                continue  # Skip this transaction
-            else:
-                fundsAdded += transaction.price  # Add subsequent "Added Funds"
-        else:
-            if transaction.date not in total_spent_dict:
-                total_spent_dict[transaction.date] = 0
-            total_spent_dict[transaction.date] += transaction.price
-
-    # Round the totals for each day
-    total_spent_dict = {date: round(total, 2) for date, total in total_spent_dict.items()}
-    return total_spent_dict, round(fundsAdded, 2)
-##########################################################################
-
-
-
-
-        # not done yet, lots to tweak
-            # theme
-            # colors
-            # font sizes, fonts
-            # bar graph might be better
-            # more info?
-            # line shape
-            # prevent panning past graph?
-            # padding for titles
-
-        # comment things
-        # comment plotly import 
-
-def create_spending_graph(total_spent_dict):
-    df = pd.DataFrame(list(total_spent_dict.items()), columns=['Date', 'Price'])
-    df['Date'] = pd.to_datetime(df['Date'])
-    df = df.sort_values(by='Date', ascending=True)
-
-    # CREATE THE HOVER TEXT
-    hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
-    # CREATE THE LINE
-    line = go.Scatter(x=df['Date'], y=df['Price'], mode='lines', text=hover_text, hoverinfo='text', line=dict(shape='spline', color='#006747'))
-    # CREATE THE LAYOUT
-    layout = go.Layout(
-        xaxis=dict(
-            type='date',  # Use type='date' for date values
-            showgrid=True,  
-            tickformat='%b %Y',
-            tickfont=dict(size=15)
-        ),
-        yaxis=dict(
-            title='Total Spent', 
-            title_font=dict(size=30), 
-            tickprefix='$', 
-            tickfont=dict(size=15)
-        ),
-        hovermode='x',
-        template='plotly_dark',
-        paper_bgcolor='white',  # Set the background color to white
-        plot_bgcolor='white',   # Set the plot area background color to white
-        font=dict(color='black')  # Set the text color to black
-    )
-    fig = go.Figure(data=[line], layout=layout)
-    fig.update_layout(modebar_remove=['zoom', 'resetScale2d', 'toImage'])
-    return fig.to_html(fig, full_html=False)  
-
-    ##########################################################################
-# This function below scrapes the binghamton university academic calander for the end and start dates of both the fall and spring semesters.
-# It looks for the specific text provided and searches for the date corelated with in in the previous tables box.
-# It then splits the text, only getting the day and returns it as an int
-
+######################################################################################################
+# This function scrapes the Binghamton University academic calander for the end and start dates 
+# of both the fall and spring semesters. It looks for the specific text provided and searches for the 
+#date corelated with in in the previous tables box. It then splits the text, only getting the day and 
+#returns it as an int
 def academic_calander():
     url = 'https://www.binghamton.edu/academics/academic-calendar.html'
     response = requests.get(url)
@@ -314,7 +236,84 @@ def academic_calander():
         spring_start_day = full_date_spring_open[-1]
 
     return int(fall_end_day), int(spring_end_day), int(fall_start_day), int(spring_start_day)
-##########################################################################             
+###############################################################################################
+
+#############################################################################
+# Function that calculates the total amount spent for given dates. 
+# Creates a dictionary total_spent_dict. Within the dictionary, it will have
+# a key:value pair of date:total_spent. First loops through each transaction
+# in transactions[] array. For each transaction, we check if the location is 
+# "Added Funds". In this case, we dont consider this transaction because money
+# was added to account, not spent, so we use "continue" to skip this transaction
+# . Then we check if the current transaction's date is in the dictionary already. 
+# If it isnt, we add it to the dictionary. Finally, we add the the current 
+# transactions price to its corresponding date into the dictionary, and move on
+# to next transaction.
+def calculate_total_spent_daily(transactions):
+    fundsAdded = 0
+    isFirstAddedFundsTransaction = True
+    total_spent_dict = {}
+    for transaction in transactions:
+        if transaction.location == "Added Funds":
+            if isFirstAddedFundsTransaction:
+                isFirstAddedFundsTransaction = False
+                continue  # Skip this transaction
+            else:
+                fundsAdded += transaction.price  # Add subsequent "Added Funds"
+        else:
+            if transaction.date not in total_spent_dict:
+                total_spent_dict[transaction.date] = 0
+            total_spent_dict[transaction.date] += transaction.price
+
+    # Round the totals for each day
+    total_spent_dict = {date: round(total, 2) for date, total in total_spent_dict.items()}
+    return total_spent_dict, round(fundsAdded, 2)
+##########################################################################
+
+# not done yet, lots to tweak
+    # theme
+    # colors
+    # font sizes, fonts
+    # bar graph might be better
+    # more info?
+    # line shape
+    # prevent panning past graph?
+    # padding for titles
+
+# comment things
+    # comment plotly import 
+def create_spending_graph(total_spent_dict):
+    df = pd.DataFrame(list(total_spent_dict.items()), columns=['Date', 'Price'])
+    df['Date'] = pd.to_datetime(df['Date'])
+    df = df.sort_values(by='Date', ascending=True)
+
+    # CREATE THE HOVER TEXT
+    hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
+    # CREATE THE LINE
+    line = go.Scatter(x=df['Date'], y=df['Price'], mode='lines', text=hover_text, hoverinfo='text', line=dict(shape='spline', color='#006747'))
+    # CREATE THE LAYOUT
+    layout = go.Layout(
+        xaxis=dict(
+            type='date',  # Use type='date' for date values
+            showgrid=True,  
+            tickformat='%b %Y',
+            tickfont=dict(size=15)
+        ),
+        yaxis=dict(
+            title='Total Spent', 
+            title_font=dict(size=30), 
+            tickprefix='$', 
+            tickfont=dict(size=15)
+        ),
+        hovermode='x',
+        template='plotly_dark',
+        paper_bgcolor='white',
+        plot_bgcolor='white',   
+        font=dict(color='black')  
+    )
+    fig = go.Figure(data=[line], layout=layout)
+    fig.update_layout(modebar_remove=['zoom', 'resetScale2d', 'toImage'])
+    return fig.to_html(fig, full_html=False)           
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
