@@ -350,7 +350,7 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
     # Create the graph out of the bar data and layout
     fig = go.Figure(data=[bar], layout=layout)
     fig.update_layout(
-        modebar_remove=['zoom', 'pan', 'select2d', 'lasso', 'zoomIn', 'zoomOut', 'autoScale'],
+        modebar_remove=['zoom', 'resetScale2d', 'pan', 'select2d', 'lasso', 'zoomIn', 'zoomOut', 'autoScale'],
         margin=dict(l=0,r=0,t=10,b=0))
     return fig.to_html(fig, full_html=False)           
 ##########################################################################
