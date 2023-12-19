@@ -80,9 +80,9 @@ def logged_in():
         return redirect(url_for('error'))
     first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
     transactions = scrape_mealplan_transactions(transactions_href, browser)
-    days_left, daily_budget = calculate_daily_spending(mealplan_balance)
+    fall_end_day, spring_end_day, fall_start_day, spring_start_day = scrape_academic_calander()
+    days_left, daily_budget = calculate_daily_spending(mealplan_balance, fall_end_day, spring_end_day, fall_start_day, spring_start_day)
     totals_by_date, funds_added = calculate_total_spent_daily(transactions)
-    fall_end_day, spring_end_day, fall_start_day, spring_start_day = academic_calander()
     graph_html = create_spending_graph(totals_by_date, fall_end_day, spring_end_day, fall_start_day, spring_start_day)
     return render_template('userPage.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
                 transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html = graph_html, totals_by_date=totals_by_date)
@@ -176,34 +176,12 @@ def scrape_mealplan_transactions(transactions_href, browser):
     return transactions
     #########################################################################
 
-#########################################################################
-#Takes in scraped meaplan balance, and calculates the daily budget
-#that person can spend until end of semeseter
-def calculate_daily_spending(meal_plan_balance):
-    fall_end_day, spring_end_day,fall_start_day, spring_start_day = academic_calander()
-    curr_date = date.today()
-    end_date = date.today()
-    year = curr_date.year
-    if date(year, 8, fall_start_day) <= curr_date <= date(year, 12, fall_end_day):
-        end_date = date(year, 12, fall_end_day)
-    elif date(year, 1, spring_start_day) <= curr_date <= date(year, 5, spring_end_day):
-        end_date = date(year, 5, spring_end_day)
-
-    days_left = (end_date - curr_date).days
-    if days_left > 0:
-        daily_budget = round((meal_plan_balance / days_left), 2)
-    else:
-        daily_budget = meal_plan_balance
-        days_left = 0
-    return days_left, daily_budget
-#########################################################################
-
 ######################################################################################################
 # This function scrapes the Binghamton University academic calander for the end and start dates 
 # of both the fall and spring semesters. It looks for the specific text provided and searches for the 
 #date corelated with in in the previous tables box. It then splits the text, only getting the day and 
 #returns it as an int
-def academic_calander():
+def scrape_academic_calander():
     url = 'https://www.binghamton.edu/academics/academic-calendar.html'
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
@@ -239,6 +217,27 @@ def academic_calander():
 
     return int(fall_end_day), int(spring_end_day), int(fall_start_day), int(spring_start_day)
 ###############################################################################################
+
+#########################################################################
+#Takes in scraped meaplan balance, and calculates the daily budget
+#that person can spend until end of semeseter
+def calculate_daily_spending(meal_plan_balance, fall_end_day, spring_end_day, fall_start_day, spring_start_day):
+    curr_date = date.today()
+    end_date = date.today()
+    year = curr_date.year
+    if date(year, 8, fall_start_day) <= curr_date <= date(year, 12, fall_end_day):
+        end_date = date(year, 12, fall_end_day)
+    elif date(year, 1, spring_start_day) <= curr_date <= date(year, 5, spring_end_day):
+        end_date = date(year, 5, spring_end_day)
+
+    days_left = (end_date - curr_date).days
+    if days_left > 0:
+        daily_budget = round((meal_plan_balance / days_left), 2)
+    else:
+        daily_budget = meal_plan_balance
+        days_left = 0
+    return days_left, daily_budget
+#########################################################################
 
 #############################################################################
 # Function that calculates the total amount spent for given dates. 
