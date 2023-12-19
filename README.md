@@ -28,8 +28,10 @@ Project Idea Proposed by [Josef Schindler](https://www.linkedin.com/in/josef-sch
 * Mealplan Balance
 * How Many Days Left in Current Semester
 * Daily Budget (Based on Current Balance and Days Left of Semester)
-* All Recent Transactions (Date, Location, Price)
+* Total Funds Added (How Much Money Student Has Added)
 * Redirect Link to Add Funds to Mealplan
+* All Recent Transactions (Date, Location, Price)
+* Daily Spending (Graph and Table Format)
 
 ## Libraries Used
 
@@ -38,3 +40,5 @@ Project Idea Proposed by [Josef Schindler](https://www.linkedin.com/in/josef-sch
 * BeautifulSoup: Used for scraping HTML code from websites launched in Selenium browser. I.E, how we scrape the balance and transactions from the Binghamton Mealplan site
 
 * Flask: Allows for data to be passed in from Python file to HTML, using methods such as POST, PUT, etc. This is how we pass the data scraped using BeautifulSoup into the HTML code to be displayed for the user
+
+* Plotly: Used to create an interactive graph that displays the users daily spending.

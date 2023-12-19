@@ -62,6 +62,8 @@ img{
     padding-bottom: 15px;
 }
 
+
+/*Start of stlying for displaying transactions in table---*/
 .transactions-table {
     display: block;
     overflow-y: auto; 
@@ -76,19 +78,11 @@ img{
   z-index: 2; 
 }
 
-.transactions-table thead th:first-child{
+.transactions-table thead th:first-child, .transactions-table tbody td:first-child{
   text-align: left;
 }
 
-.transactions-table thead th:last-child{
-  text-align: right;
-}
-
-.transactions-table tbody td:first-child{
-  text-align: left;
-}
-
-.transactions-table tbody td:last-child{
+.transactions-table thead th:last-child, .transactions-table tbody td:last-child{
   text-align: right;
 }
 
@@ -97,6 +91,7 @@ img{
     width: 50%;
     white-space: nowrap;
 }
+/*End of stlying for displaying transactions in table---*/
 
 .graph-container{
   display: flex;
@@ -111,13 +106,9 @@ img{
   margin-bottom: 10px;
 }
 
-.hideable-graph{
+.hideable-graph, .hideable-table{
   width: 100%;
 } 
-
-.hideable-table{
-  width: 100%;
-}
 
 .button.is-danger { 
     margin-top: 10px;
