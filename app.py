@@ -57,8 +57,10 @@ def logged_in():
     #Takes username and password from login page and stores in username and 
     #password variables using Flask POST method
     if request.method == 'POST': 
-        username = request.form.get('username')
-        password = request.form.get('password')
+        #username = request.form.get('username')
+        #password = request.form.get('password')
+        username = 'ndenobrega'
+        password = '21Velocity21@'
     ##############################################################################
 
     ##############################################################################
@@ -289,34 +291,29 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
 
     # Create hover box text
     hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
-
     # Create the bar graph data
     bar = go.Bar(x=df['Date'], y=df['Price'], text=hover_text, hoverinfo='text', textposition="none", marker_color='#006747')
-
     # !!! can get rid of this if we want
     year = date.today().year
+    #Create dropdown menu for range selction
+    dropdown_options = [
+        # if in fall semester -> [date(year, 8, fall_start_day), date(year, 12, fall_end_day)] works well
+        # if in spring semester, dates need to be:
+        # start dates = last yeras start dates 
+        # end dates = last years end dates
+        {'label': 'Fall Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(year, 8, fall_start_day), date(year, 12, fall_end_day)]}]},
 
-    rangebuttons = [                                      
-                
-                # if in fall semester -> [date(year, 8, fall_start_day), date(year+1, 5, spring_end_day)] works well
+        # maybe dont show this button if youre in the fall semester? 
+        {'label': 'Spring Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(year, 12, spring_start_day), date(year, 12, spring_end_day)]}]},
+        
+        #good
+         {'label': 'Current Month', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
 
-                # if in spring semester, dates need to be:
-                    # start dates = last years start dates
-                    # end dates = current years end dates
-            dict(label="School Year", method="relayout", args=[{"xaxis.range": [date(year, 8, fall_start_day), date(year+1, 5, spring_end_day)]}]),
-
-                # if in fall semester -> [date(year, 8, fall_start_day), date(year, 12, fall_end_day)] works well
-
-                # if in spring semester, dates need to be:
-                    # start dates = last yeras start dates 
-                    # end dates = last years end dates
-            dict(label="Fall Semester", method="relayout", args=[{"xaxis.range": [date(year, 8, fall_start_day), date(year, 12, fall_end_day)]}]),
-
-                # maybe dont show this button if youre in the fall semester? 
-            dict(label="Spring Semester", method="relayout", args=[{"xaxis.range": [date(year, 12, spring_start_day), date(year, 12, spring_end_day)]}]),
-
-                # good
-            dict(label="Month", method="relayout", args=[{"xaxis.range": [date.today() - timedelta(days=30), date.today()]  } ]),
+        # if in fall semester -> [date(year, 8, fall_start_day), date(year+1, 5, spring_end_day)] works well
+        # if in spring semester, dates need to be:
+        # start dates = last years start dates
+        # end dates = current years end dates
+        {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(year, 8, fall_start_day), date(year+1, 5, spring_end_day)]}]}
     ]
 
     # Create the layout of the graph
@@ -329,9 +326,7 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
             tickformat='%b %Y',
             tickfont=dict(size=15),
         ),
-        yaxis=dict(
-            title='<b>Total Spent</b>', 
-            title_font=dict(size=30), 
+        yaxis=dict( 
             tickprefix='$', 
             tickfont=dict(size=15, family="Arial Black, sans-serif")
         ),
@@ -341,15 +336,24 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
         plot_bgcolor='white',   
         font=dict(color='black', family='Arial, sans-serif'),
         updatemenus=[
-            dict(type="buttons", direction="right", x=0.7, y=1.2, showactive=False, buttons=rangebuttons)    # <----- buttons 
-        ] 
+            dict(  
+                buttons=dropdown_options,
+                direction="down",
+                pad={"r": 10, "t": 10},
+                showactive=False,
+                x=0.49,
+                xanchor="center",
+                y=1.2,
+                yanchor="top",
+            )
+        ]
     )
 
     # Create the graph out of the bar data and layout
     fig = go.Figure(data=[bar], layout=layout)
     fig.update_layout(
-        modebar_remove=['zoom', 'resetScale2d', 'pan', 'select2d', 'lasso', 'zoomIn', 'zoomOut', 'autoScale'],
-        margin=dict(l=0,r=0,t=10,b=5))
+        modebar_remove=['zoom', 'pan', 'select2d', 'lasso', 'zoomIn', 'zoomOut', 'autoScale'],
+        margin=dict(l=0,r=0,t=10,b=0))
     return fig.to_html(fig, full_html=False)           
 ##########################################################################
 
