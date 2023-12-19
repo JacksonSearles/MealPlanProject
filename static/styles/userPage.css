@@ -7,31 +7,42 @@ body {
     background-attachment: fixed;
 }
 
+img{
+  width:300px;
+  height:auto;
+  display: block;
+  margin: 0 auto;
+}
+
 .binghamton-green { 
     background-color: #006747; 
 }
 
-.box { 
-    border: 1px solid #006747; 
-}
-
-img{
-    width:400px;
-    height:auto;
-    display: block;
-    margin: 0 auto;
-}
-
 .hero-body{
-    padding: 1rem 0.5rem;
+  padding: 1rem 0.5rem;
+}
+
+.container{
+  flex-direction: column;
+}
+
+.box { 
+  border: 1px solid #006747; 
+  height: 100%;
+}
+
+.is-flex-centered{
+  display: flex;
+  justify-content: center;
 }
 
 .binghamton-white{
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     font-weight: bold;
     text-align: center;
     color: white;
     margin-bottom: 5px;
+    max-width: 980px;
 }
 
 .binghamton-black{
@@ -53,23 +64,38 @@ img{
 
 .transactions-table {
     display: block;
-    max-height: 200px;
     overflow-y: auto; 
-    border-collapse: separate;
-    background-color: white;
-    border-radius: 5px;
-    padding: 15px 0px;
-    padding-left: 25px;
+    max-height: 200px;
     padding-right: 10px;
 }
 
-.transactions-table thead tr td{
-    position: sticky; top: 0    
+.transactions-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 2; 
+}
+
+.transactions-table thead th:first-child{
+  text-align: left;
+}
+
+.transactions-table thead th:last-child{
+  text-align: right;
+}
+
+.transactions-table tbody td:first-child{
+  text-align: left;
+}
+
+.transactions-table tbody td:last-child{
+  text-align: right;
 }
 
 .transactions-table tbody td {
-    padding-right: 20px;
     margin-bottom: 10px;
+    width: 50%;
+    white-space: nowrap;
 }
 
 .graph-container{
@@ -87,6 +113,10 @@ img{
 
 .hideable-graph{
   width: 100%;
+} 
+
+.hideable-table{
+  width: 100%;
 }
 
 .button.is-danger { 
@@ -94,8 +124,7 @@ img{
     background-color: #006747; border-color: #006747;
 }
 
-
-/* The switch - the box around the slider */
+/* All CSS code below is to create the switch for switching between graph and table */
 .switch {
   position: relative;
   display: inline-block;
@@ -104,14 +133,12 @@ img{
   margin: 0px 10px;
 }
 
-/* Hide default HTML checkbox */
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-/* The slider */
 .slider {
   position: absolute;
   cursor: pointer;
@@ -119,7 +146,7 @@ img{
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #006747; /* Set default background color to green */
+  background-color: #006747; 
   -webkit-transition: .4s;
   transition: .4s;
 }
@@ -136,18 +163,16 @@ img{
   transition: .4s;
 }
 
-/* Updated styles for checked state */
 input:checked + .slider {
-  background-color: #ccc; /* Change background color when checked */
+  background-color: #ccc; 
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(30px); /* Adjust the value based on your design */
+  -webkit-transform: translateX(30px); 
   -ms-transform: translateX(30px);
   transform: translateX(30px);
 }
 
-/* Rounded sliders */
 .slider.round {
   border-radius: 34px;
 }

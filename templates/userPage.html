@@ -9,108 +9,99 @@
 </head>
 <body class="binghamton-green">
 	<img src="{{ url_for('static', filename='BU_Logo.png') }}" alt="Binghamton University Logo">
-	<section class="hero is-fullheight is-default is-bold">
-    <div class="hero-body" style="align-items: start;">
-    	<div class="container">
-      	<h1 class="binghamton-white">Welcome, {{first_name}}</h1>
-      	<!-- Meal Plan Overview and Transactions with Graph Below -->
-				<div class="columns is-multiline">
-					<!-- Meal Plan Overview and Transactions in One Box -->
-					<div class="column is-12">
-						<div class="box">
-							<div class="columns">
-								<!-- Meal Plan Overview Column -->
-								<div class="column">
-									<h2 class="binghamton-black">Your Meal Plan Overview</h2>
-									<p class="has-text-centered">Meal Plan Name: <strong>{{ mealplan_name }}</strong> </p>
-									<p class="has-text-centered">Meal Plan Balance: <strong>${{ mealplan_balance }}</strong> </p>
-									<p class="has-text-centered">Days Left in Semester: <strong>{{ days_left }}</strong> </p>
-									<p class="has-text-centered">Daily Budget: <strong>${{ daily_budget }}</strong> </p>
-									<p class="has-text-centered">Total Funds Added: <strong>${{ funds_added }}</strong> </p>
-									<p class="has-text-centered add-funds">Running Low? <strong>Click <a href="https://bing.campuscardcenter.com/ch/add_value.html" target="_blank">Here</a> to Add Funds</strong></p>
-								</div>
-								<!-- Transactions Column -->
-								<div class="column">
-									<h2 class="binghamton-black">Recent Transactions</h2>
-									<table class="transactions-table">
-										<thead>
-											<tr>
-												<th>Date</th>
-												<th>Amount</th>
-											</tr>
-										</thead>
-										<tbody>
-											{% if transactions %}
-												{# The 'transactions' list is not empty #}
-												{% for transaction in transactions %}
-													<tr>
-														<td>{{ transaction.date }}: {{ transaction.location }}</td>
-														<td>${{ transaction.price }}</td>
-													</tr>
-												{% endfor %}
-											{% else %}
-												{# The 'dates' list is empty #}
-												<tr>
-													<td colspan="2">No recent transactions</td>
-												</tr>
-											{% endif %}
-										</tbody>
-									</table>
-								</div>	
-            	</div>
-          	</div>
+	<section class="hero is-fullheight">
+		<div class="hero-body container">
+			<h1 class="binghamton-white">Welcome, {{first_name}}</h1>
+			<div class="columns is-multiline" style="max-width: 980px;">
+				<!-- Overview Column -->
+				<div class="column is-6-desktop">
+					<div class="box">
+							<h2 class="binghamton-black">Your Meal Plan Overview</h2>
+							<p class="has-text-centered">Meal Plan Name: <strong>{{ mealplan_name }}</strong> </p>
+							<p class="has-text-centered">Meal Plan Balance: <strong>${{ mealplan_balance }}</strong> </p>
+							<p class="has-text-centered">Days Left in Semester: <strong>{{ days_left }}</strong> </p>
+							<p class="has-text-centered">Daily Budget: <strong>${{ daily_budget }}</strong> </p>
+							<p class="has-text-centered">Total Funds Added: <strong>${{ funds_added }}</strong> </p>
+							<p class="has-text-centered add-funds">Running Low? <strong>Click <a href="https://bing.campuscardcenter.com/ch/add_value.html" target="_blank">Here</a> to Add Funds</strong></p>
 					</div>
-					<!-- Graph Column -->
-					<div class="column is-12">
-						<div class="graph-container box">
-							<h2 class="binghamton-black">Daily Spending</h2>
-							<div class="switch-container">
-								<p>Graph Format</p>
-								<label class="switch">
-									<input type="checkbox" id="toggleSwitch">
-									<span class="slider round"></span>
-								</label>
-								<p>Table Format</p>
-							</div>
-							<div class="hideable-graph">
-								{{ graph_html|safe }}
-							</div>
-							<div class="hideable-table">
-                <table class="transactions-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Total Spent</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for date, total in totals_by_date.items() %}
-                            <tr>
-                                <td>{{date}}</td>
-                                <td>{{total}}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-							</div>
+				</div>
+				<!-- Transactions Column -->
+				<div class="column is-6-desktop">
+					<div class="box">
+						<h2 class="binghamton-black">Recent Transactions</h2>
+						<table class="transactions-table">
+							<thead>
+								<tr>
+									<th>Date</th>
+									<th>Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% if transactions %}
+									{# The 'transactions' list is not empty #}
+									{% for transaction in transactions %}
+										<tr>
+											<td>{{ transaction.date }}: {{ transaction.location }}</td>
+												<td>${{ transaction.price }}</td>
+										</tr>
+									{% endfor %}
+								{% else %}
+									{# The 'dates' list is empty #}
+									<tr>
+										<td colspan="2">No recent transactions</td>
+									</tr>
+								{% endif %}
+							</tbody>
+						</table>	
+					</div>
+				</div>
+				<!-- Graph Column -->
+				<div class="column is-12" id="graphColumn">
+					<div class="graph-container box">
+						<h2 class="binghamton-black">Daily Spending</h2>
+						<div class="switch-container">
+							<p>Graph Format</p>
+							<label class="switch">
+								<input type="checkbox" id="toggleSwitch">
+								<span class="slider round"></span>
+							</label>
+							<p>Table Format</p>
+						</div>
+						<div class="hideable-graph">
+							{{ graph_html|safe }}
+						</div>
+						<div class="hideable-table">
+							<table class="transactions-table">
+								<thead>
+									<tr>
+										<th>Date</th>
+										<th>Total Spent</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for date, total in totals_by_date.items() %}
+										<tr>
+											<td>{{date}}</td>
+											<td>{{total}}</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
 						</div>
 					</div>
-        	<!-- Logout Button -->
-        	<div class="columns">
-          	<div class="column is-centered">
-            	<form action="/" method="put">
-                	<input class="button is-danger button is-centered" type="submit" value="Logout">
-            	</form>
-          	</div>
-        	</div>
-      	</div>
+				</div>
 			</div>
-    </div>
+			<!-- Logout Button -->
+			<form action="/" method="put">
+				<input class="button is-danger button is-centered" type="submit" value="Logout">
+			</form>
+		</div>
   </section>
 
 	<script>
     document.addEventListener('DOMContentLoaded', function () {
         var toggleSwitch = document.getElementById('toggleSwitch');
+				var graphColumn = document.getElementById('graphColumn')
         var hideableGraph = document.querySelector('.hideable-graph');
         var hideableTable = document.querySelector('.hideable-table');
 
@@ -120,8 +111,17 @@
 
         // Toggle visibility on checkbox change
         toggleSwitch.addEventListener('change', function () {
-            hideableGraph.style.display = this.checked ? 'none' : 'block';
-            hideableTable.style.display = this.checked ? 'block' : 'none';
+					if (toggleSwitch.checked) {
+            hideableGraph.style.display = 'none';
+            hideableTable.style.display = 'flex';
+            hideableTable.style.justifyContent = 'center';
+						graphColumn.classList.add('is-flex-centered');
+        	} else {
+            hideableGraph.style.display = 'block';
+            hideableTable.style.display = 'none';
+						hideableTable.style.justifyContent = '';
+            graphColumn.classList.remove('is-flex-centered');
+        	}
         });
     });
 </script>

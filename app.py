@@ -349,7 +349,7 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
     fig = go.Figure(data=[bar], layout=layout)
     fig.update_layout(
         modebar_remove=['zoom', 'resetScale2d', 'pan', 'select2d', 'lasso', 'zoomIn', 'zoomOut', 'autoScale'],
-        margin=dict(l=20,r=20,t=20,b=20))
+        margin=dict(l=0,r=0,t=10,b=5))
     return fig.to_html(fig, full_html=False)           
 ##########################################################################
 
