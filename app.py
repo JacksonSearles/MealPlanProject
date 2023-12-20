@@ -46,19 +46,17 @@ def error():
     message = "Incorrect username or password"
     return render_template('index.html', message=message)
 
-#################################################################################
-# Takes username and password from login page and stores in username and 
-# password variables using Flask POST method #Launches Selenium browser using 
-# launch_selenium_browser, with the url of the Binghamton mealplan site. If 
-# the user was logged in succesfully, browser.find element will return true, 
-# and the rest of the program will run. If login failed, the user is prompted to 
-# login again. We use BeautifulSoup to get HTML code of Binghamton mealplan site. 
-# From this, we scrape the name of the user, mealplan type, mealplan balance, 
-# and the link for the transactions page with scrape_mealplan_data. Then we 
-# scrape all recent transaction prices and dates with scrape_recent_transactions. 
-# Then we calculate the daily budget based on balance using calculate_daily_spending, 
-# and also calculate the total spending for each day using calculate_total_spent_daily.
-# Finally, we launch the HTML landing page and pass values through using Flask render_template.  
+######################################################################################################
+# Takes username and password from login page and stores in username and password variables using Flask 
+# POST method #Launches Selenium browser using launch_selenium_browser, with the url of the Binghamton 
+# mealplan site. If the user was logged in succesfully, browser.find element will return true, and the 
+# rest of the program will run. If login failed, the user is prompted to login again. We use BeautifulSoup 
+# to get HTML code of Binghamton mealplan site. From this, we scrape the name of the user, mealplan type,
+# mealplan balance, and the link for the transactions page with scrape_mealplan_data. Then we scrape all 
+# recent transaction prices and dates with scrape_recent_transactions. Then we calculate the daily budget
+# based on balance using calculate_daily_spending, and also calculate the total spending for each day using
+# calculate_total_spent_daily. Finally, we launch the HTML landing page and pass values through using Flask 
+# render_template.  
 @app.route('/logged_in', methods=['POST', 'GET', 'PUT'])
 def logged_in():
     if request.method == 'POST': 
@@ -78,12 +76,12 @@ def logged_in():
     graph_html = create_spending_graph(totals_by_date, fall_end_day, spring_end_day, fall_start_day, spring_start_day)
     return render_template('userPage.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
                 transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html = graph_html, totals_by_date=totals_by_date)
-###############################################################################
+######################################################################################################
 
-###############################################################################
-# Utilize Selenium to open headless incognito browser withe the url of mealplan 
-# site,  Takes username and password gathered from Flask POST method, and sends 
-# keys to actual mealplan Binghamton site to login user
+######################################################################################################
+# Utilize Selenium to open headless incognito browser with the url of mealplan site. Takes username 
+# and password gathered from Flask POST method, and sends keys to actual mealplan Binghamton site to login 
+# user
 def launch_selenium_browser(username, password):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
@@ -96,19 +94,16 @@ def launch_selenium_browser(username, password):
     elem = browser.find_element(By.NAME, 'password')
     elem.send_keys(password + Keys.RETURN)
     return browser
-###############################################################################
+######################################################################################################
 
-###############################################################################
-# Scrapes the first name of the user. Then finds the table element that holds 
-# all mealplan accounts(mealplan_accounts_table). Then finds all the tr elements
-# in the table, where each tr element is a mealplan account row, and store 
-# this in mealplan_accounts. Then we loop through each account in 
-# mealplan_accounts, and search to see if this mealplan account is one of 
-# the mealplans listed in mealplans[] array. If it isnt, we continue to the
-# next account. If it is, we store the name of the meal plan account found in
-# mealplan_name, then scrape the href that holds the link to the full 
-# transactions page and store in transactions_href, and scrape the balance of 
-# the account found and store in mealplan_balance.
+######################################################################################################
+# Scrapes the first name of the user. Then finds the table element that holds all mealplan 
+# accounts(mealplan_accounts_table). Then finds all the tr elements in the table, where each tr element 
+# is a mealplan account row, and store this in mealplan_accounts. Then we loop through each account in 
+# mealplan_accounts, and search to see if this mealplan account is one of the mealplans listed in 
+# mealplans[] array. If it isnt, we continue to the next account. If it is, we store the name of the meal 
+# plan account found in mealplan_name, then scrape the href that holds the link to the full transactions page 
+# and store in transactions_href, and scrape the balance of the account found and store in mealplan_balance.
 def scrape_mealplan_data(browser):
     soup = BeautifulSoup(browser.page_source, "html.parser")
     first_name = soup.label.text.split()[2]
@@ -129,20 +124,16 @@ def scrape_mealplan_data(browser):
         if transactions_href:
             break
     return first_name, mealplan_name, mealplan_balance, transactions_href
-#############################################################################
+######################################################################################################
 
-
-#############################################################################
-# Updates the Selenium browser to open transactions page. Since all 
-# transactions are split between multiple pages, the current page and 
-# total page amounts are scraped and stored in page numbers[] array. 
-# This is so we can loop through all pages to scrape every transactions. Then
-# loops through every page of transactions using curr_page and total_page 
-# which were scraped earlier. Scrapes transactions page using BeautifulSoup, 
-# creates a Transaction object and adds the date, location, and price to the
-# Transaction object, and adds that object to transactions[] array, Then, 
-# iterate to next page by updating Selenium browser with href for next page 
-# and repeat.
+######################################################################################################
+# Updates the Selenium browser to open transactions page. Since all transactions are split between 
+# multiple pages, the current page and total page amounts are scraped and stored in page numbers[] 
+# array. This is so we can loop through all pages to scrape every transactions. Then loops through every 
+# page of transactions using curr_page and total_page which were scraped earlier. Scrapes transactions 
+# page using BeautifulSoup, creates a Transaction object and adds the date, location, and price to the
+# Transaction object, and adds that object to transactions[] array. Then, iterate to next page by updating 
+# Selenium browser with href for next page and repeat.
 def scrape_mealplan_transactions(transactions_href, browser):
     browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}")
     soup = BeautifulSoup(browser.page_source, "html.parser")
@@ -156,7 +147,7 @@ def scrape_mealplan_transactions(transactions_href, browser):
             date = entry_row.contents[3].text.strip()
             location = entry_row.contents[7].text.strip().replace('Dining', '')
             price = entry_row.contents[9].div.text.strip().replace('(', '').replace(')', '')      
-            #Ehen funds are added to account, there is no location of transaction
+            #When funds are added to account, there is no location of transaction
             if len(location) == 0:
                 #True when current transaction is the intial funds added to account
                 if entry_row.contents[5].text.strip() == 'Adj_Credit':
@@ -169,7 +160,7 @@ def scrape_mealplan_transactions(transactions_href, browser):
         browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={cur_page}")
         soup = BeautifulSoup(browser.page_source, "html.parser")
     return transactions
-#############################################################################
+######################################################################################################
 
 ######################################################################################################
 # This function scrapes the Binghamton University academic calander for the end and start dates 
@@ -281,8 +272,8 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
     curr_month = date.today().month
     curr_year = date.today().year
     dropdown_options = []
-    # True when in fall semester
     if 8 <= curr_month <= 12:
+    # True when in fall semester
         dropdown_options.extend([
             {'label': 'Current Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year, 12, fall_end_day)]}]},
             {'label': 'Previous Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
@@ -290,8 +281,8 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
             {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year+1, 5, spring_end_day)]}]}
         ])
         default_range = [date(curr_year, 8, fall_start_day), date(curr_year, 12, fall_end_day)]
-    # True when in spring semester
     elif 1 <= curr_month <= 5:
+    # True when in spring semester
         dropdown_options.extend([
             {'label': 'Current Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
             {'label': 'Previous Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year-1, 12, fall_end_day)]}]},
@@ -299,8 +290,8 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
             {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year, 5, spring_end_day)]}]}
         ])
         default_range = [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]
-    #True when in the summer, only show most recent semester and most recent school year
     else:
+    #True when in the summer, only show most recent semester and most recent school year
         dropdown_options.extend([
             {'label': 'Most Recent Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
             {'label': 'Most Recent School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year, 5, spring_end_day)]}]}
