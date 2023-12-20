@@ -46,22 +46,20 @@ def error():
     message = "Incorrect username or password"
     return render_template('index.html', message=message)
 
-@app.route('/logged_in', methods=['POST', 'GET', 'PUT'])
-
 #################################################################################
 # Takes username and password from login page and stores in username and 
-# password variables using Flask POST method
-# Launches Selenium browser using launch_selenium_browser, with the url of the
-# Binghamton mealplan site. If the user was logged in succesfully, 
-# borwser.find element will return true, and the rest of the program will run.
-# If login failed, the user is prompted to login again. We use BeautifulSoup 
-# to get HTML code of Binghamton mealplan site. From this, we scrape the name of
-# the user, mealplan type, mealplan balance, and the link for the transactions page
-# with scrape_mealplan_data. Then we scrape all recent transaction prices and 
-# dates with scrape_recent_transactions. Then we calculate the daily budget based on 
-# balance using calculate_daily_spending, and also calculate the total spending
-# for each day using calculate_total_spent_daily. Finally, we launch the HTML 
-# landing page and pass values through using Flask render_template.  
+# password variables using Flask POST method #Launches Selenium browser using 
+# launch_selenium_browser, with the url of the Binghamton mealplan site. If 
+# the user was logged in succesfully, browser.find element will return true, 
+# and the rest of the program will run. If login failed, the user is prompted to 
+# login again. We use BeautifulSoup to get HTML code of Binghamton mealplan site. 
+# From this, we scrape the name of the user, mealplan type, mealplan balance, 
+# and the link for the transactions page with scrape_mealplan_data. Then we 
+# scrape all recent transaction prices and dates with scrape_recent_transactions. 
+# Then we calculate the daily budget based on balance using calculate_daily_spending, 
+# and also calculate the total spending for each day using calculate_total_spent_daily.
+# Finally, we launch the HTML landing page and pass values through using Flask render_template.  
+@app.route('/logged_in', methods=['POST', 'GET', 'PUT'])
 def logged_in():
     if request.method == 'POST': 
         username = request.form.get('username')
@@ -83,9 +81,9 @@ def logged_in():
 ###############################################################################
 
 ###############################################################################
-# Selenium opens headless incognito browser withe the url of mealplan site,
-# Takes username and password gathered from Flask POST method, and sends keys 
-# to actual mealplan Binghamton site to login user
+# Utilize Selenium to open headless incognito browser withe the url of mealplan 
+# site,  Takes username and password gathered from Flask POST method, and sends 
+# keys to actual mealplan Binghamton site to login user
 def launch_selenium_browser(username, password):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
@@ -93,7 +91,6 @@ def launch_selenium_browser(username, password):
     options.add_argument('--disable-dev-shm-usage')
     browser = webdriver.Chrome(options=options)
     browser.get('https://bing.campuscardcenter.com/ch/login.html')
-
     elem = browser.find_element(By.NAME, 'username')
     elem.send_keys(username)
     elem = browser.find_element(By.NAME, 'password')
@@ -134,48 +131,45 @@ def scrape_mealplan_data(browser):
     return first_name, mealplan_name, mealplan_balance, transactions_href
 #############################################################################
 
+
+#############################################################################
+# Updates the Selenium browser to open transactions page. Since all 
+# transactions are split between multiple pages, the current page and 
+# total page amounts are scraped and stored in page numbers[] array. 
+# This is so we can loop through all pages to scrape every transactions. Then
+# loops through every page of transactions using curr_page and total_page 
+# which were scraped earlier. Scrapes transactions page using BeautifulSoup, 
+# creates a Transaction object and adds the date, location, and price to the
+# Transaction object, and adds that object to transactions[] array, Then, 
+# iterate to next page by updating Selenium browser with href for next page 
+# and repeat.
 def scrape_mealplan_transactions(transactions_href, browser):
-    #########################################################################
-    # Updates the Selenium browser to open transactions page. Since all 
-    # transactions are split between multiple pages, the current page and 
-    # total page amounts are scraped and stored in page numbers[] array. 
-    # This is so we can loop through all pages to scrape every transactions
     browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}")
     soup = BeautifulSoup(browser.page_source, "html.parser")
     page_numbers = soup.find('td', align='center', colspan='7').get_text(strip=True).replace(">>>", '').split(' ')[1].split('/')
     cur_page = int(page_numbers[0])
     total_page = int(page_numbers[1])  
-    #########################################################################
-    
-    #########################################################################
-    # Loops through every page of transactions using curr_page and total_page 
-    # which were scraped earlier. Scrapes transactions page using BeautifulSoup, 
-    # creates a Transaction object and adds the date, location, and price to the
-    # Transaction object, and adds that object to transactions[] array, Then, 
-    # iterate to next page by updating Selenium browser with href for next page 
-    # and repeat.
     transactions = []
     while cur_page <= total_page:      
         entry_rows = soup.find_all('tr', {'id': 'EntryRow'})
         for entry_row in entry_rows:
             date = entry_row.contents[3].text.strip()
             location = entry_row.contents[7].text.strip().replace('Dining', '')
-            price = entry_row.contents[9].div.text.strip().replace('(', '').replace(')', '')
-            
-            #When funds are added to account, there is no location
+            price = entry_row.contents[9].div.text.strip().replace('(', '').replace(')', '')      
+            #Ehen funds are added to account, there is no location of transaction
             if len(location) == 0:
-                #True when current transaction is funds being added to account
-                if entry_row.contents[5].text.strip() == 'ADDVALUE':
-                    location = "Added Funds"
                 #True when current transaction is the intial funds added to account
-                elif entry_row.contents[5].text.strip() == 'Adj_Credit':
+                if entry_row.contents[5].text.strip() == 'Adj_Credit':
                     location = "Initial Funds"
+                #True when current transaction is funds being added to account
+                elif entry_row.contents[5].text.strip() == 'ADDVALUE':
+                    location = "Added Funds"
             transactions.append(Transaction(date, location, price))
         cur_page += 1
         browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={cur_page}")
         soup = BeautifulSoup(browser.page_source, "html.parser")
     return transactions
-    #########################################################################
+#############################################################################
 
 ######################################################################################################
 # This function scrapes the Binghamton University academic calander for the end and start dates 
@@ -186,7 +180,6 @@ def scrape_academic_calander():
     url = 'https://www.binghamton.edu/academics/academic-calendar.html'
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
-
     dorms_open_fall = soup.find_all('td', text='New Student Move-in and Welcome Program')
     dorm_open_spring = soup.find_all('td', text='Resident Halls Open for Returning Students at 9am')
     dorms_closed_fall = soup.find_all('td', text='Residence halls close at 10 a.m.')
@@ -222,7 +215,8 @@ def scrape_academic_calander():
 ######################################################################################################
 # Takes in scraped meaplan balance, and calculates the daily budget that person can spend until end of 
 # semeseter. Calculation is based on the the how many days there between the current day and the end
-# of semester day.
+# of semester day. The end of semester day is determined by fall_end_day, spring_end_day, fall_start_day, 
+# spring_start_day, which are the start and end days that were scraped from Binghamton academic calendar
 def calculate_daily_spending(meal_plan_balance, fall_end_day, spring_end_day, fall_start_day, spring_start_day):
     curr_date = date.today()
     end_date = date.today()
