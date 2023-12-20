@@ -224,11 +224,11 @@ def scrape_academic_calander():
 def calculate_daily_spending(meal_plan_balance, fall_end_day, spring_end_day, fall_start_day, spring_start_day):
     curr_date = date.today()
     end_date = date.today()
-    year = curr_date.year
-    if date(year, 8, fall_start_day) <= curr_date <= date(year, 12, fall_end_day):
-        end_date = date(year, 12, fall_end_day)
-    elif date(year, 1, spring_start_day) <= curr_date <= date(year, 5, spring_end_day):
-        end_date = date(year, 5, spring_end_day)
+    curr_year = curr_date.year
+    if date(curr_year, 8, fall_start_day) <= curr_date <= date(curr_year, 12, fall_end_day):
+        end_date = date(curr_year, 12, fall_end_day)
+    elif date(curr_year, 1, spring_start_day) <= curr_date <= date(curr_year, 5, spring_end_day):
+        end_date = date(curr_year, 5, spring_end_day)
 
     days_left = (end_date - curr_date).days
     if days_left > 0:
@@ -285,35 +285,43 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
     df = pd.DataFrame(list(total_spent_dict.items()), columns=['Date', 'Price'])
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.sort_values(by='Date', ascending=True)
+    
+    #######################################################################################################################################################################
+    #CREATE DROPDOWN MENU FOR RANGE SELECTION
+    curr_month = date.today().month
+    curr_year = date.today().year
+    dropdown_options = []
+    # True when in fall semester
+    if 8 <= curr_month <= 12:
+        dropdown_options.extend([
+            {'label': 'Current Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year, 12, fall_end_day)]}]},
+            {'label': 'Previous Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
+            {'label': 'Current Month', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
+            {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year+1, 5, spring_end_day)]}]}
+        ])
+        default_range = [date(curr_year, 8, fall_start_day), date(curr_year, 12, fall_end_day)]
+    # True when in spring semester
+    elif 1 <= curr_month <= 5:
+        dropdown_options.extend([
+            {'label': 'Current Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
+            {'label': 'Previous Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year-1, 12, fall_end_day)]}]},
+            {'label': 'Current Month', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
+            {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year, 5, spring_end_day)]}]}
+        ])
+        default_range = [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]
+    #True when in the summer, only show most recent semester and most recent school year
+    else:
+        dropdown_options.extend([
+            {'label': 'Most Recent Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
+            {'label': 'Most Recent School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year, 5, spring_end_day)]}]}
+        ])
+        default_range = [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]
+    #######################################################################################################################################################################
 
-    # Create hover box text
+    #######################################################################################################################################################################
+    #DESIGN LAYOUT OF GRAPH      
     hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
-    # Create the bar graph data
     bar = go.Bar(x=df['Date'], y=df['Price'], text=hover_text, hoverinfo='text', textposition="none", marker_color='#006747')
-    # !!! can get rid of this if we want
-    year = date.today().year
-    #Create dropdown menu for range selction
-    dropdown_options = [
-        # if in fall semester -> [date(year, 8, fall_start_day), date(year, 12, fall_end_day)] works well
-        # if in spring semester, dates need to be:
-        # start dates = last yeras start dates 
-        # end dates = last years end dates
-        {'label': 'Fall Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(year, 8, fall_start_day), date(year, 12, fall_end_day)]}]},
-
-        # maybe dont show this button if youre in the fall semester? 
-        {'label': 'Spring Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(year, 12, spring_start_day), date(year, 12, spring_end_day)]}]},
-        
-        #good
-         {'label': 'Current Month', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
-
-        # if in fall semester -> [date(year, 8, fall_start_day), date(year+1, 5, spring_end_day)] works well
-        # if in spring semester, dates need to be:
-        # start dates = last years start dates
-        # end dates = current years end dates
-        {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(year, 8, fall_start_day), date(year+1, 5, spring_end_day)]}]}
-    ]
-
-    # Create the layout of the graph
     layout = go.Layout(
         xaxis=dict(
             title="<b>Date</b>",
@@ -322,6 +330,7 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
             showgrid=True,  
             tickformat='%b %Y',
             tickfont=dict(size=15),
+            range=default_range
         ),
         yaxis=dict( 
             tickprefix='$', 
@@ -332,26 +341,29 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
         paper_bgcolor='white',
         plot_bgcolor='white',   
         font=dict(color='black', family='Arial, sans-serif'),
-        updatemenus=[
-            dict(  
-                buttons=dropdown_options,
-                direction="down",
-                pad={"r": 10, "t": 10},
-                showactive=False,
-                x=0.49,
-                xanchor="center",
-                y=1.2,
-                yanchor="top",
-            )
-        ]
+        updatemenus=[dict(
+            buttons=dropdown_options, 
+            direction="down", 
+            pad={"r": 10, "t": 10}, 
+            showactive=False,
+            x=0.49, 
+            xanchor="center", 
+            y=1.2, 
+            yanchor="top",
+            bgcolor='#006747',  
+            bordercolor='white',  
+            font=dict(size=15, family='Arial, sans-serif', color='white'),
+        )]     
     )
-
-    # Create the graph out of the bar data and layout
+    #######################################################################################################################################################################
     fig = go.Figure(data=[bar], layout=layout)
     fig.update_layout(
         modebar_remove=['zoom', 'resetScale2d', 'pan', 'select2d', 'lasso', 'zoomIn', 'zoomOut', 'autoScale'],
         margin=dict(l=0,r=0,t=10,b=0))
-    return fig.to_html(fig, full_html=False)           
+    graph_html = fig.to_html(fig, full_html=False)
+    # plotly has no option to change the hover affect of its buttons. so this changes hover color of graph buttons (super jank fix but it works)
+    graph_html = graph_html.replace('activeColor:"#F4FAFF"', 'activeColor:"#006747"').replace('hoverColor:"#F4FAFF"', 'hoverColor:"grey"')
+    return graph_html              
 ##########################################################################
 
 if __name__ == "__main__":
