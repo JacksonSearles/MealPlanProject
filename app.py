@@ -29,11 +29,27 @@ import json
 #Pandas:        Used to create a DataFrame of prices and dates. Uses the
 #               DataFrame to calculate the total spent per date
 
+################################################################
+# Definition for custom "Transaction" object, which stores a date,
+# location, and price in each object. When we scrape transactions
+# off mealplan website, each transaction is stored in a Tranasction
+# object.
 class Transaction:
     def __init__(self, date, location, price):
         self.date = date
         self.location = location
         self.price = float(price)
+#################################################################
+        
+#################################################################        
+# Definition for serializing Transaction Object. Since Transaction
+# object is not a default object, we need to create a custom 
+# serializer to allow for it to be written to json file.
+class TransactionSerializer(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Transaction):
+            return obj.__dict__
+        return super().default(obj)
 ##############################################################
 
 app = Flask(__name__, template_folder='templates')
@@ -80,54 +96,50 @@ def login():
     totals_by_date, funds_added = calculate_total_spent_daily(transactions)
     graph_html = create_spending_graph(totals_by_date, fall_end_day, spring_end_day, fall_start_day, spring_start_day)
 
-    transaction_dict = transaction_test(transactions)
-    
-    graph_filename = 'graph_file.html'
-    with open(graph_filename, 'w') as file:
-        file.write(graph_html)
+    recent_transaction_filename = 'recent_transaction_filename.json'
+    with open(recent_transaction_filename, 'w') as file:
+        json.dump(transactions, file, cls=TransactionSerializer)
     
     totals_by_date_filename = 'totals_by_date_filename.json'
     with open(totals_by_date_filename,  'w') as file:
         json.dump(totals_by_date, file)
 
-    recent_transaction_filename = 'recent_transaction_filename.json'
-    with open(recent_transaction_filename, 'w') as file:
-        json.dump(transaction_dict, file)
+    graph_filename = 'graph_file.html'
+    with open(graph_filename, 'w', encoding='utf-8') as file:
+        file.write(graph_html)
         
     if session.get('logged_in'):
-        return redirect(url_for('logged_in', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
-                    transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_filename=graph_filename, totals_by_date_filename=totals_by_date_filename, recent_transaction_filename=recent_transaction_filename))
-    # return render_template('userPage.html',first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
-    #              days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html = graph_html)
+        return redirect(url_for('logged_in', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance, 
+                    days_left=days_left, daily_budget=daily_budget, funds_added=funds_added, recent_transaction_filename=recent_transaction_filename,
+                    totals_by_date_filename=totals_by_date_filename, graph_filename=graph_filename,))
     ############################################################################
 
+###############################################################################
 @app.route('/logged_in')
-def logged_in():
-    
+def logged_in():   
     first_name = request.args.get('first_name', None)
     mealplan_name = request.args.get('mealplan_name', None)
     mealplan_balance = request.args.get('mealplan_balance', None)
-    transactions = request.args.get('transactions')
     days_left = request.args.get('days_left', None)
     daily_budget = request.args.get('daily_budget', None)
     funds_added = request.args.get('funds_added', None)
-
-    # transaction_dict = request.args.get('transaction_dict')
-
-    graph_filename = request.args.get('graph_filename')
-    with open(graph_filename, 'r') as file:
-        graph_html = file.read()
+    
+    recent_transaction_filename = request.args.get('recent_transaction_filename')
+    with open(recent_transaction_filename, 'r') as file:
+        transactions = json.load(file)
 
     totals_by_date_filename = request.args.get('totals_by_date_filename')
     with open(totals_by_date_filename, 'r') as file:
         totals_by_date = json.load(file)
 
-    recent_transaction_filename = request.args.get('recent_transaction_filename')
-    with open(recent_transaction_filename, 'r') as file:
-        transaction_dict = json.load(file)
+    graph_filename = request.args.get('graph_filename')
+    with open(graph_filename, 'r', encoding='utf-8') as file:
+        graph_html = file.read()
 
     return render_template('userPage.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
-                    transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html=graph_html,totals_by_date=totals_by_date, transaction_dict=transaction_dict)
+                    days_left=days_left, daily_budget=daily_budget, funds_added=funds_added, transactions=transactions,
+                    totals_by_date=totals_by_date, graph_html=graph_html)
+###############################################################################
 
 @app.route('/logout')
 def logout():
@@ -230,15 +242,6 @@ def scrape_mealplan_transactions(transactions_href, browser):
         soup = BeautifulSoup(browser.page_source, "html.parser")
 
     return transactions
-
-def transaction_test(transactions):
-
-    transaction_dict = {}
-    for transaction in transactions:
-        transaction_dict[transaction.date + ":" + transaction.location] = transaction.price
-
-    return transaction_dict
-    #########################################################################
 
 ######################################################################################################
 # This function scrapes the Binghamton University academic calander for the end and start dates 

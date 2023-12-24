@@ -37,14 +37,20 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tbody>
-									{% for date, value in transaction_dict.items() %}
+								{% if transactions %}
+									{# The 'transactions' list is not empty #}
+									{% for transaction in transactions %}
 										<tr>
-											<td>{{date}}</td>
-											<td>${{value}}</td>
-
+											<td>{{ transaction.date }}: {{ transaction.location }}</td>
+											<td>${{ transaction.price }}</td>
 										</tr>
 									{% endfor %}
+								{% else %}
+									{# The 'dates' list is empty #}
+									<tr>
+										<td colspan="2">No recent transactions</td>
+									</tr>
+								{% endif %}
 							</tbody>
 						</table>	
 					</div>
