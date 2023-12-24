@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, session, flash, send_from_directory
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -9,6 +9,9 @@ from bs4 import BeautifulSoup
 import plotly.graph_objects as go
 import pandas as pd
 import requests
+from flask_compress import Compress
+import json
+
 
 #Libraries Used: Flask, Selenium, BeautifulSoup, Pandas
 
@@ -26,60 +29,111 @@ import requests
 #Pandas:        Used to create a DataFrame of prices and dates. Uses the
 #               DataFrame to calculate the total spent per date
 
-#Plotly:        Used to create an interactive graph of the users spending over time
-
 class Transaction:
     def __init__(self, date, location, price):
         self.date = date
         self.location = location
         self.price = float(price)
+##############################################################
 
 app = Flask(__name__, template_folder='templates')
+app.config['SECRET_KEY'] = 'binghamtonMealPlanApp'
 
 @app.route('/')
 @app.route('/home')
-def login():
+def home():
     return render_template('index.html')
 
-@app.route('/error')
-def error():
-    message = "Incorrect username or password"
-    return render_template('index.html', message=message)
-
-@app.route('/logged_in', methods=['POST', 'GET', 'PUT'])
-
-#################################################################################
-# Takes username and password from login page and stores in username and 
-# password variables using Flask POST method
-# Launches Selenium browser using launch_selenium_browser, with the url of the
-# Binghamton mealplan site. If the user was logged in succesfully, 
-# borwser.find element will return true, and the rest of the program will run.
-# If login failed, the user is prompted to login again. We use BeautifulSoup 
-# to get HTML code of Binghamton mealplan site. From this, we scrape the name of
-# the user, mealplan type, mealplan balance, and the link for the transactions page
-# with scrape_mealplan_data. Then we scrape all recent transaction prices and 
-# dates with scrape_recent_transactions. Then we calculate the daily budget based on 
-# balance using calculate_daily_spending, and also calculate the total spending
-# for each day using calculate_total_spent_daily. Finally, we launch the HTML 
-# landing page and pass values through using Flask render_template.  
-def logged_in():
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    #############################################################################
+    #Takes username and password from login page and stores in username and 
+    #password variables using Flask POST method
     if request.method == 'POST': 
-        username = request.form.get('username')
-        password = request.form.get('password')
-
+        username = request.form['username']
+        password = request.form['password']
+    ##############################################################################
+    
+    ##############################################################################
+    #Launches Selenium browser using launch_selenium_browser, with the url of the
+    #Binghamton mealplan site. If the user was logged in succesfully, 
+    #borwser.find element will return true, and the rest of the program will run.
+    #If login failed, the user is prompted to login again. We use BeautifulSoup 
+    #to get HTML code of Binghamton mealplan site. From this, we scrape the name of
+    #the user, mealplan type, mealplan balance, and the link for the transactions page
+    #with scrape_mealplan_data. Then we scrape all recent transaction prices and 
+    #dates with scrape_recent_transactions. Then we calculate the daily budget based on 
+    #balance using calculate_daily_spending, and also calculate the total spending
+    #for each day using calculate_total_spent_daily. Finally, we launch the HTML 
+    #landing page and pass values through using Flask render_template.    
     browser = launch_selenium_browser(username, password)
     try:
         browser.find_element(By.ID, 'welcome')
+        session['logged_in'] = True
     except NoSuchElementException:
-        return redirect(url_for('error'))
+        flash('Login failed. Check username or password', 'danger')
+        return redirect(url_for('home'))
     first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
     transactions = scrape_mealplan_transactions(transactions_href, browser)
     fall_end_day, spring_end_day, fall_start_day, spring_start_day = scrape_academic_calander()
     days_left, daily_budget = calculate_daily_spending(mealplan_balance, fall_end_day, spring_end_day, fall_start_day, spring_start_day)
     totals_by_date, funds_added = calculate_total_spent_daily(transactions)
     graph_html = create_spending_graph(totals_by_date, fall_end_day, spring_end_day, fall_start_day, spring_start_day)
+
+    transaction_dict = transaction_test(transactions)
+    
+    graph_filename = 'graph_file.html'
+    with open(graph_filename, 'w') as file:
+        file.write(graph_html)
+    
+    totals_by_date_filename = 'totals_by_date_filename.json'
+    with open(totals_by_date_filename,  'w') as file:
+        json.dump(totals_by_date, file)
+
+    recent_transaction_filename = 'recent_transaction_filename.json'
+    with open(recent_transaction_filename, 'w') as file:
+        json.dump(transaction_dict, file)
+        
+    if session.get('logged_in'):
+        return redirect(url_for('logged_in', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
+                    transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_filename=graph_filename, totals_by_date_filename=totals_by_date_filename, recent_transaction_filename=recent_transaction_filename))
+    # return render_template('userPage.html',first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
+    #              days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html = graph_html)
+    ############################################################################
+
+@app.route('/logged_in')
+def logged_in():
+    
+    first_name = request.args.get('first_name', None)
+    mealplan_name = request.args.get('mealplan_name', None)
+    mealplan_balance = request.args.get('mealplan_balance', None)
+    transactions = request.args.get('transactions')
+    days_left = request.args.get('days_left', None)
+    daily_budget = request.args.get('daily_budget', None)
+    funds_added = request.args.get('funds_added', None)
+
+    # transaction_dict = request.args.get('transaction_dict')
+
+    graph_filename = request.args.get('graph_filename')
+    with open(graph_filename, 'r') as file:
+        graph_html = file.read()
+
+    totals_by_date_filename = request.args.get('totals_by_date_filename')
+    with open(totals_by_date_filename, 'r') as file:
+        totals_by_date = json.load(file)
+
+    recent_transaction_filename = request.args.get('recent_transaction_filename')
+    with open(recent_transaction_filename, 'r') as file:
+        transaction_dict = json.load(file)
+
     return render_template('userPage.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
-                transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html = graph_html, totals_by_date=totals_by_date)
+                    transactions=transactions, days_left=days_left, daily_budget=daily_budget, funds_added = funds_added, graph_html=graph_html,totals_by_date=totals_by_date, transaction_dict=transaction_dict)
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    flash('You have been logged out', 'success')
+    return redirect(url_for('home'))
 ###############################################################################
 
 ###############################################################################
@@ -174,7 +228,16 @@ def scrape_mealplan_transactions(transactions_href, browser):
         cur_page += 1
         browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={cur_page}")
         soup = BeautifulSoup(browser.page_source, "html.parser")
+
     return transactions
+
+def transaction_test(transactions):
+
+    transaction_dict = {}
+    for transaction in transactions:
+        transaction_dict[transaction.date + ":" + transaction.location] = transaction.price
+
+    return transaction_dict
     #########################################################################
 
 ######################################################################################################
@@ -360,3 +423,4 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+    
