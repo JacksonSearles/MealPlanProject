@@ -12,7 +12,6 @@ import requests
 from flask_compress import Compress
 import json
 
-
 #Libraries Used: Flask, Selenium, BeautifulSoup, Pandas
 
 #Selenium:      Opens private incognito browser used for scraping data from
@@ -60,28 +59,25 @@ app.config['SECRET_KEY'] = 'binghamtonMealPlanApp'
 def home():
     return render_template('index.html')
 
+##############################################################################
+#Takes username and password from login page and stores in username and 
+#password variables using Flask POST method.
+# Launches Selenium browser using launch_selenium_browser, with the url of the
+# Binghamton mealplan site. If the user was logged in succesfully, 
+# borwser.find element will return true, and the rest of the program will run.
+# If login failed, the user is prompted to login again. We use BeautifulSoup 
+# to get HTML code of Binghamton mealplan site. From this, we scrape the name of
+# the user, mealplan type, mealplan balance, and the link for the transactions page
+# with scrape_mealplan_data. Then we scrape all recent transaction prices and 
+# dates with scrape_recent_transactions. Then we calculate the daily budget based on 
+# balance using calculate_daily_spending, and also calculate the total spending
+# for each day using calculate_total_spent_daily. Finally, we launch the HTML 
+# landing page and pass values through using Flask render_template.
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    #############################################################################
-    #Takes username and password from login page and stores in username and 
-    #password variables using Flask POST method
     if request.method == 'POST': 
         username = request.form['username']
-        password = request.form['password']
-    ##############################################################################
-    
-    ##############################################################################
-    #Launches Selenium browser using launch_selenium_browser, with the url of the
-    #Binghamton mealplan site. If the user was logged in succesfully, 
-    #borwser.find element will return true, and the rest of the program will run.
-    #If login failed, the user is prompted to login again. We use BeautifulSoup 
-    #to get HTML code of Binghamton mealplan site. From this, we scrape the name of
-    #the user, mealplan type, mealplan balance, and the link for the transactions page
-    #with scrape_mealplan_data. Then we scrape all recent transaction prices and 
-    #dates with scrape_recent_transactions. Then we calculate the daily budget based on 
-    #balance using calculate_daily_spending, and also calculate the total spending
-    #for each day using calculate_total_spent_daily. Finally, we launch the HTML 
-    #landing page and pass values through using Flask render_template.    
+        password = request.form['password']   
     browser = launch_selenium_browser(username, password)
     try:
         browser.find_element(By.ID, 'welcome')
@@ -91,10 +87,10 @@ def login():
         return redirect(url_for('home'))
     first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
     transactions = scrape_mealplan_transactions(transactions_href, browser)
-    fall_end_day, spring_end_day, fall_start_day, spring_start_day = scrape_academic_calander()
-    days_left, daily_budget = calculate_daily_spending(mealplan_balance, fall_end_day, spring_end_day, fall_start_day, spring_start_day)
+    fall_start_day, fall_end_day, spring_start_day, spring_end_day = scrape_academic_calander()
+    days_left, daily_budget = calculate_daily_spending(mealplan_balance, fall_start_day, fall_end_day, spring_start_day, spring_end_day)
     totals_by_date, funds_added = calculate_total_spent_daily(transactions)
-    graph_html = create_spending_graph(totals_by_date, fall_end_day, spring_end_day, fall_start_day, spring_start_day)
+    graph_html = create_spending_graph(totals_by_date, fall_start_day, fall_end_day, spring_start_day, spring_end_day)
 
     recent_transaction_filename = 'recent_transaction_filename.json'
     with open(recent_transaction_filename, 'w') as file:
@@ -112,7 +108,7 @@ def login():
         return redirect(url_for('logged_in', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance, 
                     days_left=days_left, daily_budget=daily_budget, funds_added=funds_added, recent_transaction_filename=recent_transaction_filename,
                     totals_by_date_filename=totals_by_date_filename, graph_filename=graph_filename,))
-    ############################################################################
+##############################################################################
 
 ###############################################################################
 @app.route('/logged_in')
@@ -200,26 +196,20 @@ def scrape_mealplan_data(browser):
     return first_name, mealplan_name, mealplan_balance, transactions_href
 #############################################################################
 
+######################################################################################################
+# Updates the Selenium browser to open transactions page. Since all transactions are split between 
+# multiple pages, the current page and total page amounts are scraped and stored in page numbers[] 
+# array. This is so we can loop through all pages to scrape every transactions. Then loops through every 
+# page of transactions using curr_page and total_page which were scraped earlier. Scrapes transactions 
+# page using BeautifulSoup, creates a Transaction object and adds the date, location, and price to the
+# Transaction object, and adds that object to transactions[] array. Then, iterate to next page by updating 
+# Selenium browser with href for next page and repeat.
 def scrape_mealplan_transactions(transactions_href, browser):
-    #########################################################################
-    # Updates the Selenium browser to open transactions page. Since all 
-    # transactions are split between multiple pages, the current page and 
-    # total page amounts are scraped and stored in page numbers[] array. 
-    # This is so we can loop through all pages to scrape every transactions
     browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}")
     soup = BeautifulSoup(browser.page_source, "html.parser")
     page_numbers = soup.find('td', align='center', colspan='7').get_text(strip=True).replace(">>>", '').split(' ')[1].split('/')
     cur_page = int(page_numbers[0])
     total_page = int(page_numbers[1])  
-    #########################################################################
-    
-    #########################################################################
-    # Loops through every page of transactions using curr_page and total_page 
-    # which were scraped earlier. Scrapes transactions page using BeautifulSoup, 
-    # creates a Transaction object and adds the date, location, and price to the
-    # Transaction object, and adds that object to transactions[] array, Then, 
-    # iterate to next page by updating Selenium browser with href for next page 
-    # and repeat.
     transactions = []
     while cur_page <= total_page:      
         entry_rows = soup.find_all('tr', {'id': 'EntryRow'})
@@ -227,7 +217,6 @@ def scrape_mealplan_transactions(transactions_href, browser):
             date = entry_row.contents[3].text.strip()
             location = entry_row.contents[7].text.strip().replace('Dining', '')
             price = entry_row.contents[9].div.text.strip().replace('(', '').replace(')', '')
-            
             #When funds are added to account, there is no location
             if len(location) == 0:
                 #True when current transaction is funds being added to account
@@ -240,35 +229,24 @@ def scrape_mealplan_transactions(transactions_href, browser):
         cur_page += 1
         browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={cur_page}")
         soup = BeautifulSoup(browser.page_source, "html.parser")
-
     return transactions
 
 ######################################################################################################
 # This function scrapes the Binghamton University academic calander for the end and start dates 
 # of both the fall and spring semesters. It looks for the specific text provided and searches for the 
 # date corelated with in in the previous tables box. It then splits the text, only getting the day and 
-# returns it as an int
+# returns it as an int. If all dates were found when scraping, return exact dates found. If all dates 
+# werent found, we can return a rough estimate of opening and closing days worst case scenario. This is 
+# to prevent the website from failing to run alltogether if all dates werent found. Right now we are just 
+# using the explicit dates listed on academic calendar for Fall 2023 - Spring 2024.
 def scrape_academic_calander():
     url = 'https://www.binghamton.edu/academics/academic-calendar.html'
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
-
     dorms_open_fall = soup.find_all('td', text='New Student Move-in and Welcome Program')
-    dorm_open_spring = soup.find_all('td', text='Resident Halls Open for Returning Students at 9am')
     dorms_closed_fall = soup.find_all('td', text='Residence halls close at 10 a.m.')
+    dorm_open_spring = soup.find_all('td', text='Resident Halls Open for Returning Students at 9am')
     dorms_closed_spring = soup.find_all('td', text='Residence halls close for non-seniors at 10 a.m.')
-
-    if len(dorms_closed_fall) >= 1:
-        end_of_fall_semester = dorms_closed_fall[1]
-        fall_date = end_of_fall_semester.find_previous_sibling('td')
-        full_date_fall = fall_date.text.split()
-        fall_end_day = full_date_fall[-1]
-
-    if len(dorms_closed_spring) >= 1:
-        end_of_spring_semester = dorms_closed_spring[0]
-        spring_date = end_of_spring_semester.find_previous_sibling('td')
-        full_date_spring = spring_date.text.split()
-        spring_end_day = full_date_spring[-1]
 
     if len(dorms_open_fall) >= 1:
         start_of_fall_semester = dorms_open_fall[0]
@@ -276,13 +254,28 @@ def scrape_academic_calander():
         full_date_fall_open = dorm_open_date_fall.text.split()
         fall_start_day = full_date_fall_open[-1]
 
+    if len(dorms_closed_fall) >= 1:
+        end_of_fall_semester = dorms_closed_fall[1]
+        fall_date = end_of_fall_semester.find_previous_sibling('td')
+        full_date_fall = fall_date.text.split()
+        fall_end_day = full_date_fall[-1]
+
     if len(dorm_open_spring) >= 1:
         start_of_spring_semester = dorm_open_spring[0]
         dorm_open_date_spring = start_of_spring_semester.find_previous_sibling('td')
         full_date_spring_open = dorm_open_date_spring.text.split()
         spring_start_day = full_date_spring_open[-1]
 
-    return int(fall_end_day), int(spring_end_day), int(fall_start_day), int(spring_start_day)
+    if len(dorms_closed_spring) >= 1:
+        end_of_spring_semester = dorms_closed_spring[0]
+        spring_date = end_of_spring_semester.find_previous_sibling('td')
+        full_date_spring = spring_date.text.split()
+        spring_end_day = full_date_spring[-1]
+    
+    if fall_start_day.isdigit() and fall_end_day.isdigit() and spring_start_day.isdigit() and spring_end_day.isdigit():
+        return int(fall_start_day), int(fall_end_day), int(spring_start_day), int(spring_end_day)
+    else:
+        return 19, 16, 14, 10
 ######################################################################################################
 
 ######################################################################################################
