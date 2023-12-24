@@ -83,7 +83,7 @@ def login():
         browser.find_element(By.ID, 'welcome')
         session['logged_in'] = True
     except NoSuchElementException:
-        flash('Login failed. Check username or password', 'danger')
+        flash('Incorrect username or password', 'danger')
         return redirect(url_for('home'))
     first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
     transactions = scrape_mealplan_transactions(transactions_href, browser)
