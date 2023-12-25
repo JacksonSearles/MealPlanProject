@@ -10,7 +10,8 @@
 <body class="has-text-centered">
 	<div class="columns is-mobile is-centered" >
 		<div class="box is-one-third is-mobile m-6">
-			<h2 class="title is-3 m-1 is-dark is-mobile">Binghamton Meal Plan Tracker</h2>
+			<h2 class="title is-3 m-2 is-dark is-mobile">Binghamton Meal Plan Tracker</h2>
+			<p class="">Created by ACM Projects Division Group</p>
 			<img src="https://static.wixstatic.com/media/7383ad_635e426608944acd83c1538cca35af9c~mv2_d_1500_1500_s_2.png/v1/fill/w_1500,h_1500,al_c/Binghamton.png" alt="broke" class="image center">
 			<form method="post" action="{{url_for('login')}}" class="">
 				<input class="input" type="text" placeholder="BUDS Username" id="username" name="username">
@@ -28,8 +29,8 @@
 				</div>
 				<div class="loader" id="welcomeDiv"  style="display:none;"></div>
 				<input class="button is-success m-2"  type="submit" value="Login" onclick="showDiv()">
-				<p class="m-2" id="create_account">Don't have a BUDS Account? Click <a href="https://bing.campuscardcenter.com/ch/register/register_Id.html" target="_blank">Here</a></p>
 				<p class="account-note"><strong style="color: #f14668!important;">NOTE:</strong> BUDS Account is seperate from BU Account</p>
+				<p class="m-2" id="create_account">Don't have a BUDS Account? Click <a href="https://bing.campuscardcenter.com/ch/register/register_Id.html" target="_blank">Here</a></p>
 				<p class="m-2" class="version">Version 1.0</p>
 			</form>	
 		</div>

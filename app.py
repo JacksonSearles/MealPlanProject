@@ -72,8 +72,8 @@ def home():
 # BeautifulSoup to get HTML code of Binghamton mealplan site. From this, we scrape the name of the user, 
 # mealplan type, mealplan balance, and the link for the transactions page with scrape_mealplan_data. 
 # Then we scrape all recent transaction prices and dates with scrape_recent_transactions. Then we 
-# calculate the daily budget based on balance using calculate_daily_spending, and also calculate the total 
-# spending for each day using calculate_total_spent_daily. Finally, we launch the HTML landing page and 
+# calculate the daily budget based on balance using calculate_daily_budget, and also calculate the total 
+# spending for each day using calculate_daily_spending. Finally, we launch the HTML landing page and 
 # pass values through using Flask render_template.
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -151,8 +151,9 @@ def logout():
 ######################################################################################################
 
 ######################################################################################################
-# Selenium opens headless incognito browser withe the url of mealplan site, Takes username and password 
-# gathered from Flask POST method, and sends keys to actual mealplan Binghamton site to login user.
+# This function uses Selenium to open a headless incognito browser with the url of actual Binghamton
+# mealplan site. Then Takes username and password gathered from Flask POST method, and sends them to 
+# actual Binghamton meaplan site using .seny_keys, which will attempt to login user.
 def launch_selenium_browser(username, password):
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
@@ -169,22 +170,21 @@ def launch_selenium_browser(username, password):
 ######################################################################################################
 
 ######################################################################################################
-# Scrapes the first name of the user. Then finds the table element that holds all mealplan 
-# accounts(mealplan_accounts_table). Then finds all the tr elements in the table, where each tr element 
-# is a mealplan account row, and store this in mealplan_accounts. Then we loop through each account in 
-# mealplan_accounts, and search to see if this mealplan account is one of the mealplans listed in 
-# mealplans[] array. If it isnt, we continue to the next account. If it is, we store the name of the meal 
-# plan account found in mealplan_name, then scrape the href that holds the link to the full transactions 
-# page and store in transactions_href, and scrape the balance of the account found and store in 
-# mealplan_balance.
+# This function scrapes important data about to the users mealplan. First we scrapes the first name of 
+# the user, and store in first_name. Then finds the table element that holds all mealplan accounts, and 
+# finds all the tr elements in the table, where each tr element is a mealplan account row. This is stored 
+# in mealplan_accounts. Then we loop through each account in mealplan_accounts, and search to see if 
+# this mealplan account is one of the mealplans defined in mealplans[] array. If it isnt, we continue to 
+# the next account. If it is, we store the name of the meal plan account in mealplan_name, the balance of 
+# the account in mealplan_balance, and scrape the href that holds the link to the full transactions page 
+# and store in transactions_href.
 def scrape_mealplan_data(browser):
     soup = BeautifulSoup(browser.page_source, "html.parser")
     first_name = soup.label.text.split()[2]
     transactions_href = None
     mealplan_name = None
     mealplan_balance = None
-    mealplan_accounts_table = soup.find('table', {'width': '500', 'border': '0'})
-    mealplan_accounts = mealplan_accounts_table.find_all('tr')
+    mealplan_accounts = soup.find('table', {'width': '500', 'border': '0'}).find_all('tr')
     mealplans = ['Meal Plan A', 'Meal Plan B', 'Meal Plan C', 'Meal Plan D', 'Meal Plan E', 'Meal Plan F',
                 'The 25.00 Plan', 'Commuter Semester', 'Commuter Annual', 'Off Campus Holding - Carryover']
     for account in mealplan_accounts:
@@ -202,11 +202,11 @@ def scrape_mealplan_data(browser):
 ######################################################################################################
 # Updates the Selenium browser to open transactions page. Since all transactions are split between 
 # multiple pages, we loop through all pages to scrape every transaction. Initially sets the curr_page
-# as 1. Then we scrape he total number of transaction pages and stores in total_pages. Then loops through 
-# every page of transactions using curr_page and total_pages which were scraped earlier. Scrapes transactions 
-# page using BeautifulSoup, creates a Transaction object and adds the date, location, and price to the
-# Transaction object, and adds that object to transactions[] array. Do this for all transactions on the
-# current page. Then, iterate to next page by updating Selenium browser with href for next page and repeat.
+# as 1. Then we scrape the total number of transaction pages and store in total_pages. Then, loop through 
+# every page of transactions and scrape every transaction on the page using BeautifulSoup. For each
+# transaction, we create a Transaction object and add the date, location, and price to the Transaction 
+# object, and add that object to transactions[] array. This is done for all transactions on the current 
+# page. Then, iterate to next page by updating Selenium browser with href for next page and repeat.
 def scrape_mealplan_transactions(transactions_href, browser):
     browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}")
     soup = BeautifulSoup(browser.page_source, "html.parser")
