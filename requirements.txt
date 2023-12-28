@@ -5,6 +5,4 @@ bs4==0.0.1
 gunicorn==21.2.0
 pandas==1.3.5
 datetime==3.11
-plotly==5.18.0
-pandas==2.1.4
- 
+plotly==5.18.0 
