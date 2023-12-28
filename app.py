@@ -9,7 +9,6 @@ from bs4 import BeautifulSoup
 import plotly.graph_objects as go
 import pandas as pd
 import requests
-from flask_compress import Compress
 import json
 
 #Libraries Used: Flask, Selenium, BeautifulSoup, Pandas
