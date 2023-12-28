@@ -115,29 +115,34 @@ def login():
 
 ######################################################################################################
 @app.route('/logged_in')
-def logged_in():   
-    first_name = request.args.get('first_name', None)
-    mealplan_name = request.args.get('mealplan_name', None)
-    mealplan_balance = request.args.get('mealplan_balance', None)
-    days_left = request.args.get('days_left', None)
-    daily_budget = request.args.get('daily_budget', None)
-    funds_added = request.args.get('funds_added', None)
-    
-    recent_transaction_filename = request.args.get('recent_transaction_filename')
-    with open(recent_transaction_filename, 'r') as file:
-        transactions = json.load(file)
+def logged_in(): 
 
-    totals_by_date_filename = request.args.get('totals_by_date_filename')
-    with open(totals_by_date_filename, 'r') as file:
-        totals_by_date = json.load(file)
+    if session.get('logged_in'):
+        first_name = request.args.get('first_name', None)
+        mealplan_name = request.args.get('mealplan_name', None)
+        mealplan_balance = request.args.get('mealplan_balance', None)
+        days_left = request.args.get('days_left', None)
+        daily_budget = request.args.get('daily_budget', None)
+        funds_added = request.args.get('funds_added', None)
+        
+        recent_transaction_filename = request.args.get('recent_transaction_filename')
+        with open(recent_transaction_filename, 'r') as file:
+            transactions = json.load(file)
 
-    graph_filename = request.args.get('graph_filename')
-    with open(graph_filename, 'r', encoding='utf-8') as file:
-        graph_html = file.read()
+        totals_by_date_filename = request.args.get('totals_by_date_filename')
+        with open(totals_by_date_filename, 'r') as file:
+            totals_by_date = json.load(file)
 
-    return render_template('loggedIn.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
-                    days_left=days_left, daily_budget=daily_budget, funds_added=funds_added, transactions=transactions,
-                    totals_by_date=totals_by_date, graph_html=graph_html)
+        graph_filename = request.args.get('graph_filename')
+        with open(graph_filename, 'r', encoding='utf-8') as file:
+            graph_html = file.read()
+
+        return render_template('loggedIn.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
+                        days_left=days_left, daily_budget=daily_budget, funds_added=funds_added, transactions=transactions,
+                        totals_by_date=totals_by_date, graph_html=graph_html)
+    else:
+        flash('You are not logged in. Please login to continue.', 'error')
+        return redirect(url_for('home'))
 ######################################################################################################
 
 ######################################################################################################
