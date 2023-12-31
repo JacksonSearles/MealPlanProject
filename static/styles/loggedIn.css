@@ -1,22 +1,11 @@
+/*Start of section for general styling of Mealplan Tracker page*/
 html {
-    font-family: 'Arial', sans-serif; 
-    
+    font-family: 'Arial', sans-serif;   
     background-image: url('https://www.usatoday.com/gcdn/-mm-/50cf5bbf732a4dc596a6cd2b25c2d55faffc0cbe/c=0-198-3888-2395/local/-/media/2015/10/07/CNYGroup/Binghamton/635798431224650549-BGMBrd-04-28-2015-Daily-1-A003--2015-04-27-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-L602622216-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-1-.jpg?width=3200&height=1809&fit=crop&format=pjpg&auto=webp');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
 }
-
-img{
-  width:300px;
-  height:auto;
-  display: block;
-  margin: 0 auto;
-}
-
-/* .binghamton-green { 
-    background-color: #006747; 
-} */
 
 .hero-body{
   padding: 1rem 0.5rem;
@@ -61,9 +50,9 @@ img{
     border-bottom: 1px solid #ccc;
     padding-bottom: 15px;
 }
+/*End of section for general styling of Mealplan Tracker page*/
 
-
-/*Start of stlying for displaying transactions in table---*/
+/*Start of stlying for "Recent Transactions" box*/
 .transactions-table {
     display: block;
     overflow-y: auto; 
@@ -91,8 +80,9 @@ img{
     width: 50%;
     white-space: nowrap;
 }
-/*End of stlying for displaying transactions in table---*/
+/*End of stlying for "Recent Transactions" box*/
 
+/*Start of stlying for the "Daily Spending" box*/
 .graph-container{
   display: flex;
   flex-direction: column; 
@@ -111,11 +101,12 @@ img{
 } 
 
 .button.is-danger { 
-    margin-top: 10px;
-    background-color: #006747; border-color: #006747;
+  padding: 0px 15px;
+  font-size: 20px;
+  margin-left: 10px;
+  background-color: #006747; border-color: #006747;
 }
 
-/* All CSS code below is to create the switch for switching between graph and table */
 .switch {
   position: relative;
   display: inline-block;
@@ -171,13 +162,14 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
-
+/*End of stlying for the "Daily Spending" box*/
 
 @media only screen and (max-width: 600px) {
   .recent-transactions{
     font-size: 87%;
   }
 }
+
 
 
 

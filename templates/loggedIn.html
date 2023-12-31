@@ -4,127 +4,52 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+	<link rel="stylesheet" href="/static/styles/navbar.css">
 	<link rel="stylesheet" href="/static/styles/loggedIn.css">
+	<script src="https://kit.fontawesome.com/d27b7bf830.js" crossorigin="anonymous"></script>
+	<script src="/static/js/scripts.js"></script>
 	<title>{{message}} Home</title>
 </head>
+<header class="navbar" id="navbar">
+	<div class="logo">
+		<img src="{{ url_for('static', filename='BU_Logo.png') }}" alt="Binghamton University Logo">
+		<a href="">Mealplan Tracker</a>
+	</div>
+	<ul class="links" id="links">
+		<li><a href="#" onclick="mealplanView()">Mealplan</a></li>
+    <li><a href="#" onclick="foodView()">Food</a></li>
+		<form action="/logout">
+			<input class="button is-danger button is-centered" type="submit" value="Logout">
+		</form>
+		<i class="fas fa-times" onclick="closemenu()"></i>
+	</ul>
+	<i class="fas fa-bars" onclick="openmenu()"></i>
+</header>
 <body class="binghamton-green">
 	<section class="hero is-fullheight">
-		<div class="hero-body container">
-			<img src="{{ url_for('static', filename='BU_Logo.png') }}" alt="Binghamton University Logo">
-			<h1 class="binghamton-white">Welcome, {{first_name}}</h1>
-			<div class="columns is-multiline" style="max-width: 980px;">
-				<!-- Overview Column -->
-				<div class="column is-6-desktop">
-					<div class="box">
-							<h2 class="binghamton-black">Your Meal Plan Overview</h2>
-							<p class="has-text-centered">Meal Plan Name: <strong>{{ mealplan_name }}</strong> </p>
-							<p class="has-text-centered">Meal Plan Balance: <strong>${{ mealplan_balance }}</strong> </p>
-							<p class="has-text-centered">Days Left in Semester: <strong>{{ days_left }}</strong> </p>
-							<p class="has-text-centered">Daily Budget: <strong>${{ daily_budget }}</strong> </p>
-							<p class="has-text-centered">Total Funds Added: <strong>${{ funds_added }}</strong> </p>
-							<p class="has-text-centered add-funds">Running Low? <strong>Click <a href="https://bing.campuscardcenter.com/ch/add_value.html" target="_blank">Here</a> to Add Funds</strong></p>
-					</div>
-				</div>
-				<!-- Transactions Column -->
-				<div class="column is-6-desktop recent-transactions">
-					<div class="box">
-						<h2 class="binghamton-black">Recent Transactions</h2>
-						<table class="transactions-table">
-							<thead>
-								<tr>
-									<th>Date</th>
-									<th>Amount</th>
-								</tr>
-							</thead>
-							<tbody>
-								{% if transactions %}
-									{# The 'transactions' list is not empty #}
-									{% for transaction in transactions %}
-										<tr>
-											<td>{{ transaction.date }}: {{ transaction.location }}</td>
-											<td>${{ transaction.price }}</td>
-										</tr>
-									{% endfor %}
-								{% else %}
-									{# The 'dates' list is empty #}
-									<tr>
-										<td colspan="2">No recent transactions</td>
-									</tr>
-								{% endif %}
-							</tbody>
-						</table>	
-					</div>
-				</div>
-				<!-- Graph Column -->
-				<div class="column is-12" id="graphColumn">
-					<div class="graph-container box">
-						<h2 class="binghamton-black">Daily Spending</h2>
-						<div class="switch-container">
-							<p>Graph</p>
-							<label class="switch">
-								<input type="checkbox" id="toggleSwitch">
-								<span class="slider round"></span>
-							</label>
-							<p>Table</p>
-						</div>
-						<div class="hideable-graph">
-							{{ graph_html|safe }}
-						</div>
-						<div class="hideable-table">
-							<table class="transactions-table">
-								<thead>
-									<tr>
-										<th>Date</th>
-										<th>Total Spent</th>
-									</tr>
-								</thead>
-								<tbody>
-									{% for date, total in totals_by_date.items() %}
-										<tr>
-											<td>{{date}}</td>
-											<td>${{total}}</td>
-										</tr>
-									{% endfor %}
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- Logout Button -->
-			<form action="/logout">
-				<input class="button is-danger button is-centered" type="submit" value="Logout">
-			</form>
+		<div class="hero-body container" id="content-container">
+			{% if view == 'mealplan' %}
+        {% include 'mealplan.html' %}
+    	{% elif view == 'food' %}
+        {% include 'food.html' %}
+    	{% endif %}
 		</div>
-  </section>
-
+	</section>
 	<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var toggleSwitch = document.getElementById('toggleSwitch');
-				var graphColumn = document.getElementById('graphColumn')
-        var hideableGraph = document.querySelector('.hideable-graph');
-        var hideableTable = document.querySelector('.hideable-table');
+		const links = document.getElementById("links");
+		const navbar = document.getElementById("navbar");
+		function openmenu() {
+			links.style.right = "0";
+		}
+		function closemenu() {
+			links.style.right = "-200px";
+		}
 
-        // Initial state
-        hideableGraph.style.display = toggleSwitch.checked ? 'none' : 'block';
-        hideableTable.style.display = toggleSwitch.checked ? 'block' : 'none';
-
-        // Toggle visibility on checkbox change
-        toggleSwitch.addEventListener('change', function () {
-					if (toggleSwitch.checked) {
-            hideableGraph.style.display = 'none';
-            hideableTable.style.display = 'flex';
-            hideableTable.style.justifyContent = 'center';
-						graphColumn.classList.add('is-flex-centered');
-        	} else {
-            hideableGraph.style.display = 'block';
-            hideableTable.style.display = 'none';
-						hideableTable.style.justifyContent = '';
-            graphColumn.classList.remove('is-flex-centered');
-        	}
-        });
-    });
-</script>
-
+		document.onclick = function (event) {
+			if (!navbar.contains(event.target)) {
+					closemenu();
+			}
+		}
+	</script>
 </body>
 </html>

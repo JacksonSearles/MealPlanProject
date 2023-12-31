@@ -1,0 +1,151 @@
+/*Start of section for styling the navbar, which is the menu
+located at the top of the screen used for navigating site*/
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: none;
+    padding: 10px 20px;
+    background-color: #006747;
+  }
+  
+  .navbar i{
+    color: white;
+  }
+  
+  .logo{
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo img{
+    margin-right: 10px;
+    width: 150px;
+  }
+  
+  .logo a{
+    text-decoration: none;
+    color: white;
+    font-size: 30px;
+    font-weight: 600;
+  }
+  
+  .links{
+    display: flex;
+    list-style: none;
+    align-items: center;
+  }
+  
+  .links i{
+    display: none;
+  }
+
+  .links li{
+    margin-left: 25px;
+  }
+  
+  .links li a{
+    text-decoration: none;
+    font-size: 20px;
+    color: white;
+    position: relative;
+  }
+  
+  .links li a::after{
+    content: '';
+    background-color: white;
+    width: 0;
+    height: 3px;
+    bottom: -6px;
+    left: 0;
+    position: absolute;
+    transition: width 0.5s;
+  }
+  
+  .links li a:hover::after{
+    width: 100%;
+  }
+  
+  .navbar .fas{
+    display: none;
+  }
+/*End of section for styling the navbar*/
+
+/*Start of section for styling the navbar when screen
+size is reduced*/
+@media only screen and (max-width: 800px){
+    .navbar{
+      background-color: transparent;     
+    }
+    
+    .links{
+        display: block;
+        background: #006747;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: -200px;
+        width: 150px;
+        padding-top: 70px;
+        z-index: 2;
+        transition: right .5s;
+    }
+
+    .links i{
+        margin-right: 10px;
+    }
+
+    .links .fas{
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        cursor: pointer;
+    }
+
+    .links li{
+        margin-left: 15px;
+        margin-right: 0;
+        margin-bottom: 30px;
+        display: block;
+        position: relative;
+    }
+
+    .links li::before{
+        content: '';
+        background-color: white;
+        width: 0;
+        height: 35px;
+        bottom: -5px;
+        left: -15px;
+        position: absolute;
+        transition: width 0.5s;
+    }
+
+    .links li:hover::before{
+        width: 150px;
+    }
+
+    .links li a{
+        transition: color 0.5s;
+    }
+
+    .links li:hover a{
+        color: #006747;
+    }
+
+    .links li a::after{
+        display: none;
+    }
+
+    .links li i{
+        display: inline-block;
+    }
+
+    .navbar .fas{
+        display: block;
+        font-size: 35px;
+        cursor: pointer;
+    }
+}
+/*End of section for styling the navbar when scren
+size is reduced*/
