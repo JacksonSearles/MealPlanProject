@@ -291,8 +291,8 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
         dropdown_options.extend([
             {'label': 'Current Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year, 12, fall_end_day)]}]},
             {'label': 'Previous Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
-            {'label': 'Current Month', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
-            {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year+1, 5, spring_end_day)]}]}
+            {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year+1, 5, spring_end_day)]}]},
+            {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]}
         ])
         default_range = [date(curr_year, 8, fall_start_day), date(curr_year, 12, fall_end_day)]
     # True when in spring semester
@@ -300,8 +300,8 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
         dropdown_options.extend([
             {'label': 'Current Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
             {'label': 'Previous Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year-1, 12, fall_end_day)]}]},
-            {'label': 'Current Month', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
-            {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year, 5, spring_end_day)]}]}
+            {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year, 5, spring_end_day)]}]},
+            {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
         ])
         default_range = [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]
     #True when in the summer, only show most recent semester and most recent school year

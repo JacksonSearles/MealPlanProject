@@ -14,9 +14,10 @@
 		<img src="{{ url_for('static', filename='BU_Logo.png') }}" alt="Binghamton University Logo">
 		<a href="">Mealplan Tracker</a>
 	</div>
+	<h1 class="welcome-msg binghamton-white">Welcome, {{first_name}}</h1>
 	<ul class="links" id="links">
-		<li><i class="fa-solid fa-calculator"></i><a href="#" onclick="mealplanView()">Mealplan</a></li>
-    <li><i class="fa-solid fa-utensils"></i><a href="#" onclick="foodView()">Food</a></li>
+		<li onclick="mealplanView()"><i class="fa-solid fa-calculator"></i><span>Mealplan</span></li>
+    <li onclick="foodView()"><i class="fa-solid fa-utensils"></i><span>Food</span></li>
 		<form action="/logout">
 			<input class="button is-danger button is-centered" type="submit" value="Logout">
 		</form>

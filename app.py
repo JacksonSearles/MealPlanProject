@@ -72,7 +72,10 @@ def mealplan():
 def food():
     if session.get('logged_in'):
         view = request.args.get('view', None)
-        return render_template('loggedin.html', view=view)
+        with open(f"{request.args.get('mealplan_data_filename', None)}", 'r') as file:
+            mealplan_data = json.load(file)
+        first_name = mealplan_data.get('first_name')
+        return render_template('loggedin.html', first_name=first_name, view=view)
     else:
         flash('You are not logged in. Please login to continue.', 'error')
         return redirect(url_for('home'))
