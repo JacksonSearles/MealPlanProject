@@ -1,0 +1,151 @@
+.box { 
+    border: 4px solid #006747; 
+    height: 100%;
+  }
+  
+  .is-flex-centered{
+    display: flex;
+    justify-content: center;
+  }
+  
+  .binghamton-white{
+      font-size: 2.5rem;
+      font-weight: bold;
+      text-align: center;
+      color: white;
+      margin-bottom: 5px;
+      max-width: 980px;
+  }
+  
+  .binghamton-black{
+      font-size: 2rem;
+      font-weight: bold;
+      text-align: center;
+      color: black;
+  }
+  
+  .add-funds{
+      margin-top: 10px;
+  }
+  
+  .mealplan-overview{
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 15px;
+  }
+  /*End of section for general styling of Mealplan Tracker page*/
+  
+  /*Start of stlying for "Recent Transactions" box*/
+  .transactions-table {
+      display: block;
+      overflow-y: auto; 
+      max-height: 200px;
+      padding-right: 10px;
+  }
+  
+  .transactions-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 2; 
+  }
+  
+  .transactions-table thead th:first-child, .transactions-table tbody td:first-child{
+    text-align: left;
+  }
+  
+  .transactions-table thead th:last-child, .transactions-table tbody td:last-child{
+    text-align: right;
+  }
+  
+  .transactions-table tbody td {
+      margin-bottom: 10px;
+      width: 50%;
+      white-space: nowrap;
+  }
+  /*End of stlying for "Recent Transactions" box*/
+  
+  /*Start of stlying for the "Daily Spending" box*/
+  .graph-container{
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+  }
+  
+  .switch-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .hideable-graph, .hideable-table{
+    width: 100%;
+  } 
+  
+  .hideable-table{
+    display: none;
+  }
+  
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin: 0px 10px;
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #006747; 
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #ccc; 
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(30px); 
+    -ms-transform: translateX(30px);
+    transform: translateX(30px);
+  }
+  
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+  /*End of stlying for the "Daily Spending" box*/
+  
+  @media only screen and (max-width: 600px) {
+    .recent-transactions{
+      font-size: 87%;
+    }
+  }

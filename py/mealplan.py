@@ -8,6 +8,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import requests
 import json
+import os
 
 ######################################################################################################
 # Definition for custom "Transaction" object, which stores a date, location, and price in each object. 
@@ -49,23 +50,42 @@ def return_mealplan_data(username, password):
     try:
         browser.find_element(By.ID, 'welcome')
     except NoSuchElementException:
-        return Exception
+        return Exception 
     first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
     transactions = scrape_mealplan_transactions(transactions_href, browser)
     fall_start_day, fall_end_day, spring_start_day, spring_end_day = scrape_academic_calander()
     days_left, daily_budget = calculate_daily_budget(mealplan_balance, fall_start_day, fall_end_day, spring_start_day, spring_end_day)
     totals_by_date, funds_added = calculate_daily_spending(transactions)
     graph_html = create_spending_graph(totals_by_date, fall_start_day, fall_end_day, spring_start_day, spring_end_day)
-    recent_transaction_filename = 'recent_transaction_filename.json'
-    with open(recent_transaction_filename, 'w') as file:
+
+    data_folder = 'data'
+    os.makedirs(data_folder, exist_ok=True)
+    transactions_filename = os.path.join(data_folder, 'transactions_filename.json')
+    totals_by_date_filename = os.path.join(data_folder, 'totals_by_date_filename.json')
+    graph_filename = os.path.join(data_folder, 'graph_file.html')
+    mealplan_data_filename = os.path.join(data_folder, 'mealplan_data.json')
+    mealplan_data = {
+        'first_name': first_name,
+        'mealplan_name': mealplan_name,
+        'mealplan_balance': mealplan_balance,
+        'days_left': days_left,
+        'daily_budget': daily_budget,
+        'funds_added': funds_added,
+        'transactions_filename': transactions_filename,
+        'totals_by_date_filename': totals_by_date_filename,
+        'graph_filename': graph_filename,
+    }
+
+    with open(transactions_filename, 'w') as file:
         json.dump(transactions, file, cls=TransactionSerializer)
-    totals_by_date_filename = 'totals_by_date_filename.json'
     with open(totals_by_date_filename,  'w') as file:
         json.dump(totals_by_date, file)
-    graph_filename = 'graph_file.html'
     with open(graph_filename, 'w', encoding='utf-8') as file:
         file.write(graph_html)   
-    return first_name, mealplan_name, mealplan_balance, days_left, daily_budget, funds_added, recent_transaction_filename, totals_by_date_filename, graph_filename
+    with open(mealplan_data_filename, 'w', encoding='utf-8') as file:
+        json.dump(mealplan_data, file)
+
+    return mealplan_data_filename
 ######################################################################################################
 
 ######################################################################################################

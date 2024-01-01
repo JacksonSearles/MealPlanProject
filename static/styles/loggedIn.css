@@ -1,10 +1,10 @@
-/*Start of section for general styling of Mealplan Tracker page*/
+/*Start of section for general styling of loggedIn.html page*/
 html {
-    font-family: 'Arial', sans-serif;   
-    background-image: url('https://www.usatoday.com/gcdn/-mm-/50cf5bbf732a4dc596a6cd2b25c2d55faffc0cbe/c=0-198-3888-2395/local/-/media/2015/10/07/CNYGroup/Binghamton/635798431224650549-BGMBrd-04-28-2015-Daily-1-A003--2015-04-27-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-L602622216-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-1-.jpg?width=3200&height=1809&fit=crop&format=pjpg&auto=webp');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+  font-family: 'Arial', sans-serif;   
+  background-image: url('https://www.usatoday.com/gcdn/-mm-/50cf5bbf732a4dc596a6cd2b25c2d55faffc0cbe/c=0-198-3888-2395/local/-/media/2015/10/07/CNYGroup/Binghamton/635798431224650549-BGMBrd-04-28-2015-Daily-1-A003--2015-04-27-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-L602622216-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-1-.jpg?width=3200&height=1809&fit=crop&format=pjpg&auto=webp');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 .hero-body{
@@ -14,91 +14,80 @@ html {
 .container{
   flex-direction: column;
 }
+/*End of section for general styling of loggedIn.html page*/
 
-.box { 
-  border: 4px solid #006747; 
-  height: 100%;
-}
 
-.is-flex-centered{
+/*Start of section for styling the navbar, which is the menu
+located at the top of the screen used for navigating site*/
+.navbar{
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: none;
+  padding: 10px 20px;
+  background-color: #006747;
 }
 
-.binghamton-white{
-    font-size: 2.5rem;
-    font-weight: bold;
-    text-align: center;
-    color: white;
-    margin-bottom: 5px;
-    max-width: 980px;
+.navbar i{
+  color: white;
 }
 
-.binghamton-black{
-    font-size: 2rem;
-    font-weight: bold;
-    text-align: center;
-    color: black;
-}
-
-.add-funds{
-    margin-top: 10px;
-}
-
-.mealplan-overview{
-    margin-bottom: 20px;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 15px;
-}
-/*End of section for general styling of Mealplan Tracker page*/
-
-/*Start of stlying for "Recent Transactions" box*/
-.transactions-table {
-    display: block;
-    overflow-y: auto; 
-    max-height: 200px;
-    padding-right: 10px;
-}
-
-.transactions-table thead th {
-  position: sticky;
-  top: 0;
-  background-color: #fff;
-  z-index: 2; 
-}
-
-.transactions-table thead th:first-child, .transactions-table tbody td:first-child{
-  text-align: left;
-}
-
-.transactions-table thead th:last-child, .transactions-table tbody td:last-child{
-  text-align: right;
-}
-
-.transactions-table tbody td {
-    margin-bottom: 10px;
-    width: 50%;
-    white-space: nowrap;
-}
-/*End of stlying for "Recent Transactions" box*/
-
-/*Start of stlying for the "Daily Spending" box*/
-.graph-container{
+.logo{
   display: flex;
-  flex-direction: column; 
   align-items: center;
 }
 
-.switch-container{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 10px;
+.logo img{
+  margin-right: 10px;
+  width: 150px;
 }
 
-.hideable-graph, .hideable-table{
+.logo a{
+  text-decoration: none;
+  color: white;
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.links{
+  display: flex;
+  list-style: none;
+  align-items: center;
+}
+
+.links i{
+  display: none;
+}
+
+.links li{
+  margin-left: 25px;
+}
+
+.links li a{
+  text-decoration: none;
+  font-size: 20px;
+  color: white;
+  position: relative;
+}
+
+.links li a::after{
+  content: '';
+  background-color: white;
+  width: 0;
+  height: 3px;
+  bottom: -6px;
+  left: 0;
+  position: absolute;
+  transition: width 0.5s;
+}
+
+.links li a:hover::after{
   width: 100%;
-} 
+}
+
+.navbar .fas{
+  display: none;
+}
 
 .button.is-danger { 
   padding: 0px 15px;
@@ -106,69 +95,87 @@ html {
   margin-left: 10px;
   background-color: #006747; border-color: #006747;
 }
+/*End of section for styling the navbar*/
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-  margin: 0px 10px;
-}
+/*Start of section for styling the navbar when screen
+size is reduced*/
+@media only screen and (max-width: 800px){
+  .navbar{
+    background-color: transparent;     
+  }
+  
+  .links{
+      display: block;
+      background: #006747;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      right: -200px;
+      width: 150px;
+      padding-top: 70px;
+      z-index: 2;
+      transition: right .5s;
+  }
 
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+  .links i{
+      margin-right: 10px;
+  }
 
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #006747; 
-  -webkit-transition: .4s;
-  transition: .4s;
-}
+  .links .fas{
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      cursor: pointer;
+  }
 
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
+  .links li{
+      margin-left: 15px;
+      margin-right: 0;
+      margin-bottom: 30px;
+      display: block;
+      position: relative;
+  }
 
-input:checked + .slider {
-  background-color: #ccc; 
-}
+  .links li::before{
+      content: '';
+      background-color: white;
+      width: 0;
+      height: 35px;
+      bottom: -5px;
+      left: -15px;
+      position: absolute;
+      transition: width 0.5s;
+  }
 
-input:checked + .slider:before {
-  -webkit-transform: translateX(30px); 
-  -ms-transform: translateX(30px);
-  transform: translateX(30px);
-}
+  .links li:hover::before{
+      width: 150px;
+  }
 
-.slider.round {
-  border-radius: 34px;
-}
+  .links li a{
+      transition: color 0.5s;
+  }
 
-.slider.round:before {
-  border-radius: 50%;
-}
-/*End of stlying for the "Daily Spending" box*/
+  .links li:hover a{
+      color: #006747;
+  }
 
-@media only screen and (max-width: 600px) {
-  .recent-transactions{
-    font-size: 87%;
+  .links li a::after{
+      display: none;
+  }
+
+  .links li i{
+      display: inline-block;
+  }
+
+  .navbar .fas{
+      display: block;
+      font-size: 35px;
+      cursor: pointer;
   }
 }
+/*End of section for styling the navbar when scren
+size is reduced*/
+
 
 
 

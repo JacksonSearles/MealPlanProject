@@ -1,3 +1,11 @@
+function openmenu() {
+    const links = document.getElementById("links");
+    links.style.right = "0";
+}
+function closemenu() {
+    const links = document.getElementById("links");
+    links.style.right = "-200px";
+}
 
 function mealplanView() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -18,10 +26,6 @@ function toggle(){
     const graphColumn = document.getElementById('graphColumn')
     const hideableGraph = document.querySelector('.hideable-graph');
     const hideableTable = document.querySelector('.hideable-table');
-
-    // Initial state
-    hideableGraph.style.display = toggleSwitch.checked ? 'none' : 'block';
-    hideableTable.style.display = toggleSwitch.checked ? 'block' : 'none';
 
     // Toggle visibility on checkbox change
     toggleSwitch.addEventListener('change', function () {

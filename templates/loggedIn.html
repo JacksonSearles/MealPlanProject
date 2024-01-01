@@ -4,10 +4,9 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-	<link rel="stylesheet" href="/static/styles/navbar.css">
 	<link rel="stylesheet" href="/static/styles/loggedIn.css">
 	<script src="https://kit.fontawesome.com/d27b7bf830.js" crossorigin="anonymous"></script>
-	<script src="/static/js/scripts.js"></script>
+	<script src="/static/js/loggedIn_scripts.js"></script>
 	<title>{{message}} Home</title>
 </head>
 <header class="navbar" id="navbar">
@@ -16,8 +15,8 @@
 		<a href="">Mealplan Tracker</a>
 	</div>
 	<ul class="links" id="links">
-		<li><a href="#" onclick="mealplanView()">Mealplan</a></li>
-    <li><a href="#" onclick="foodView()">Food</a></li>
+		<li><i class="fa-solid fa-calculator"></i><a href="#" onclick="mealplanView()">Mealplan</a></li>
+    <li><i class="fa-solid fa-utensils"></i><a href="#" onclick="foodView()">Food</a></li>
 		<form action="/logout">
 			<input class="button is-danger button is-centered" type="submit" value="Logout">
 		</form>
@@ -36,15 +35,7 @@
 		</div>
 	</section>
 	<script>
-		const links = document.getElementById("links");
 		const navbar = document.getElementById("navbar");
-		function openmenu() {
-			links.style.right = "0";
-		}
-		function closemenu() {
-			links.style.right = "-200px";
-		}
-
 		document.onclick = function (event) {
 			if (!navbar.contains(event.target)) {
 					closemenu();
