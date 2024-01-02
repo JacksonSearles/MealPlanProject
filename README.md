@@ -6,7 +6,7 @@ An interactive HTML/Python website, created by our ACM Projects Division group, 
 
 ## Website Link
 
-[https://binghamton-mealplan-calculator.onrender.com/](https://binghamton-mealplan-calculator.onrender.com/)
+[https://bingmealplanhelper.pythonanywhere.com](https://bingmealplanhelper.pythonanywhere.com)
 
 
 
@@ -32,6 +32,7 @@ Project Idea Proposed by [Josef Schindler](https://www.linkedin.com/in/josef-sch
 * Redirect Link to Add Funds to Mealplan
 * All Recent Transactions (Date, Location, Price)
 * Daily Spending (Graph and Table Format)
+* Food Currently Served at Each Dining Hall (In development still)
 
 ## Libraries Used
 
