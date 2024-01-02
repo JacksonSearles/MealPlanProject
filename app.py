@@ -12,6 +12,8 @@ app.config['SECRET_KEY'] = 'binghamtonMealPlanApp'
 @app.route('/')
 @app.route('/home')
 def home():
+    if session.get('logged_in'):
+        session.pop('logged_in', None)
     return render_template('login.html')
 ######################################################################################################
 
