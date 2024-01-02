@@ -8,7 +8,6 @@ function closemenu() {
 }
 
 function mealplanView() {
-    const urlParams = new URLSearchParams(window.location.search);
     window.location.href = "/mealplan"
 }
 
