@@ -36,7 +36,6 @@ def add_header(response):
 def home():
     if session.get("logged_in"):
         session.clear()
-    print("Session in /home:", session)
     return render_template('login.html')
 ######################################################################################################
 
