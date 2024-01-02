@@ -58,7 +58,7 @@ def mealplan():
         with open(f"{mealplan_data.get('graph_filename')}", 'r', encoding='utf-8') as file:
             graph_html = file.read()
             
-        return render_template('loggedin.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
+        return render_template('loggedIn.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
                     days_left=days_left, daily_budget=daily_budget, funds_added=funds_added, transactions=transactions,
                     totals_by_date=totals_by_date, graph_html=graph_html, view=view) 
     else:
@@ -75,7 +75,7 @@ def food():
         with open(f"{request.args.get('mealplan_data_filename', None)}", 'r') as file:
             mealplan_data = json.load(file)
         first_name = mealplan_data.get('first_name')
-        return render_template('loggedin.html', first_name=first_name, view=view)
+        return render_template('loggedIn.html', first_name=first_name, view=view)
     else:
         flash('You are not logged in. Please login to continue.', 'error')
         return redirect(url_for('home'))
