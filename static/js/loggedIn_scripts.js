@@ -9,16 +9,11 @@ function closemenu() {
 
 function mealplanView() {
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('view', 'mealplan');
-    //window.location.href = "{{url_for('mealplan')}}?" + urlParams.toString();
-    window.location.href = "/mealplan?" + urlParams.toString();
+    window.location.href = "/mealplan"
 }
 
 function foodView() {
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('view', 'food');
-    // window.location.href = "{{ url_for('food') }}?" + urlParams.toString();
-    window.location.href = "/food?" + urlParams.toString();
+    window.location.href = "/food" 
 }
 
 function toggle(){

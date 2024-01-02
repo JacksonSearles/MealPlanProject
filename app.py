@@ -5,89 +5,112 @@ import json
 
 ######################################################################################################
 # Defines the flask app as "app", and defines the /home route of website, which is the initial route 
-# that runs when the app is first started. This function launches the login.html page, which is our 
-# initial login page shown to the user.
+# that runs when the app is first started. This function checks if there is a current session where the
+# user was already logged in, and clears the session if true. This is to prevent the user from being
+# able to go back and forth between the /home route and other routes in the website that should only be
+# accessed after logging in. I.E, once user returns to the /home route (login page), they are not aloud
+# to go back other routes in the website without relogging in. Then, the login.html page is launched, 
+# which is our initial login page shown to the user.
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = 'binghamtonMealPlanApp'
 @app.route('/')
 @app.route('/home')
 def home():
-    if session.get('logged_in'):
-        session.pop('logged_in', None)
+    if session.get("logged_in"):
+        session.clear()
+    print("Session in /home:", session)
     return render_template('login.html')
 ######################################################################################################
 
 ######################################################################################################
 # Defines the /login route of website, which runs when the user clicks login button on our login page.
-# If user is sucessfully logged in, they will be redirected to the /mealplan_tracker route, which 
-# displays all information regarding their mealplan. If not sucessful, user is redirected backed to 
-# /home route, which is our login page.
+# If user is sucessfully logged in, all mealplan data will be retrieved using get_mealplan_data, and 
+# stored in the sites "session"/cookies. Also, the login status of the user will be stored in the 
+# session. This status will be checked for each route of the website, which ensures non-logged in users
+# arent able to access routes that should only be accessed after logging in. After this, the user will 
+# be redirected to the /mealplan route, which displays all information regarding their mealplan. If 
+# login was not sucessful, user is redirected back to /home route, which is our login page.
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST': 
         username = request.form['username']
         password = request.form['password']
-    mealplan_data_filename = return_mealplan_data(username, password)
-    food_data_filename = return_food_data()
-    if mealplan_data_filename and food_data_filename: 
-        session['logged_in'] = True
-        return redirect(url_for('mealplan', mealplan_data_filename=mealplan_data_filename))
+    mealplan_data = return_mealplan_data(username, password)
+    food_data = return_food_data()
+    if mealplan_data and food_data: 
+        session.update({
+        'logged_in': True,
+        'view': None,
+        'first_name': mealplan_data[0],
+        'mealplan_name': mealplan_data[1],
+        'mealplan_balance': mealplan_data[2],
+        'days_left': mealplan_data[3],
+        'daily_budget': mealplan_data[4],
+        'funds_added': mealplan_data[5],
+        'transactions_filename': mealplan_data[6],
+        'totals_by_date_filename': mealplan_data[7],
+        'graph_filename': mealplan_data[8],
+        #.....Data about food items at dining fall will be stored here aswell   
+        })
+        return redirect(url_for('mealplan'))
     else:
         flash('Incorrect username or password', 'danger')
         return redirect(url_for('home'))       
 ######################################################################################################
 
 ######################################################################################################
+# Defines the /mealplan route of website, which runs when the user first sucesfully signs in, or when 
+# user clicks the "Mealplan" tab on navbar. The function for this route will first check if user is 
+# logged in. This is to prevent user from acessing this page if not logged in, and will redirect them 
+# back to /home route (login page) if they are not logged in. Then, all mealplan data is retrieved from 
+# the current session, and then rendered on the page. NOTE: 'view' variable is used to keep track of the
+# which html page should be loaded onto the page. If 'view' = 'mealplan', the loggedIn.html page will
+# be rendered with the mealplan.html page imbedded inside of it. If view = 'food', the loggedIn.html
+# page will be rendered with the food.html page imbedded inside of it.
 @app.route('/mealplan')
 def mealplan(): 
     if session.get('logged_in'):
-        view = request.args.get('view', 'mealplan')
-        with open(f"{request.args.get('mealplan_data_filename', None)}", 'r') as file:
-            mealplan_data = json.load(file)
-        first_name = mealplan_data.get('first_name')
-        mealplan_name = mealplan_data.get('mealplan_name')
-        mealplan_balance = mealplan_data.get('mealplan_balance')
-        days_left = mealplan_data.get('days_left')
-        daily_budget = mealplan_data.get('daily_budget')
-        funds_added = mealplan_data.get('funds_added')
-
-        with open(f"{mealplan_data.get('transactions_filename')}", 'r') as file:
+        session['view'] = 'mealplan'
+        with open(f"{session.get('transactions_filename')}", 'r') as file:
             transactions = json.load(file)
-        with open(f"{mealplan_data.get('totals_by_date_filename')}", 'r') as file:
+        with open(f"{session.get('totals_by_date_filename')}", 'r') as file:
             totals_by_date = json.load(file)
-        with open(f"{mealplan_data.get('graph_filename')}", 'r', encoding='utf-8') as file:
-            graph_html = file.read()
-            
-        return render_template('loggedIn.html', first_name=first_name, mealplan_name=mealplan_name, mealplan_balance=mealplan_balance,
-                    days_left=days_left, daily_budget=daily_budget, funds_added=funds_added, transactions=transactions,
-                    totals_by_date=totals_by_date, graph_html=graph_html, view=view) 
+        with open(f"{session.get('graph_filename')}", 'r', encoding='utf-8') as file:
+            graph_html = file.read()    
+        return render_template('loggedIn.html', view = session.get('view'), first_name=session.get('first_name'), 
+                mealplan_name=session.get('mealplan_name'), mealplan_balance=session.get('mealplan_balance'),
+                days_left=session.get('days_left'), daily_budget=session.get('daily_budget'), 
+                funds_added=session.get('funds_added'), transactions=transactions,
+                totals_by_date=totals_by_date, graph_html=graph_html) 
     else:
-        flash('You are not logged in. Please login to continue.', 'error')
         return redirect(url_for('home'))
 ######################################################################################################
     
 ######################################################################################################
-#Defines the /food route, which runs when user clicks the "Food" button on navbar at the top of page. 
+# Defines the /food route of website, which runs when the user clicks the "Food" tab on navbar. 
+# The function for this route will first check if user is logged in. This is to prevent user from 
+# acessing this page if not logged in, and will redirect them back to /home route (login page) if they 
+# are not logged in. Then, all food related data is retrieved from the current session, and then rendered 
+# on the page. NOTE: 'view' variable is used to keep track of the which html page should be loaded onto 
+# the page. If 'view' = 'mealplan', the loggedIn.html page will be rendered with the mealplan.html page 
+# imbedded inside of it. If view = 'food', the loggedIn.html page will be rendered with the food.html 
+# page imbedded inside of it. 
 @app.route('/food')
 def food():
     if session.get('logged_in'):
-        view = request.args.get('view', None)
-        with open(f"{request.args.get('mealplan_data_filename', None)}", 'r') as file:
-            mealplan_data = json.load(file)
-        first_name = mealplan_data.get('first_name')
-        return render_template('loggedIn.html', first_name=first_name, view=view)
+        session['view'] = 'food'
+        return render_template('loggedIn.html', view=session.get('view'), first_name=session.get('first_name'))
     else:
-        flash('You are not logged in. Please login to continue.', 'error')
         return redirect(url_for('home'))
 ######################################################################################################   
 
 ######################################################################################################
 # Defines the /logout route of website, which runs when user clicks the 'Logout' button. This will
-# redirect the user back to the login page and sign them out of their account.
+# clear the current session (login status, meaplan data, etc), sign them out of their account, and
+# redirect them back to the /home route (login page)
 @app.route('/logout')
 def logout():
-    session.pop('logged_in', None)
-    flash('You have been logged out', 'success')
+    session.clear()
     return redirect(url_for('home'))
 ######################################################################################################
 

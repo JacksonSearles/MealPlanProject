@@ -63,18 +63,6 @@ def return_mealplan_data(username, password):
     transactions_filename = os.path.join(data_folder, 'transactions_filename.json')
     totals_by_date_filename = os.path.join(data_folder, 'totals_by_date_filename.json')
     graph_filename = os.path.join(data_folder, 'graph_file.html')
-    mealplan_data_filename = os.path.join(data_folder, 'mealplan_data.json')
-    mealplan_data = {
-        'first_name': first_name,
-        'mealplan_name': mealplan_name,
-        'mealplan_balance': mealplan_balance,
-        'days_left': days_left,
-        'daily_budget': daily_budget,
-        'funds_added': funds_added,
-        'transactions_filename': transactions_filename,
-        'totals_by_date_filename': totals_by_date_filename,
-        'graph_filename': graph_filename,
-    }
 
     with open(transactions_filename, 'w') as file:
         json.dump(transactions, file, cls=TransactionSerializer)
@@ -82,10 +70,8 @@ def return_mealplan_data(username, password):
         json.dump(totals_by_date, file)
     with open(graph_filename, 'w', encoding='utf-8') as file:
         file.write(graph_html)   
-    with open(mealplan_data_filename, 'w', encoding='utf-8') as file:
-        json.dump(mealplan_data, file)
 
-    return mealplan_data_filename
+    return first_name, mealplan_name, mealplan_balance, days_left, daily_budget, funds_added, transactions_filename, totals_by_date_filename, graph_filename
 ######################################################################################################
 
 ######################################################################################################

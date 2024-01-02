@@ -52,8 +52,9 @@ located at the top of the screen used for navigating site*/
   width: 100px;
 }
 
-.logo a{
+.logo span{
   text-decoration: none;
+  cursor: pointer;
   color: white;
   font-size: 25px;
   font-weight: 600;
