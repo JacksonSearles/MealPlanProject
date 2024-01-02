@@ -64,9 +64,9 @@ def login():
         'days_left': mealplan_data[3],
         'daily_budget': mealplan_data[4],
         'funds_added': mealplan_data[5],
-        'transactions_filename': mealplan_data[6],
-        'totals_by_date_filename': mealplan_data[7],
-        'graph_filename': mealplan_data[8],
+        'transactions': mealplan_data[6],
+        'totals_by_date': mealplan_data[7],
+        'graph': mealplan_data[8],
         #.....Data about food items at dining fall will be stored here aswell   
         })
         return redirect(url_for('mealplan'))
@@ -88,17 +88,17 @@ def login():
 def mealplan(): 
     if session.get('logged_in'):
         session['view'] = 'mealplan'
-        with open(f"{session.get('transactions_filename')}", 'r') as file:
+        with open(f"{session.get('transactions')}", 'r') as file:
             transactions = json.load(file)
-        with open(f"{session.get('totals_by_date_filename')}", 'r') as file:
+        with open(f"{session.get('totals_by_date')}", 'r') as file:
             totals_by_date = json.load(file)
-        with open(f"{session.get('graph_filename')}", 'r', encoding='utf-8') as file:
-            graph_html = file.read()    
+        with open(f"{session.get('graph')}", 'r', encoding='utf-8') as file:
+            graph = file.read()    
         return render_template('loggedIn.html', view = session.get('view'), first_name=session.get('first_name'), 
                 mealplan_name=session.get('mealplan_name'), mealplan_balance=session.get('mealplan_balance'),
                 days_left=session.get('days_left'), daily_budget=session.get('daily_budget'), 
                 funds_added=session.get('funds_added'), transactions=transactions,
-                totals_by_date=totals_by_date, graph_html=graph_html) 
+                totals_by_date=totals_by_date, graph=graph) 
     else:
         return redirect(url_for('home'))
 ######################################################################################################

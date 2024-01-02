@@ -60,9 +60,9 @@ def return_mealplan_data(username, password):
 
     data_folder = 'data'
     os.makedirs(data_folder, exist_ok=True)
-    transactions_filename = os.path.join(data_folder, 'transactions_filename.json')
-    totals_by_date_filename = os.path.join(data_folder, 'totals_by_date_filename.json')
-    graph_filename = os.path.join(data_folder, 'graph_file.html')
+    transactions_filename = os.path.join(data_folder, 'transactions.json')
+    totals_by_date_filename = os.path.join(data_folder, 'totals_by_date.json')
+    graph_filename = os.path.join(data_folder, 'graph.html')
 
     with open(transactions_filename, 'w') as file:
         json.dump(transactions, file, cls=TransactionSerializer)
