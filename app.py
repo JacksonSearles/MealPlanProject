@@ -4,20 +4,33 @@ from py.food import return_food_data
 import json
 
 ######################################################################################################
-# Defines the flask app as "app", and defines the /home route of website, which is the initial route 
-# that runs when the app is first started. This function checks if there is a current session where the
-# user was already logged in, and clears the session if true. This is to prevent the user from being
-# able to go back and forth between the /home route and other routes in the website that should only be
-# accessed after logging in. I.E, once user returns to the /home route (login page), they are not aloud
-# to go back other routes in the website without relogging in. Then, the login.html page is launched, 
-# which is our initial login page shown to the user.
+# Defines the Flask application as "app", and sets the location of the templates folder. The templates 
+# folder contains the html files needed for website.
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = 'binghamtonMealPlanApp'
+######################################################################################################
+
+######################################################################################################
+# Ensures that bingmealplanhelper.pythonanywhere.com (hosted site) will always run the function 
+# connected to each route. Sometimes, the site will cache pages connected to a route, which prevents
+# the function attached to route from running (speeds up performance). However, since some of our
+# functions manually clear the session to prevent non-loggedin users from acessing certain routes 
+# of the website, we disable this caching to prevent non-loggedin users from returning to routes
+# meant for logged in users such as /mealplan and /food.
 @app.after_request
 def add_header(response):
     response.cache_control.no_store = True
     return response
+######################################################################################################
 
+######################################################################################################
+# Defines the /home route of website, which is the initial route that runs when the app is first 
+# started. This function checks if there is a current session where the user was already logged in,
+# and clears the session if true. This is to prevent the user from being able to go back and forth 
+# between the /home route and other routes in the website that should only be accessed after logging 
+# in. I.E, once user returns to the /home route (login page), they are not aloud to go back other routes 
+# in the website without relogging in. Then, the login.html page is launched, which is our initial login 
+# page shown to the user.
 @app.route('/')
 @app.route('/home')
 def home():
@@ -119,6 +132,8 @@ def logout():
     return redirect(url_for('home'))
 ######################################################################################################
 
+######################################################################################################
+# Launches Flask app.
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-    
+######################################################################################################    
