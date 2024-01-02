@@ -50,7 +50,7 @@ def return_mealplan_data(username, password):
     try:
         browser.find_element(By.ID, 'welcome')
     except NoSuchElementException:
-        return Exception 
+        return None
     first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
     transactions = scrape_mealplan_transactions(transactions_href, browser)
     fall_start_day, fall_end_day, spring_start_day, spring_end_day = scrape_academic_calander()

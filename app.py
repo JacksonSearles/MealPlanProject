@@ -25,14 +25,14 @@ def login():
     if request.method == 'POST': 
         username = request.form['username']
         password = request.form['password']
-    try:
-        mealplan_data_filename = return_mealplan_data(username, password)
-        food_data = return_food_data()
+    mealplan_data_filename = return_mealplan_data(username, password)
+    food_data_filename = return_food_data()
+    if mealplan_data_filename and food_data_filename: 
         session['logged_in'] = True
-    except Exception:
+        return redirect(url_for('mealplan', mealplan_data_filename=mealplan_data_filename))
+    else:
         flash('Incorrect username or password', 'danger')
         return redirect(url_for('home'))       
-    return redirect(url_for('mealplan', mealplan_data_filename=mealplan_data_filename))
 ######################################################################################################
 
 ######################################################################################################
