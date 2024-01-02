@@ -13,6 +13,11 @@ import json
 # which is our initial login page shown to the user.
 app = Flask(__name__, template_folder='templates')
 app.config['SECRET_KEY'] = 'binghamtonMealPlanApp'
+@app.after_request
+def add_header(response):
+    response.cache_control.no_store = True
+    return response
+
 @app.route('/')
 @app.route('/home')
 def home():
