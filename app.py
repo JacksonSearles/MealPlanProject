@@ -23,10 +23,8 @@ def home():
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST': 
-        #username = request.form['username']
-        #password = request.form['password']
-        username = 'ndenobrega'
-        password = '21Velocity21@'
+        username = request.form['username']
+        password = request.form['password']
     try:
         mealplan_data_filename = return_mealplan_data(username, password)
         food_data = return_food_data()
