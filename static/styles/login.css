@@ -18,6 +18,19 @@ img{
     max-width: 510px;
 }
 
+.input-field{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-field i{
+    margin-right: 10px;
+    margin-bottom: 8px;
+    color:#006747;
+    font-size: 23px;
+}
+
 .input{
     margin-bottom: 10px;
 }
@@ -53,17 +66,17 @@ img{
 }
 
 
-@media only screen and (max-width: 600px) {
-    #create_account {
-        font-size: 10px;
-    }
-    
+@media only screen and (max-width: 400px) {
     .account-note{
-        font-size: 10px;
+        font-size: 14px;
     }
 
-    .version{
-        font-size: 7px;
+    .create-account{
+        font-size: 14px;
+    }
+
+    .input-field i{
+        font-size: 18px;
     }
     
 }

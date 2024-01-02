@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 	<link rel="stylesheet" href="/static/styles/login.css">
+	<script src="https://kit.fontawesome.com/d27b7bf830.js" crossorigin="anonymous"></script>
 	<title>Meal Plan Tracker</title>
 </head>
 <body class="has-text-centered">
@@ -14,8 +15,14 @@
 			<p class="">Created by ACM Projects Division Group</p>
 			<img src="https://static.wixstatic.com/media/7383ad_635e426608944acd83c1538cca35af9c~mv2_d_1500_1500_s_2.png/v1/fill/w_1500,h_1500,al_c/Binghamton.png" alt="broke" class="image center">
 			<form method="post" action="{{url_for('login')}}" class="">
-				<input class="input" type="text" placeholder="BUDS Username" id="username" name="username">
-				<input class="input" type="password" placeholder="BUDS Password" id="password" name="password">
+				<div class="input-field">
+					<i class="fa-solid fa-user"></i>
+					<input class="input" type="text" placeholder="BUDS Username" id="username" name="username">
+				</div>
+				<div class="input-field">
+					<i class="fa-solid fa-lock"></i>
+					<input class="input" type="password" placeholder="BUDS Password" id="password" name="password">
+				</div>
 				<div class="is-centered">
 					{% with messages = get_flashed_messages() %}
 						{% if messages %}
@@ -30,8 +37,8 @@
 				<div class="loader" id="welcomeDiv"  style="display:none;"></div>
 				<input class="button is-success m-2"  type="submit" value="Login" onclick="showDiv()">
 				<p class="account-note"><strong style="color: #f14668!important;">NOTE:</strong> BUDS Account is seperate from BU Account</p>
-				<p class="m-2" id="create_account">Don't have a BUDS Account? Click <a href="https://bing.campuscardcenter.com/ch/register/register_Id.html" target="_blank">Here</a></p>
-				<p class="m-2" class="version">Version 1.0</p>
+				<p class="create-account m-2">Don't have a BUDS Account? Click <a href="https://bing.campuscardcenter.com/ch/register/register_Id.html" target="_blank">Here</a></p>
+				<p class="version m-2">Version 1.0</p>
 			</form>	
 		</div>
 	</div>
