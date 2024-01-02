@@ -1,7 +1,8 @@
 
 # Mealplan Tracker
 
-An interactive HTML/Python website, created by our ACM Projects Division group, that improves on Binghamton Unviversity's Mealplan website. This site is a one-stop shop that gathers all imporant information regarding a students mealplan account. Allows Binghamton University students to login into their mealplan accounts, and/or redirect them to create a mealplan account if they have yet to. Once logged in, imporatant information regarding the students mealplan will be displayed in an easy-to-follow format. 
+An interactive HTML/Python website, created by our ACM Projects Division group, that improves on Binghamton Unviversity's Mealplan website. This site is a one-stop shop that gathers all imporant information regarding a students mealplan account. Allows Binghamton University students to login into their mealplan accounts, and/or redirect them to create a mealplan account if they have yet to. Once logged in, imporatant information regarding the students mealplan will be displayed in an easy-to-follow format. If you are not a BU Student, but wish to test the functionality of
+the website, type "demo" in username field, leave the password field blank, and click login button.
 
 
 ## Website Link

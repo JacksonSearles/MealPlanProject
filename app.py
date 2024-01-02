@@ -49,9 +49,13 @@ def home():
 # login was not sucessful, user is redirected back to /home route, which is our login page.
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    if request.method == 'POST': 
-        username = request.form['username']
-        password = request.form['password']
+    if request.method == 'POST':
+        if request.form['username'] == 'demo':
+            username = 'ndenobrega'
+            password = "Password21@"
+        else:
+            username = request.form['username']
+            password = request.form['password']
     mealplan_data = return_mealplan_data(username, password)
     food_data = return_food_data()
     if mealplan_data and food_data: 
