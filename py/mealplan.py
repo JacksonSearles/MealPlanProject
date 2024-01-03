@@ -306,28 +306,26 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
     # True when in fall semester
     if 8 <= curr_month <= 12:
         dropdown_options.extend([
+            {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
             {'label': 'Current Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year, 12, fall_end_day)]}]},
             {'label': 'Previous Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
             {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year+1, 5, spring_end_day)]}]},
-            {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]}
         ])
-        default_range = [date(curr_year, 8, fall_start_day), date(curr_year, 12, fall_end_day)]
     # True when in spring semester
     elif 1 <= curr_month <= 5:
         dropdown_options.extend([
+            {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
             {'label': 'Current Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
             {'label': 'Previous Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year-1, 12, fall_end_day)]}]},
-            {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year, 5, spring_end_day)]}]},
-            {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
+            {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year, 5, spring_end_day)]}]}
         ])
-        default_range = [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]
-    #True when in the summer, only show most recent semester and most recent school year
+    #True when in the summer
     else:
         dropdown_options.extend([
+            {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
             {'label': 'Most Recent Spring Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
             {'label': 'Most Recent School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year, 5, spring_end_day)]}]}
         ])
-        default_range = [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]
 
     #DESIGN LAYOUT OF GRAPH      
     hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
@@ -340,7 +338,7 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
             showgrid=True,  
             tickformat='%b %Y',
             tickfont=dict(size=15),
-            range=default_range
+            range=[date.today() - timedelta(days=30), date.today()]
         ),
         yaxis=dict( 
             tickprefix='$', 
@@ -365,6 +363,7 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
         plot_bgcolor='white',   
         font=dict(color='black', family='Arial, sans-serif'),
         modebar_remove=['zoom', 'resetScale2d', 'pan', 'select2d', 'lasso', 'zoomIn', 'zoomOut', 'autoScale'],
+        dragmode=False,
         margin=dict(l=0,r=0,t=10,b=0)    
     )
     fig = go.Figure(data=[bar], layout=layout)
