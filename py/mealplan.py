@@ -74,6 +74,18 @@ def return_mealplan_data(username, password):
     return first_name, mealplan_name, mealplan_balance, days_left, daily_budget, funds_added, transactions_filename, totals_by_date_filename, graph_filename
 ######################################################################################################
 
+def return_demo_mealplan_data():
+    first_name = "Demo"
+    mealplan_name = "Meal Plan C"
+    mealplan_balance = 21.8
+    days_left = 0
+    daily_budget = 21.8
+    funds_added = 250.0
+    transactions_filename = 'data\\demo_transactions.json'
+    totals_by_date_filename = 'data\\demo_totals_by_date.json'
+    graph_filename = 'data\\demo_graph.html'
+    return first_name, mealplan_name, mealplan_balance, days_left, daily_budget, funds_added, transactions_filename, totals_by_date_filename, graph_filename
+
 ######################################################################################################
 # This function uses Selenium to open a headless incognito browser with the url of actual Binghamton
 # mealplan site. Then Takes username and password gathered from Flask POST method, and sends them to 

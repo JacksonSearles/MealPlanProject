@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash
-from py.mealplan import return_mealplan_data
-from py.food import return_food_data
+from py.mealplan import return_mealplan_data, return_demo_mealplan_data
+from py.food import return_food_data, return_demo_food_data
 import json
 
 ######################################################################################################
@@ -51,13 +51,13 @@ def home():
 def login():
     if request.method == 'POST':
         if request.form['username'] == 'demo':
-            username = 'ndenobrega'
-            password = "Password21@"
+            mealplan_data = return_demo_mealplan_data()
+            food_data = return_demo_food_data()
         else:
             username = request.form['username']
             password = request.form['password']
-    mealplan_data = return_mealplan_data(username, password)
-    food_data = return_food_data()
+            mealplan_data = return_mealplan_data(username, password)     
+            food_data = return_food_data()
     if mealplan_data and food_data: 
         session.update({
         'logged_in': True,
