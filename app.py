@@ -122,13 +122,13 @@ def budget():
     if session.get('logged_in'):
         session['view'] = 'budget'
         if session.get('current_semester') == 'Fall':
-            chart_title = 'Fall Mealplan Budget Chart'
+            chart_title = 'Fall Budget Chart'
             current_semester = 'Fall'
         elif session.get('current_semester') == 'Spring':
-            chart_title = 'Spring Mealplan Budget Chart'
+            chart_title = 'Spring Budget Chart'
             current_semester = 'Spring'
         else:
-            chart_title = 'Mealplan Budget Chart'
+            chart_title = 'Budget Chart'
             current_semester = '' 
         return render_template('loggedIn.html', view=session.get('view'),
                     first_name=session.get('first_name'),

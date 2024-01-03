@@ -12,7 +12,7 @@
 <header class="navbar" id="navbar">
 	<div class="logo">
 		<img src="/static/imgs/BU_Logo.png" alt="Binghamton University Logo">
-		<span onclick="mealplanView()">Welcome, {{first_name}}</span>
+		<span onclick="changeView('mealplan')">Welcome, {{first_name}}</span>
 	</div>
 	<ul class="links" id="links">
 		<li class="link {% if view == 'mealplan' %}active{% endif %}" onclick="changeView('mealplan')"><i class="fa-solid fa-calculator"></i><span>Your Mealplan</span></li>
