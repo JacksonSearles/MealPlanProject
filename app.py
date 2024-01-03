@@ -50,6 +50,7 @@ def home():
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
+        #Demo will only work on hosted website (Wont work locally) due to filepaths
         if request.form['username'] == 'demo':
             mealplan_data = return_demo_mealplan_data()
             food_data = return_demo_food_data()

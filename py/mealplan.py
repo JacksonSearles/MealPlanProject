@@ -74,6 +74,11 @@ def return_mealplan_data(username, password):
     return first_name, mealplan_name, mealplan_balance, days_left, daily_budget, funds_added, transactions_filename, totals_by_date_filename, graph_filename
 ######################################################################################################
 
+######################################################################################################
+# Returns demo mealplan data for when users who are not BU students want to test functionality of the
+# website. This demo function only works on the hosted website, since the filepaths for
+# transactions_filename, totals_by_date_filename, and graph_filename are set for the filepaths of
+# the hosted site (bingmealplanhelper.pythonanywhere.com).
 def return_demo_mealplan_data():
     first_name = "Demo"
     mealplan_name = "Meal Plan C"
@@ -81,10 +86,11 @@ def return_demo_mealplan_data():
     days_left = 0
     daily_budget = 21.8
     funds_added = 250.0
-    transactions_filename = 'data\\demo_transactions.json'
-    totals_by_date_filename = 'data\\demo_totals_by_date.json'
-    graph_filename = 'data\\demo_graph.html'
+    transactions_filename = '/home/bingmealplanhelper/demo_data/demo_transactions.json'
+    totals_by_date_filename = '/home/bingmealplanhelper/demo_data/demo_totals_by_date.json'
+    graph_filename = '/home/bingmealplanhelper/demo_data/demo_graph.html'
     return first_name, mealplan_name, mealplan_balance, days_left, daily_budget, funds_added, transactions_filename, totals_by_date_filename, graph_filename
+######################################################################################################
 
 ######################################################################################################
 # This function uses Selenium to open a headless incognito browser with the url of actual Binghamton
