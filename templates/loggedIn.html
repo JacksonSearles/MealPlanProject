@@ -11,12 +11,12 @@
 </head>
 <header class="navbar" id="navbar">
 	<div class="logo">
-		<img src="{{ url_for('static', filename='BU_Logo.png') }}" alt="Binghamton University Logo">
-		<span onclick="mealplanView()">Mealplan Tracker</span>
+		<img src="/static/imgs/BU_Logo.png" alt="Binghamton University Logo">
+		<span onclick="mealplanView()">Welcome, {{first_name}}</span>
 	</div>
-	<h1 class="welcome-msg binghamton-white">Welcome, {{first_name}}</h1>
 	<ul class="links" id="links">
-		<li onclick="mealplanView()"><i class="fa-solid fa-calculator"></i><span>Mealplan</span></li>
+		<li onclick="mealplanView()"><i class="fa-solid fa-calculator"></i><span>Your Mealplan</span></li>
+		<li onclick="budgetView()"><i class="fa-solid fa-question"></i><span>How to Budget</span></li>
     <li onclick="foodView()"><i class="fa-solid fa-utensils"></i><span>Food</span></li>
 		<form action="/logout">
 			<input class="button is-danger button is-centered" type="submit" value="Logout">
@@ -30,6 +30,8 @@
 		<div class="hero-body container" id="content-container">
 			{% if view == 'mealplan' %}
         {% include 'mealplan.html' %}
+			{% elif view == 'budget' %}
+        {% include 'budget.html' %}
     	{% elif view == 'food' %}
         {% include 'food.html' %}
     	{% endif %}

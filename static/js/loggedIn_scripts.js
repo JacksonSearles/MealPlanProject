@@ -11,6 +11,10 @@ function mealplanView() {
     window.location.href = "/mealplan"
 }
 
+function budgetView() {
+    window.location.href = "/budget" 
+}
+
 function foodView() {
     window.location.href = "/food" 
 }

@@ -66,12 +66,13 @@ def login():
         'first_name': mealplan_data[0],
         'mealplan_name': mealplan_data[1],
         'mealplan_balance': mealplan_data[2],
-        'days_left': mealplan_data[3],
-        'daily_budget': mealplan_data[4],
-        'funds_added': mealplan_data[5],
-        'transactions': mealplan_data[6],
-        'totals_by_date': mealplan_data[7],
-        'graph': mealplan_data[8],
+        'current_semester': mealplan_data[3],
+        'days_left_semester': mealplan_data[4],
+        'daily_budget': mealplan_data[5],
+        'funds_added': mealplan_data[6],
+        'transactions': mealplan_data[7],
+        'totals_by_date': mealplan_data[8],
+        'graph': mealplan_data[9],
         #.....Data about food items at dining fall will be stored here aswell   
         })
         return redirect(url_for('mealplan'))
@@ -85,10 +86,9 @@ def login():
 # user clicks the "Mealplan" tab on navbar. The function for this route will first check if user is 
 # logged in. This is to prevent user from acessing this page if not logged in, and will redirect them 
 # back to /home route (login page) if they are not logged in. Then, all mealplan data is retrieved from 
-# the current session, and then rendered on the page. NOTE: 'view' variable is used to keep track of the
-# which html page should be loaded onto the page. If 'view' = 'mealplan', the loggedIn.html page will
-# be rendered with the mealplan.html page imbedded inside of it. If view = 'food', the loggedIn.html
-# page will be rendered with the food.html page imbedded inside of it.
+# the current session, and then rendered on the page. NOTE: 'view' variable is used to keep track of 
+# the which html page should be loaded onto the page. In this case, view = 'mealplan', so the the 
+# loggedIn.html page will be rendered with the mealplan.html embedded inside of it.
 @app.route('/mealplan')
 def mealplan(): 
     if session.get('logged_in'):
@@ -109,19 +109,48 @@ def mealplan():
 ######################################################################################################
     
 ######################################################################################################
+# Defines the /bduget route of website, which runs when the user clicks the "How to Budget" tab on navbar. 
+# The function for this route will first check if user is logged in. This is to prevent user from 
+# acessing this page if not logged in, and will redirect them back to /home route (login page) if they 
+# are not logged in. Then, the current semester is feteched from the current session. If the semester
+# is Fall, the Fall Mealplan Budget Chart will be displayed, if semeseter is Spring the Spring Mealplan
+# Budget Chart will be displayed, else no chart will be displayed. NOTE: 'view' variable is used to keep 
+# track of the which html page should be loaded onto the page. In this case, view = 'budget', so the
+# the loggedIn.html page will be rendered with the budget.html embedded inside of it.
+@app.route('/budget')
+def budget():
+    if session.get('logged_in'):
+        session['view'] = 'budget'
+        if session.get('current_semester') == 'Fall':
+            chart_title = 'Fall Mealplan Budget Chart'
+            current_semester = 'Fall'
+        elif session.get('current_semester') == 'Spring':
+            chart_title = 'Spring Mealplan Budget Chart'
+            current_semester = 'Spring'
+        else:
+            chart_title = 'Mealplan Budget Chart'
+            current_semester = '' 
+        return render_template('loggedIn.html', view=session.get('view'),
+                    first_name=session.get('first_name'),
+                    chart_title=chart_title, current_semester=current_semester)
+    else:
+        return redirect(url_for('home'))
+######################################################################################################
+    
+######################################################################################################
 # Defines the /food route of website, which runs when the user clicks the "Food" tab on navbar. 
 # The function for this route will first check if user is logged in. This is to prevent user from 
 # acessing this page if not logged in, and will redirect them back to /home route (login page) if they 
 # are not logged in. Then, all food related data is retrieved from the current session, and then rendered 
 # on the page. NOTE: 'view' variable is used to keep track of the which html page should be loaded onto 
-# the page. If 'view' = 'mealplan', the loggedIn.html page will be rendered with the mealplan.html page 
-# imbedded inside of it. If view = 'food', the loggedIn.html page will be rendered with the food.html 
-# page imbedded inside of it. 
+# the page. In this case, view = 'food', so the the loggedIn.html page will be rendered with the 
+# food.html embedded inside of it.
 @app.route('/food')
 def food():
     if session.get('logged_in'):
         session['view'] = 'food'
-        return render_template('loggedIn.html', view=session.get('view'), first_name=session.get('first_name'))
+        return render_template('loggedIn.html', view=session.get('view'), 
+                    first_name=session.get('first_name'))
     else:
         return redirect(url_for('home'))
 ######################################################################################################   

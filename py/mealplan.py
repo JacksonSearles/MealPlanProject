@@ -54,7 +54,8 @@ def return_mealplan_data(username, password):
     first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
     transactions = scrape_mealplan_transactions(transactions_href, browser)
     fall_start_day, fall_end_day, spring_start_day, spring_end_day = scrape_academic_calander()
-    days_left, daily_budget = calculate_daily_budget(mealplan_balance, fall_start_day, fall_end_day, spring_start_day, spring_end_day)
+    current_semester, days_left_semester = calculate_current_date(fall_start_day, fall_end_day, spring_start_day, spring_end_day)
+    daily_budget = calculate_daily_budget(mealplan_balance, days_left_semester)
     totals_by_date, funds_added = calculate_daily_spending(transactions)
     graph_html = create_spending_graph(totals_by_date, fall_start_day, fall_end_day, spring_start_day, spring_end_day)
 
@@ -71,7 +72,7 @@ def return_mealplan_data(username, password):
     with open(graph_filename, 'w', encoding='utf-8') as file:
         file.write(graph_html)   
 
-    return first_name, mealplan_name, mealplan_balance, days_left, daily_budget, funds_added, transactions_filename, totals_by_date_filename, graph_filename
+    return first_name, mealplan_name, mealplan_balance, current_semester, days_left_semester, daily_budget, funds_added, transactions_filename, totals_by_date_filename, graph_filename
 ######################################################################################################
 
 ######################################################################################################
@@ -80,16 +81,17 @@ def return_mealplan_data(username, password):
 # transactions_filename, totals_by_date_filename, and graph_filename are set for the filepaths of
 # the hosted site (bingmealplanhelper.pythonanywhere.com).
 def return_demo_mealplan_data():
-    first_name = "Demo"
-    mealplan_name = "Meal Plan C"
+    first_name = 'Demo'
+    mealplan_name = 'Meal Plan C'
     mealplan_balance = 21.8
-    days_left = 0
+    current_semester = 'Fall'
+    days_left_semester = 0
     daily_budget = 21.8
     funds_added = 250.0
     transactions_filename = '/home/bingmealplanhelper/demo_data/demo_transactions.json'
     totals_by_date_filename = '/home/bingmealplanhelper/demo_data/demo_totals_by_date.json'
     graph_filename = '/home/bingmealplanhelper/demo_data/demo_graph.html'
-    return first_name, mealplan_name, mealplan_balance, days_left, daily_budget, funds_added, transactions_filename, totals_by_date_filename, graph_filename
+    return first_name, mealplan_name, mealplan_balance, current_semester, days_left_semester, daily_budget, funds_added, transactions_filename, totals_by_date_filename, graph_filename
 ######################################################################################################
 
 ######################################################################################################
@@ -223,27 +225,38 @@ def scrape_academic_calander():
     else:
         return 19, 16, 14, 10
 ######################################################################################################
-
+    
 ######################################################################################################
-# Takes in scraped meaplan balance, and calculates the daily budget that person can spend until end of 
-# semeseter. Calculation is based on how many days there between the current day and the end
-# of semester day.
-def calculate_daily_budget(meal_plan_balance, fall_end_day, spring_end_day, fall_start_day, spring_start_day):
+# This function determines the current semester the user is in, and the days left in the current 
+# semester based on start and end days scraped from the academic calendar
+def calculate_current_date(fall_start_day, fall_end_day, spring_start_day, spring_end_day):
+    current_semester = None
+    days_left_semester = 0
+    curr_year = date.today().year
     curr_date = date.today()
     end_date = date.today()
-    curr_year = curr_date.year
     if date(curr_year, 8, fall_start_day) <= curr_date <= date(curr_year, 12, fall_end_day):
         end_date = date(curr_year, 12, fall_end_day)
+        current_semester = 'Fall'
     elif date(curr_year, 1, spring_start_day) <= curr_date <= date(curr_year, 5, spring_end_day):
         end_date = date(curr_year, 5, spring_end_day)
-
-    days_left = (end_date - curr_date).days
-    if days_left > 0:
-        daily_budget = round((meal_plan_balance / days_left), 2)
+        current_semester = 'Spring'
+    elif (curr_date.month == 12 and date(curr_year, 12, fall_end_day) <= curr_date <= date(curr_year+1, 1, spring_start_day)) or curr_date.month == 1 and date(curr_year-1, 12, fall_end_day) <= curr_date <= date(curr_year, 1, spring_start_day):
+        current_semester = 'Spring'
     else:
-        daily_budget = meal_plan_balance
-        days_left = 0
-    return days_left, daily_budget
+        current_semester = "Summer"
+    days_left_semester = (end_date - curr_date).days
+    return current_semester, days_left_semester
+######################################################################################################
+
+######################################################################################################
+# Takes in scraped meaplan balance and the days left in the semester, and calculates the daily 
+# budget that person can spend until end of semeseter.
+def calculate_daily_budget(meal_plan_balance, days_left_semester):
+    if days_left_semester > 0:
+        return round((meal_plan_balance / days_left_semester), 2)
+    else:
+        return 0
 ######################################################################################################
 
 ######################################################################################################

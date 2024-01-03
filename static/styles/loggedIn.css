@@ -117,10 +117,6 @@ located at the top of the screen used for navigating site*/
 /*Start of section for styling the navbar when screen
 size is reduced*/
 @media only screen and (max-width: 800px){
-  .welcome-msg{
-    display: none;
-  }
-  
   .navbar{
     background-color: transparent;
     border-bottom: none; 
@@ -138,11 +134,11 @@ size is reduced*/
       position: fixed;
       top: 0;
       bottom: 0;
-      right: -200px;
-      width: 150px;
+      right: -230px;
+      width: 180px;
       padding-top: 70px;
       z-index: 2;
-      transition: right .5s;
+      transition: right .4s;
   }
 
   .links .fas{
