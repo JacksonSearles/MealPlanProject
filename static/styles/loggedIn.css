@@ -152,7 +152,7 @@ size is reduced*/
       cursor: pointer;
   }
 
-  .links li{
+  .link{
       margin-left: 15px;
       margin-right: 0;
       margin-bottom: 30px;
@@ -161,10 +161,14 @@ size is reduced*/
       transition: color 0.5s;
   }
 
-  .links li::before{
+  .link i{
+    margin-right: 10px;
+  }
+
+  .link::before{
       content: '';
       background-color: white;
-      width: 150px;
+      width: 0px;
       height: 35px;
       bottom: -5px;
       left: -15px;
@@ -173,25 +177,34 @@ size is reduced*/
       z-index: -1;
   }
 
-  .links li:hover::before{
-      width: 150px;
-  }
-
-  .links li::after{
+  .link::after{
     display: none;
   }
 
-  .links li:hover span{
+  .link:hover::before{
+      width: 200px;
+  }
+
+  .link:hover span{
     color: #006747;
   }
 
-  .links li i{
-    margin-right: 10px;
-  }
-
-  .links li:hover i{
+  .link:hover i{
     color: #006747;
   }
+
+  .link.active::before{
+    width: 200px;
+  }
+
+  .link.active span{
+    color: #006747;
+  }
+
+  .link.active i{
+    color: #006747;  
+  }
+
 }
 /*End of section for styling the navbar when scren
 size is reduced*/
