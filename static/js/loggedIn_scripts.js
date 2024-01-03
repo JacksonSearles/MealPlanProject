@@ -7,16 +7,8 @@ function closemenu() {
     links.style.right = "-200px";
 }
 
-function mealplanView() {
-    window.location.href = "/mealplan"
-}
-
-function budgetView() {
-    window.location.href = "/budget" 
-}
-
-function foodView() {
-    window.location.href = "/food" 
+function changeView(view) {
+    window.location.href = `/${view}`;
 }
 
 function toggle(){

@@ -15,9 +15,9 @@
 		<span onclick="mealplanView()">Welcome, {{first_name}}</span>
 	</div>
 	<ul class="links" id="links">
-		<li onclick="mealplanView()"><i class="fa-solid fa-calculator"></i><span>Your Mealplan</span></li>
-		<li onclick="budgetView()"><i class="fa-solid fa-question"></i><span>How to Budget</span></li>
-    <li onclick="foodView()"><i class="fa-solid fa-utensils"></i><span>Food</span></li>
+		<li class="link {% if view == 'mealplan' %}active{% endif %}" onclick="changeView('mealplan')"><i class="fa-solid fa-calculator"></i><span>Your Mealplan</span></li>
+		<li class="link {% if view == 'budget' %}active{% endif %}" onclick="changeView('budget')"><i class="fa-solid fa-sack-dollar"></i><span>Budget</span></li>
+    <li class="link {% if view == 'food' %}active{% endif %}" onclick="changeView('food')"><i class="fa-solid fa-utensils"></i><span>Food</span></li>
 		<form action="/logout">
 			<input class="button is-danger button is-centered" type="submit" value="Logout">
 		</form>

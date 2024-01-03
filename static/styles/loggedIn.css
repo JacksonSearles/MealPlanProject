@@ -70,20 +70,20 @@ located at the top of the screen used for navigating site*/
   margin-right: 5px;
 }
 
-.links li{
+.link{
   margin-left: 25px;
   text-wrap: nowrap;
   cursor: pointer;
   position: relative;
 }
 
-.links li span{
+.link span{
   text-decoration: none;
   font-size: 20px;
   color: white;
 }
 
-.links li::after{
+.link::after{
   content: '';
   background-color: white;
   width: 0;
@@ -94,7 +94,11 @@ located at the top of the screen used for navigating site*/
   transition: width 0.5s;
 }
 
-.links li:hover::after{
+.link.active::after{
+  width: 100%;
+}
+
+.link:hover::after {
   width: 100%;
 }
 
@@ -160,7 +164,7 @@ size is reduced*/
   .links li::before{
       content: '';
       background-color: white;
-      width: 0;
+      width: 150px;
       height: 35px;
       bottom: -5px;
       left: -15px;
@@ -174,7 +178,7 @@ size is reduced*/
   }
 
   .links li::after{
-      display: none;
+    display: none;
   }
 
   .links li:hover span{
