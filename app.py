@@ -101,7 +101,7 @@ def mealplan():
             graph = file.read()    
         return render_template('loggedIn.html', view = session.get('view'), first_name=session.get('first_name'), 
                 mealplan_name=session.get('mealplan_name'), mealplan_balance=session.get('mealplan_balance'),
-                days_left=session.get('days_left'), daily_budget=session.get('daily_budget'), 
+                days_left_semester=session.get('days_left_semester'), daily_budget=session.get('daily_budget'), 
                 funds_added=session.get('funds_added'), transactions=transactions,
                 totals_by_date=totals_by_date, graph=graph) 
     else:

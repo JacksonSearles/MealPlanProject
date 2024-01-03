@@ -256,7 +256,7 @@ def calculate_daily_budget(meal_plan_balance, days_left_semester):
     if days_left_semester > 0:
         return round((meal_plan_balance / days_left_semester), 2)
     else:
-        return 0
+        return meal_plan_balance
 ######################################################################################################
 
 ######################################################################################################
