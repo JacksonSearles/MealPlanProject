@@ -84,7 +84,7 @@ def return_demo_mealplan_data():
     first_name = 'Demo'
     mealplan_name = 'Meal Plan C'
     mealplan_balance = 21.8
-    current_semester = 'Fall'
+    current_semester = 'Spring'
     days_left_semester = 0
     daily_budget = 21.8
     funds_added = 250.0
