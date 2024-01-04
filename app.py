@@ -114,10 +114,10 @@ def mealplan():
 @app.route('/budget')
 def budget():
     if session.get('logged_in'):
-        if session.get('current_semester') == 'Fall':
+        if 'Fall' in session.get('current_semester'):
             chart_title = 'Fall Budget Chart'
             current_semester = 'Fall'
-        elif session.get('current_semester') == 'Spring':
+        elif 'Spring' in session.get('current_semester'):
             chart_title = 'Spring Budget Chart'
             current_semester = 'Spring'
         else:
