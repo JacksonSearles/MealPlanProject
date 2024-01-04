@@ -33,9 +33,9 @@ class TransactionSerializer(json.JSONEncoder):
     
 ######################################################################################################
 # Returns demo mealplan data for when users who are not BU students want to test functionality of the
-# website. This demo function only works on the hosted website, since the filepaths for
-# transactions_filename, totals_by_date_filename, and graph_filename are set for the filepaths of
-# the hosted site (bingmealplanhelper.pythonanywhere.com).
+# website. This demo function will try and open the files at the location where they are stored on
+# hosted website (bingmealplanhelper.pythonanywhere.come). If there is a FileNotFound Error, that means 
+# the user is running demo locally, so we must retrieve local file paths
 def return_demo_mealplan_data():
     first_name = 'Demo'
     mealplan_name = 'Meal Plan C'
@@ -44,9 +44,15 @@ def return_demo_mealplan_data():
     days_left_semester = 0
     daily_budget = 21.8
     funds_added = 250.0
-    transactions_filename = '/home/bingmealplanhelper/demo_data/demo_transactions.json'
-    daily_spending_filename = '/home/bingmealplanhelper/demo_data/demo_daily_spending.json'
-    graph_filename = '/home/bingmealplanhelper/demo_data/demo_graph.html'
+    try:
+        with open('/home/bingmealplanhelper/demo_data/demo_transactions.json'): pass
+        transactions_filename = '/home/bingmealplanhelper/demo_data/demo_transactions.json'
+        daily_spending_filename = '/home/bingmealplanhelper/demo_data/demo_daily_spending.json'
+        graph_filename = '/home/bingmealplanhelper/demo_data/demo_graph.html'
+    except FileNotFoundError:
+        transactions_filename = 'data\\demo_transactions.json'
+        daily_spending_filename = 'data\\demo_daily_spending.json'
+        graph_filename = 'data\\demo_graph.html'   
     return first_name, mealplan_name, mealplan_balance, current_semester, days_left_semester, daily_budget, funds_added, transactions_filename, daily_spending_filename, graph_filename
 ######################################################################################################
 
@@ -304,7 +310,7 @@ def create_spending_graph(daily_spending_dict, fall_end_day, spring_end_day, fal
     hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
     bar = go.Bar(x=df['Date'], y=df['Price'], text=hover_text, hoverinfo='text', textposition="none", marker_color='#006747')
     layout = go.Layout(
-        xaxis=dict(title="<b>Date</b>", title_font=dict(size=30), type='date', showgrid=True, tickformat='%b %Y',tickfont=dict(size=15), range=[date.today() - timedelta(days=30), date.today()]),
+        xaxis=dict(title_font=dict(size=30), type='date', showgrid=True, tickformat='%b %Y',tickfont=dict(size=15), range=[date.today() - timedelta(days=30), date.today()]),
         yaxis=dict(tickprefix='$', tickfont=dict(size=15, family="Arial Black, sans-serif")),
         hovermode='x',
         template='plotly_dark',
