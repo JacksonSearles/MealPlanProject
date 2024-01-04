@@ -31,18 +31,25 @@
   /*End of section for general styling of Mealplan Tracker page*/
   
   /*Start of stlying for "Recent Transactions" box*/
+  .transactions-table-header{
+    display: flex;
+    justify-content: space-between;
+    padding-right: 10px;
+  }
+
+  .transactions-table-header p{
+    font-weight: bold;
+    color: black;
+    white-space: nowrap;
+  }
+
   .transactions-table {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
       overflow-y: auto; 
       max-height: 230px;
       padding-right: 10px;
-  }
-  
-  .transactions-table thead th {
-    position: sticky;
-    top: 0;
-    background-color: #fff;
-    z-index: 2; 
   }
   
   .transactions-table thead th:first-child, .transactions-table tbody td:first-child{
@@ -55,7 +62,7 @@
   
   .transactions-table tbody td {
       margin-bottom: 10px;
-      width: 50%;
+      width: 100%;
       white-space: nowrap;
   }
   /*End of stlying for "Recent Transactions" box*/

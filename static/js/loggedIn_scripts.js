@@ -25,13 +25,11 @@ function toggle(){
     toggleSwitch.addEventListener('change', function () {
         if (toggleSwitch.checked) {
             hideableGraph.style.display = 'none';
-            hideableTable.style.display = 'flex';
-            hideableTable.style.justifyContent = 'center';
+            hideableTable.style.display = 'block';
             graphColumn.classList.add('is-flex-centered');
         } else {
             hideableGraph.style.display = 'block';
             hideableTable.style.display = 'none';
-            hideableTable.style.justifyContent = '';
             graphColumn.classList.remove('is-flex-centered');
         }
     });

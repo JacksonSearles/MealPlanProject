@@ -82,7 +82,7 @@ def return_mealplan_data(username, password):
     current_semester, days_left_semester = calculate_current_date(fall_start_day, fall_end_day, spring_start_day, spring_end_day)
     daily_budget = calculate_daily_budget(mealplan_balance, days_left_semester)
     daily_spending, funds_added = calculate_daily_spending(transactions)
-    graph = create_spending_graph(daily_spending, fall_start_day, fall_end_day, spring_start_day, spring_end_day)
+    graph = create_spending_graph(daily_spending, current_semester, fall_start_day, fall_end_day, spring_start_day, spring_end_day)
 
     data_folder = 'data'
     os.makedirs(data_folder, exist_ok=True)
@@ -126,17 +126,21 @@ def scrape_mealplan_data(browser):
     first_name = soup.label.text.split()[2]
     transactions_href = None
     mealplan_name = None
-    mealplan_balance = None
+    mealplan_balance = 0
     mealplan_accounts = soup.find('table', {'width': '500', 'border': '0'}).find_all('tr')
-    mealplans = ['Meal Plan A', 'Meal Plan B', 'Meal Plan C', 'Meal Plan D', 'Meal Plan E', 'Meal Plan F',
-                'The 25.00 Plan', 'Commuter Semester', 'Commuter Annual', 'Off Campus Holding - Carryover']
-    for account in mealplan_accounts:
+    mealplans = ['Resident Holding - Carryover'	, 'Off Campus Holding - Carryover', 'Meal Plan A', 'Meal Plan B', 'Meal Plan C', 'Meal Plan D', 
+                 'Meal Plan E', 'Meal Plan F', 'The 25.00 Plan', 'Commuter Semester', 'Commuter Annual']
+    for account in mealplan_accounts[3:]:
         for mealplan in mealplans:
             if account.find('td', string=mealplan):
-                transactions_href = account.find('a')['href']
-                mealplan_balance = float(account.find('div', {'align': 'right'}).text.strip().replace('$', '').replace('  ', ''))
-                mealplan_name = mealplan
-                break
+                if mealplan == 'Resident Holding - Carryover' or mealplan == 'Off Campus Holding - Carryover':
+                    mealplan_balance += float(account.find('div', {'align': 'right'}).text.strip().replace('$', '').replace('  ', ''))
+                    continue
+                else: 
+                    transactions_href = account.find('a')['href']
+                    mealplan_balance += float(account.find('div', {'align': 'right'}).text.strip().replace('$', '').replace('  ', ''))
+                    mealplan_name = mealplan
+                    break
         if transactions_href:
             break
     return first_name, mealplan_name, mealplan_balance, transactions_href
@@ -272,46 +276,30 @@ def calculate_daily_spending(transactions):
 # A Plotly Bar object is created out of the data from the DataFrame. A Plotly Layout object is created, 
 # customizing the appearance of the graph. A Plotly Figure is created out of the Bar and Layout object.
 # The Figure is then returned as an HTML string to be displayed on the website
-def create_spending_graph(daily_spending_dict, fall_end_day, spring_end_day, fall_start_day, spring_start_day):
+def create_spending_graph(daily_spending_dict, current_semester,fall_end_day, spring_end_day, fall_start_day, spring_start_day):
     #CREATES PANDAS DATAFRAME OUT OF INPUT DICT, THEN SORTS DATES IN CHRONOLOGICAL ORDER
     df = pd.DataFrame(list(daily_spending_dict.items()), columns=['Date', 'Price'])
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.sort_values(by='Date', ascending=True)
-    
+
     #CREATES DROPDOWN MENU FOR RANGE SELECTION
-    curr_month = date.today().month
     curr_year = date.today().year
-    dropdown_options = []
-    # True when in fall semester
-    if 8 <= curr_month <= 12:
-        dropdown_options.extend([
-            {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
-            {'label': 'Current Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year, 12, fall_end_day)]}]},
-            {'label': 'Previous Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
-            {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year+1, 5, spring_end_day)]}]},
-        ])
-    # True when in spring semester
-    elif 1 <= curr_month <= 5:
-        dropdown_options.extend([
-            {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
-            {'label': 'Current Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
-            {'label': 'Previous Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year-1, 12, fall_end_day)]}]},
-            {'label': 'Current School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year, 5, spring_end_day)]}]}
-        ])
-    #True when in the summer
-    else:
-        dropdown_options.extend([
-            {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
-            {'label': 'Most Recent Spring Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]},
-            {'label': 'Most Recent School Year', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year-1, 8, fall_start_day), date(curr_year, 5, spring_end_day)]}]}
-        ])
+    dropdown_options = [
+        {'label': 'Last 7 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=7), date.today()]}]},
+        {'label': 'Last 14 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=14), date.today()]}]},
+        {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
+    ]
+    if current_semester == 'Fall':
+        dropdown_options.append({'label': 'Entire Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year, 12, fall_end_day)]}]})
+    elif current_semester == 'Spring': 
+        dropdown_options.append({'label': 'Entire Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]})
 
     #DESIGN LAYOUT OF GRAPH      
     hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
     bar = go.Bar(x=df['Date'], y=df['Price'], text=hover_text, hoverinfo='text', textposition="none", marker_color='#006747')
     layout = go.Layout(
-        xaxis=dict(title_font=dict(size=30), type='date', showgrid=True, tickformat='%b %Y',tickfont=dict(size=15), range=[date.today() - timedelta(days=30), date.today()]),
-        yaxis=dict(tickprefix='$', tickfont=dict(size=15, family="Arial Black, sans-serif")),
+        xaxis=dict(title_font=dict(size=30), type='date', showgrid=True, tickformat='%b %Y',tickfont=dict(size=15), range=[date.today() - timedelta(days=7), date.today()]),
+        yaxis=dict(tickprefix='$', tickfont=dict(size=15, family="Arial Black, sans-serif"), range=[0, 10], autorange=True),
         hovermode='x',
         template='plotly_dark',
         paper_bgcolor='white',

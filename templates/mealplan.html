@@ -21,13 +21,11 @@
     <div class="column is-6-desktop recent-transactions">
       <div class="box">
         <h2 class="binghamton-black">Recent Transactions</h2>
+        <div class="transactions-table-header">
+          <p>Date</p>
+          <p>Amount</p>
+        </div>
         <table class="transactions-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Amount</th>
-            </tr>
-          </thead>
           <tbody>
             {% if transactions %}
             {# The 'transactions' list is not empty #}
@@ -63,13 +61,11 @@
           {{ graph|safe }}
         </div>
         <div class="hideable-table">
+          <div class="transactions-table-header">
+            <p>Date</p>
+            <p>Total Spent</p>
+          </div>
           <table class="transactions-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Total Spent</th>
-              </tr>
-            </thead>
             <tbody>
               {% for date, total in daily_spending.items() %}
               <tr>
