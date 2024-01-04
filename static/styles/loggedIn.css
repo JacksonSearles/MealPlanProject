@@ -35,11 +35,14 @@ located at the top of the screen used for navigating site*/
   background-color: #006747;
   border-bottom: 3px solid white;
   min-width: 380px;
-  
 }
 
 .navbar i{
   color: white;
+}
+
+.navbar .fas{
+  display: none;
 }
 
 .logo{
@@ -100,10 +103,6 @@ located at the top of the screen used for navigating site*/
 
 .link:hover::after {
   width: 100%;
-}
-
-.navbar .fas{
-  display: none;
 }
 
 .button.is-danger { 

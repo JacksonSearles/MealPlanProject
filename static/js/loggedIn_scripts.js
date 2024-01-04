@@ -1,3 +1,7 @@
+document.onclick = function (event) {
+    if (!document.getElementById("navbar").contains(event.target)) closemenu();
+}
+
 function openmenu() {
     const links = document.getElementById("links");
     links.style.right = "0";

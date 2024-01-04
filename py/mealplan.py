@@ -30,6 +30,25 @@ class TransactionSerializer(json.JSONEncoder):
             return obj.__dict__
         return super().default(obj)
 ######################################################################################################
+    
+######################################################################################################
+# Returns demo mealplan data for when users who are not BU students want to test functionality of the
+# website. This demo function only works on the hosted website, since the filepaths for
+# transactions_filename, totals_by_date_filename, and graph_filename are set for the filepaths of
+# the hosted site (bingmealplanhelper.pythonanywhere.com).
+def return_demo_mealplan_data():
+    first_name = 'Demo'
+    mealplan_name = 'Meal Plan C'
+    mealplan_balance = 21.8
+    current_semester = 'Spring'
+    days_left_semester = 0
+    daily_budget = 21.8
+    funds_added = 250.0
+    transactions_filename = '/home/bingmealplanhelper/demo_data/demo_transactions.json'
+    daily_spending_filename = '/home/bingmealplanhelper/demo_data/demo_daily_spending.json'
+    graph_filename = '/home/bingmealplanhelper/demo_data/demo_graph.html'
+    return first_name, mealplan_name, mealplan_balance, current_semester, days_left_semester, daily_budget, funds_added, transactions_filename, daily_spending_filename, graph_filename
+######################################################################################################
 
 ######################################################################################################
 # Takes username and password from our login page. Launches Selenium browser using launch_selenium_browser, 
@@ -56,42 +75,19 @@ def return_mealplan_data(username, password):
     fall_start_day, fall_end_day, spring_start_day, spring_end_day = scrape_academic_calander()
     current_semester, days_left_semester = calculate_current_date(fall_start_day, fall_end_day, spring_start_day, spring_end_day)
     daily_budget = calculate_daily_budget(mealplan_balance, days_left_semester)
-    totals_by_date, funds_added = calculate_daily_spending(transactions)
-    graph_html = create_spending_graph(totals_by_date, fall_start_day, fall_end_day, spring_start_day, spring_end_day)
+    daily_spending, funds_added = calculate_daily_spending(transactions)
+    graph = create_spending_graph(daily_spending, fall_start_day, fall_end_day, spring_start_day, spring_end_day)
 
     data_folder = 'data'
     os.makedirs(data_folder, exist_ok=True)
     transactions_filename = os.path.join(data_folder, 'transactions.json')
-    totals_by_date_filename = os.path.join(data_folder, 'totals_by_date.json')
+    daily_spending_filename = os.path.join(data_folder, 'daily_spending.json')
     graph_filename = os.path.join(data_folder, 'graph.html')
-
-    with open(transactions_filename, 'w') as file:
-        json.dump(transactions, file, cls=TransactionSerializer)
-    with open(totals_by_date_filename,  'w') as file:
-        json.dump(totals_by_date, file)
-    with open(graph_filename, 'w', encoding='utf-8') as file:
-        file.write(graph_html)   
-
-    return first_name, mealplan_name, mealplan_balance, current_semester, days_left_semester, daily_budget, funds_added, transactions_filename, totals_by_date_filename, graph_filename
-######################################################################################################
-
-######################################################################################################
-# Returns demo mealplan data for when users who are not BU students want to test functionality of the
-# website. This demo function only works on the hosted website, since the filepaths for
-# transactions_filename, totals_by_date_filename, and graph_filename are set for the filepaths of
-# the hosted site (bingmealplanhelper.pythonanywhere.com).
-def return_demo_mealplan_data():
-    first_name = 'Demo'
-    mealplan_name = 'Meal Plan C'
-    mealplan_balance = 21.8
-    current_semester = 'Spring'
-    days_left_semester = 0
-    daily_budget = 21.8
-    funds_added = 250.0
-    transactions_filename = '/home/bingmealplanhelper/demo_data/demo_transactions.json'
-    totals_by_date_filename = '/home/bingmealplanhelper/demo_data/demo_totals_by_date.json'
-    graph_filename = '/home/bingmealplanhelper/demo_data/demo_graph.html'
-    return first_name, mealplan_name, mealplan_balance, current_semester, days_left_semester, daily_budget, funds_added, transactions_filename, totals_by_date_filename, graph_filename
+    with open(transactions_filename, 'w') as file: json.dump(transactions, file, cls=TransactionSerializer)
+    with open(daily_spending_filename,  'w') as file: json.dump(daily_spending, file)
+    with open(graph_filename, 'w', encoding='utf-8') as file: file.write(graph)
+       
+    return first_name, mealplan_name, mealplan_balance, current_semester, days_left_semester, daily_budget, funds_added, transactions_filename, daily_spending_filename, graph_filename
 ######################################################################################################
 
 ######################################################################################################
@@ -100,16 +96,13 @@ def return_demo_mealplan_data():
 # actual Binghamton meaplan site using .seny_keys, which will attempt to login user.
 def launch_selenium_browser(username, password):
     options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
+    options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     browser = webdriver.Chrome(options=options)
     browser.get('https://bing.campuscardcenter.com/ch/login.html')
-
-    elem = browser.find_element(By.NAME, 'username')
-    elem.send_keys(username)
-    elem = browser.find_element(By.NAME, 'password')
-    elem.send_keys(password + Keys.RETURN)
+    browser.find_element(By.NAME, 'username').send_keys(username)
+    browser.find_element(By.NAME, 'password').send_keys(password + Keys.RETURN)
     return browser
 ######################################################################################################
 
@@ -191,35 +184,18 @@ def scrape_academic_calander():
     url = 'https://www.binghamton.edu/academics/academic-calendar.html'
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
-    dorms_open_fall = soup.find_all('td', text='New Student Move-in and Welcome Program')
-    dorms_closed_fall = soup.find_all('td', text='Residence halls close at 10 a.m.')
-    dorm_open_spring = soup.find_all('td', text='Resident Halls Open for Returning Students at 9am')
-    dorms_closed_spring = soup.find_all('td', text='Residence halls close for non-seniors at 10 a.m.')
-
-    if len(dorms_open_fall) >= 1:
-        start_of_fall_semester = dorms_open_fall[0]
-        dorm_open_date_fall = start_of_fall_semester.find_previous_sibling('td')
-        full_date_fall_open = dorm_open_date_fall.text.split()
-        fall_start_day = full_date_fall_open[-1]
-
-    if len(dorms_closed_fall) >= 1:
-        end_of_fall_semester = dorms_closed_fall[1]
-        fall_date = end_of_fall_semester.find_previous_sibling('td')
-        full_date_fall = fall_date.text.split()
-        fall_end_day = full_date_fall[-1]
-
-    if len(dorm_open_spring) >= 1:
-        start_of_spring_semester = dorm_open_spring[0]
-        dorm_open_date_spring = start_of_spring_semester.find_previous_sibling('td')
-        full_date_spring_open = dorm_open_date_spring.text.split()
-        spring_start_day = full_date_spring_open[-1]
-
-    if len(dorms_closed_spring) >= 1:
-        end_of_spring_semester = dorms_closed_spring[0]
-        spring_date = end_of_spring_semester.find_previous_sibling('td')
-        full_date_spring = spring_date.text.split()
-        spring_end_day = full_date_spring[-1]
-    
+    fall_start_day_target = soup.find_all('td', text='New Student Move-in and Welcome Program')
+    fall_end_day_target = soup.find_all('td', text='Residence halls close at 10 a.m.')
+    spring_start_day_target = soup.find_all('td', text='Resident Halls Open for Returning Students at 9am')
+    spring_end_day_target = soup.find_all('td', text='Residence halls close for non-seniors at 10 a.m.')
+    if len(fall_start_day_target) >= 1:
+        fall_start_day = fall_start_day_target[0].find_previous_sibling('td').text.split()[-1]
+    if len(fall_end_day_target) >= 1:
+        fall_end_day = fall_end_day_target[1].find_previous_sibling('td').text.split()[-1]
+    if len(spring_start_day_target) >= 1:
+        spring_start_day = spring_start_day_target[0].find_previous_sibling('td').text.split()[-1]
+    if len(spring_end_day_target) >= 1:
+        spring_end_day = spring_end_day_target[0].find_previous_sibling('td').text.split()[-1] 
     if fall_start_day.isdigit() and fall_end_day.isdigit() and spring_start_day.isdigit() and spring_end_day.isdigit():
         return int(fall_start_day), int(fall_end_day), int(spring_start_day), int(spring_end_day)
     else:
@@ -230,7 +206,7 @@ def scrape_academic_calander():
 # This function determines the current semester the user is in, and the days left in the current 
 # semester based on start and end days scraped from the academic calendar
 def calculate_current_date(fall_start_day, fall_end_day, spring_start_day, spring_end_day):
-    current_semester = None
+    current_semester = None 
     days_left_semester = 0
     curr_year = date.today().year
     curr_date = date.today()
@@ -253,10 +229,7 @@ def calculate_current_date(fall_start_day, fall_end_day, spring_start_day, sprin
 # Takes in scraped meaplan balance and the days left in the semester, and calculates the daily 
 # budget that person can spend until end of semeseter.
 def calculate_daily_budget(meal_plan_balance, days_left_semester):
-    if days_left_semester > 0:
-        return round((meal_plan_balance / days_left_semester), 2)
-    else:
-        return meal_plan_balance
+    return round((meal_plan_balance / days_left_semester), 2) if days_left_semester > 0 else meal_plan_balance
 ######################################################################################################
 
 ######################################################################################################
@@ -272,18 +245,18 @@ def calculate_daily_budget(meal_plan_balance, days_left_semester):
 # Finally, the total for each day is rounded to 2 decimal places.
 def calculate_daily_spending(transactions):
     funds_added = 0
-    total_spent_dict = {}
+    daily_spending_dict = {}
     for transaction in transactions:
         if transaction.location == "Initial Funds":
             continue 
         elif transaction.location == "Added Funds":
             funds_added += transaction.price
         else:
-            if transaction.date not in total_spent_dict:
-                total_spent_dict[transaction.date] = 0
-            total_spent_dict[transaction.date] += transaction.price
-    total_spent_dict = {date: round(total, 2) for date, total in total_spent_dict.items()}
-    return total_spent_dict, round(funds_added, 2)
+            if transaction.date not in daily_spending_dict:
+                daily_spending_dict[transaction.date] = 0
+            daily_spending_dict[transaction.date] += transaction.price
+    daily_spending_dict = {date: round(total, 2) for date, total in daily_spending_dict.items()}
+    return daily_spending_dict, round(funds_added, 2)
 ######################################################################################################
 
 ######################################################################################################
@@ -293,9 +266,9 @@ def calculate_daily_spending(transactions):
 # A Plotly Bar object is created out of the data from the DataFrame. A Plotly Layout object is created, 
 # customizing the appearance of the graph. A Plotly Figure is created out of the Bar and Layout object.
 # The Figure is then returned as an HTML string to be displayed on the website
-def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_start_day, spring_start_day):
+def create_spending_graph(daily_spending_dict, fall_end_day, spring_end_day, fall_start_day, spring_start_day):
     #CREATES PANDAS DATAFRAME OUT OF INPUT DICT, THEN SORTS DATES IN CHRONOLOGICAL ORDER
-    df = pd.DataFrame(list(total_spent_dict.items()), columns=['Date', 'Price'])
+    df = pd.DataFrame(list(daily_spending_dict.items()), columns=['Date', 'Price'])
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.sort_values(by='Date', ascending=True)
     
@@ -331,19 +304,16 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
     hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
     bar = go.Bar(x=df['Date'], y=df['Price'], text=hover_text, hoverinfo='text', textposition="none", marker_color='#006747')
     layout = go.Layout(
-        xaxis=dict(
-            title="<b>Date</b>",
-            title_font=dict(size=30),
-            type='date', 
-            showgrid=True,  
-            tickformat='%b %Y',
-            tickfont=dict(size=15),
-            range=[date.today() - timedelta(days=30), date.today()]
-        ),
-        yaxis=dict( 
-            tickprefix='$', 
-            tickfont=dict(size=15, family="Arial Black, sans-serif")
-        ),
+        xaxis=dict(title="<b>Date</b>", title_font=dict(size=30), type='date', showgrid=True, tickformat='%b %Y',tickfont=dict(size=15), range=[date.today() - timedelta(days=30), date.today()]),
+        yaxis=dict(tickprefix='$', tickfont=dict(size=15, family="Arial Black, sans-serif")),
+        hovermode='x',
+        template='plotly_dark',
+        paper_bgcolor='white',
+        plot_bgcolor='white',   
+        font=dict(color='black', family='Arial, sans-serif'),
+        modebar_remove=['zoom', 'resetScale2d', 'pan', 'select2d', 'lasso', 'zoomIn', 'zoomOut', 'autoScale'],
+        dragmode=False,
+        margin=dict(l=0,r=0,t=10,b=0),
         updatemenus=[dict(
             buttons=dropdown_options, 
             direction="down", 
@@ -356,15 +326,7 @@ def create_spending_graph(total_spent_dict, fall_end_day, spring_end_day, fall_s
             bgcolor='#006747',  
             bordercolor='white',  
             font=dict(size=15, family='Arial, sans-serif', color='white'),
-        )], 
-        hovermode='x',
-        template='plotly_dark',
-        paper_bgcolor='white',
-        plot_bgcolor='white',   
-        font=dict(color='black', family='Arial, sans-serif'),
-        modebar_remove=['zoom', 'resetScale2d', 'pan', 'select2d', 'lasso', 'zoomIn', 'zoomOut', 'autoScale'],
-        dragmode=False,
-        margin=dict(l=0,r=0,t=10,b=0)    
+        )],     
     )
     fig = go.Figure(data=[bar], layout=layout)
     # plotly has no option to change the hover affect of its buttons. so this changes hover color of graph buttons (super jank fix but it works)

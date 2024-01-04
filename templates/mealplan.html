@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/static/styles/mealplan.css">
 </head>
 <body>
@@ -73,7 +71,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for date, total in totals_by_date.items() %}
+              {% for date, total in daily_spending.items() %}
               <tr>
                 <td>{{date}}</td>
                 <td>${{total}}</td>

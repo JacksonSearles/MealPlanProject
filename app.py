@@ -61,19 +61,19 @@ def login():
             food_data = return_food_data()
     if mealplan_data and food_data: 
         session.update({
-        'logged_in': True,
-        'view': None,
-        'first_name': mealplan_data[0],
-        'mealplan_name': mealplan_data[1],
-        'mealplan_balance': mealplan_data[2],
-        'current_semester': mealplan_data[3],
-        'days_left_semester': mealplan_data[4],
-        'daily_budget': mealplan_data[5],
-        'funds_added': mealplan_data[6],
-        'transactions': mealplan_data[7],
-        'totals_by_date': mealplan_data[8],
-        'graph': mealplan_data[9],
-        #.....Data about food items at dining fall will be stored here aswell   
+            'logged_in': True,
+            'view': None,
+            'first_name': mealplan_data[0],
+            'mealplan_name': mealplan_data[1],
+            'mealplan_balance': mealplan_data[2],
+            'current_semester': mealplan_data[3],
+            'days_left_semester': mealplan_data[4],
+            'daily_budget': mealplan_data[5],
+            'funds_added': mealplan_data[6],
+            'transactions': mealplan_data[7],
+            'daily_spending': mealplan_data[8],
+            'graph': mealplan_data[9],
+            #.....Data about food items at dining fall will be stored here aswell   
         })
         return redirect(url_for('mealplan'))
     else:
@@ -93,17 +93,14 @@ def login():
 def mealplan(): 
     if session.get('logged_in'):
         session['view'] = 'mealplan'
-        with open(f"{session.get('transactions')}", 'r') as file:
-            transactions = json.load(file)
-        with open(f"{session.get('totals_by_date')}", 'r') as file:
-            totals_by_date = json.load(file)
-        with open(f"{session.get('graph')}", 'r', encoding='utf-8') as file:
-            graph = file.read()    
+        with open(f"{session.get('transactions')}", 'r') as file: transactions = json.load(file)
+        with open(f"{session.get('daily_spending')}", 'r') as file: daily_spending = json.load(file)
+        with open(f"{session.get('graph')}", 'r', encoding='utf-8') as file: graph = file.read()    
         return render_template('loggedIn.html', view = session.get('view'), first_name=session.get('first_name'), 
                 mealplan_name=session.get('mealplan_name'), mealplan_balance=session.get('mealplan_balance'),
                 days_left_semester=session.get('days_left_semester'), daily_budget=session.get('daily_budget'), 
                 funds_added=session.get('funds_added'), transactions=transactions,
-                totals_by_date=totals_by_date, graph=graph) 
+                daily_spending=daily_spending, graph=graph) 
     else:
         return redirect(url_for('home'))
 ######################################################################################################
@@ -131,8 +128,8 @@ def budget():
             chart_title = 'Budget Chart'
             current_semester = '' 
         return render_template('loggedIn.html', view=session.get('view'),
-                    first_name=session.get('first_name'),
-                    chart_title=chart_title, current_semester=current_semester)
+                first_name=session.get('first_name'), chart_title=chart_title,
+                current_semester=current_semester)
     else:
         return redirect(url_for('home'))
 ######################################################################################################
@@ -149,8 +146,7 @@ def budget():
 def food():
     if session.get('logged_in'):
         session['view'] = 'food'
-        return render_template('loggedIn.html', view=session.get('view'), 
-                    first_name=session.get('first_name'))
+        return render_template('loggedIn.html', view=session.get('view'), first_name=session.get('first_name'))
     else:
         return redirect(url_for('home'))
 ######################################################################################################   
