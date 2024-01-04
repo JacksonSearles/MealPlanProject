@@ -61,7 +61,6 @@ def login():
     if mealplan_data and food_data: 
         session.update({
             'logged_in': True,
-            'view': None,
             'first_name': mealplan_data[0],
             'mealplan_name': mealplan_data[1],
             'mealplan_balance': mealplan_data[2],
@@ -91,11 +90,10 @@ def login():
 @app.route('/mealplan')
 def mealplan(): 
     if session.get('logged_in'):
-        session['view'] = 'mealplan'
         with open(f"{session.get('transactions')}", 'r') as file: transactions = json.load(file)
         with open(f"{session.get('daily_spending')}", 'r') as file: daily_spending = json.load(file)
         with open(f"{session.get('graph')}", 'r', encoding='utf-8') as file: graph = file.read()    
-        return render_template('loggedIn.html', view = session.get('view'), first_name=session.get('first_name'), 
+        return render_template('loggedIn.html', view='mealplan', first_name=session.get('first_name'), 
                 mealplan_name=session.get('mealplan_name'), mealplan_balance=session.get('mealplan_balance'),
                 days_left_semester=session.get('days_left_semester'), daily_budget=session.get('daily_budget'), 
                 funds_added=session.get('funds_added'), transactions=transactions,
@@ -116,7 +114,6 @@ def mealplan():
 @app.route('/budget')
 def budget():
     if session.get('logged_in'):
-        session['view'] = 'budget'
         if session.get('current_semester') == 'Fall':
             chart_title = 'Fall Budget Chart'
             current_semester = 'Fall'
@@ -126,7 +123,7 @@ def budget():
         else:
             chart_title = 'Budget Chart'
             current_semester = '' 
-        return render_template('loggedIn.html', view=session.get('view'),
+        return render_template('loggedIn.html', view='budget',
                 first_name=session.get('first_name'), chart_title=chart_title,
                 current_semester=current_semester)
     else:
@@ -144,8 +141,7 @@ def budget():
 @app.route('/food')
 def food():
     if session.get('logged_in'):
-        session['view'] = 'food'
-        return render_template('loggedIn.html', view=session.get('view'), first_name=session.get('first_name'))
+        return render_template('loggedIn.html', view='food', first_name=session.get('first_name'))
     else:
         return redirect(url_for('home'))
 ######################################################################################################   
