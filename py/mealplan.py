@@ -40,7 +40,7 @@ def return_demo_mealplan_data():
     first_name = 'Demo'
     mealplan_name = 'Meal Plan C'
     mealplan_balance = 21.8
-    current_semester = 'Spring'
+    current_semester = 'Fall 2023'
     days_left_semester = 0
     daily_budget = 21.8
     funds_added = 250.0
@@ -126,7 +126,8 @@ def scrape_mealplan_data(browser):
     first_name = soup.label.text.split()[2]
     transactions_href = None
     mealplan_name = None
-    mealplan_balance = 0
+    mealplan_balance = None
+    carryover_balance = None
     mealplan_accounts = soup.find('table', {'width': '500', 'border': '0'}).find_all('tr')
     mealplans = ['Resident Holding - Carryover'	, 'Off Campus Holding - Carryover', 'Meal Plan A', 'Meal Plan B', 'Meal Plan C', 'Meal Plan D', 
                  'Meal Plan E', 'Meal Plan F', 'The 25.00 Plan', 'Commuter Semester', 'Commuter Annual']
@@ -134,16 +135,16 @@ def scrape_mealplan_data(browser):
         for mealplan in mealplans:
             if account.find('td', string=mealplan):
                 if mealplan == 'Resident Holding - Carryover' or mealplan == 'Off Campus Holding - Carryover':
-                    mealplan_balance += float(account.find('div', {'align': 'right'}).text.strip().replace('$', '').replace('  ', ''))
-                    continue
+                    carryover_balance = float(account.find('div', {'align': 'right'}).text.strip().replace('$', '').replace('  ', ''))
+                    break
                 else: 
                     transactions_href = account.find('a')['href']
-                    mealplan_balance += float(account.find('div', {'align': 'right'}).text.strip().replace('$', '').replace('  ', ''))
+                    mealplan_balance = float(account.find('div', {'align': 'right'}).text.strip().replace('$', '').replace('  ', ''))
                     mealplan_name = mealplan
                     break
-        if transactions_href:
-            break
-    return first_name, mealplan_name, mealplan_balance, transactions_href
+        if mealplan_balance is not None and carryover_balance is not None:
+            break          
+    return first_name, mealplan_name,  mealplan_balance+carryover_balance if mealplan_balance is not None and carryover_balance is not None else 0, transactions_href
 ######################################################################################################
 
 ######################################################################################################
@@ -223,14 +224,14 @@ def calculate_current_date(fall_start_day, fall_end_day, spring_start_day, sprin
     end_date = date.today()
     if date(curr_year, 8, fall_start_day) <= curr_date <= date(curr_year, 12, fall_end_day):
         end_date = date(curr_year, 12, fall_end_day)
-        current_semester = 'Fall'
+        current_semester = f'Fall {curr_year}'
     elif date(curr_year, 1, spring_start_day) <= curr_date <= date(curr_year, 5, spring_end_day):
         end_date = date(curr_year, 5, spring_end_day)
-        current_semester = 'Spring'
+        current_semester = f'Spring {curr_year}'
     elif (curr_date.month == 12 and date(curr_year, 12, fall_end_day) <= curr_date <= date(curr_year+1, 1, spring_start_day)) or curr_date.month == 1 and date(curr_year-1, 12, fall_end_day) <= curr_date <= date(curr_year, 1, spring_start_day):
-        current_semester = 'Spring'
+        current_semester =  f'Spring {curr_year}'
     else:
-        current_semester = "Summer"
+        current_semester =  f'Summer {curr_year}'
     days_left_semester = (end_date - curr_date).days
     return current_semester, days_left_semester
 ######################################################################################################
@@ -289,9 +290,9 @@ def create_spending_graph(daily_spending_dict, current_semester,fall_end_day, sp
         {'label': 'Last 14 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=14), date.today()]}]},
         {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
     ]
-    if current_semester == 'Fall':
+    if 'Fall' in current_semester:
         dropdown_options.append({'label': 'Entire Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year, 12, fall_end_day)]}]})
-    elif current_semester == 'Spring': 
+    elif 'Spring' in current_semester: 
         dropdown_options.append({'label': 'Entire Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 1, spring_start_day), date(curr_year, 5, spring_end_day)]}]})
 
     #DESIGN LAYOUT OF GRAPH      

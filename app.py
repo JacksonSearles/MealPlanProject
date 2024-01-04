@@ -95,9 +95,9 @@ def mealplan():
         with open(f"{session.get('graph')}", 'r', encoding='utf-8') as file: graph = file.read()    
         return render_template('loggedIn.html', view='mealplan', first_name=session.get('first_name'), 
                 mealplan_name=session.get('mealplan_name'), mealplan_balance=session.get('mealplan_balance'),
-                days_left_semester=session.get('days_left_semester'), daily_budget=session.get('daily_budget'), 
-                funds_added=session.get('funds_added'), transactions=transactions,
-                daily_spending=daily_spending, graph=graph) 
+                current_semester=session.get('current_semester'),days_left_semester=session.get('days_left_semester'), 
+                daily_budget=session.get('daily_budget'), funds_added=session.get('funds_added'), 
+                transactions=transactions, daily_spending=daily_spending, graph=graph) 
     else:
         return redirect(url_for('home'))
 ######################################################################################################

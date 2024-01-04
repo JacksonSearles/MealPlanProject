@@ -20,7 +20,7 @@
     <!-- Transactions Column -->
     <div class="column is-6-desktop recent-transactions">
       <div class="box">
-        <h2 class="binghamton-black">Recent Transactions</h2>
+        <h2 class="binghamton-black">{{current_semester}} Transactions</h2>
         <div class="transactions-table-header">
           <p>Date</p>
           <p>Amount</p>
@@ -48,7 +48,7 @@
     <!-- Graph Column -->
     <div class="column is-12" id="graphColumn">
       <div class="graph-container box">
-        <h2 class="binghamton-black">Daily Spending</h2>
+        <h2 class="binghamton-black">{{current_semester}} Daily Spending</h2>
         <div class="switch-container">
           <p>Graph</p>
           <label class="switch" onclick="toggle()">
