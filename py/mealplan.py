@@ -168,8 +168,9 @@ def scrape_mealplan_transactions(transactions_href, browser):
             date = transaction.contents[3].text.strip()
             location = transaction.contents[7].text.strip().replace('Dining', '')
             price = transaction.contents[9].div.text.strip().replace('(', '').replace(')', '')
-            if len(location) == 0 and transaction.contents[5].text.strip() == 'ADDVALUE': location = "Added Funds"
-            elif len(location) == 0 and transaction.contents[5].text.strip() == 'Adj_Credit': location = "Initial Funds"
+            if len(location) == 0:
+                if transaction.contents[5].text.strip() == 'ADDVALUE': location = "Added Funds"
+                if transaction.contents[5].text.strip() == 'Adj_Credit': location = "Initial Funds"
             mealplan_transactions.append(Transaction(date, location, price))
         curr_page += 1
     browser.quit()
