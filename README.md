@@ -33,6 +33,7 @@ Project Idea Proposed by [Josef Schindler](https://www.linkedin.com/in/josef-sch
 * Redirect Link to Add Funds to Mealplan
 * All Recent Transactions (Date, Location, Price)
 * Daily Spending (Graph and Table Format)
+* Budget Chart for Current Semester(Based on BU Dining Service Chart)
 * Food Currently Served at Each Dining Hall (In development still)
 
 ## Libraries Used
@@ -41,6 +42,6 @@ Project Idea Proposed by [Josef Schindler](https://www.linkedin.com/in/josef-sch
 
 * BeautifulSoup: Used for scraping HTML code from websites launched in Selenium browser. I.E, how we scrape the balance and transactions from the Binghamton Mealplan site
 
-* Flask: Allows for data to be passed in from Python file to HTML, using methods such as POST, PUT, etc. This is how we pass the data scraped using BeautifulSoup into the HTML code to be displayed for the user
+* Flask: At a high level, Flask is how we pass the data scraped from mealplan site using BeautifulSoup into the HTML code to be displayed for the user. Flask allows us to run Python functions based on the current route/url of the website. For example, if the user is at https://bingmealplanhelper.pythonanywhere.com/mealplan, the function named "mealplan" in app.py will run. Overall, we use Flask to handle GET and POST methods made from website. POST allows us to send data from the HTML page to the Python file, such as the username and password entered on our login page. GET allows the website to request some sort of data. In a majority of the GET requests, we use Flask to return an html page with some data passed through using Flask's render_template function, and display this data on the html page using the Jinja templating engine.
 
 * Plotly: Used to create an interactive graph that displays the users daily spending.
