@@ -129,22 +129,18 @@ def scrape_mealplan_data(browser):
     mealplan_name = None
     mealplan_balance = None
     carryover_balance = None
-    mealplan_accounts = soup.find('table', {'width': '500', 'border': '0'}).find_all('tr')
-    mealplans = ['Meal Plan C', 'Resident Holding - Carryover'	, 'Off Campus Holding - Carryover', 'Meal Plan A', 'Meal Plan B', 'Meal Plan D', 
-                 'Meal Plan E', 'Meal Plan F', 'The 25.00 Plan', 'Commuter Semester', 'Commuter Annual']
-    for account in mealplan_accounts[3:]:
-        for mealplan in mealplans:
-            if account.find('td', string=mealplan):
-                if mealplan == 'Resident Holding - Carryover' or mealplan == 'Off Campus Holding - Carryover':
-                    carryover_balance = float(account.find('div', {'align': 'right'}).text.strip().replace('$', '').replace('  ', ''))
-                    break
-                else: 
-                    transactions_href = account.find('a')['href']
-                    mealplan_balance = float(account.find('div', {'align': 'right'}).text.strip().replace('$', '').replace('  ', ''))
-                    mealplan_name = mealplan
-                    break
-        if mealplan_balance is not None and carryover_balance is not None:
-            break
+    mealplan_accounts = soup.find('table', {'width': '500', 'border': '0'}).find_all('tr')[3:]
+    mealplans = {'Meal Plan C', 'Meal Plan A', 'Meal Plan B', 'Meal Plan D', 
+                 'Meal Plan E', 'Meal Plan F', 'The 25.00 Plan', 'Commuter Semester', 'Commuter Annual'}  
+    for account in mealplan_accounts:
+        if mealplan_balance is not None and carryover_balance is not None: break
+        account_name = account.find_all('td', limit=2)[-1].text.strip()
+        if 'Carryover' in account_name:
+            carryover_balance = float(account.find('div', {'align': 'right'}).text.strip().replace('$', '').replace('  ', ''))
+        elif account_name in mealplans:
+            mealplan_balance = float(account.find('div', {'align': 'right'}).text.strip().replace('$', '').replace('  ', ''))
+            mealplan_name = account_name
+            transactions_href = account.find('a')['href']
     if mealplan_balance is None: mealplan_balance = 0
     if carryover_balance is None: carryover_balance = 0       
     return first_name, mealplan_name,  mealplan_balance+carryover_balance, transactions_href
