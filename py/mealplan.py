@@ -75,7 +75,6 @@ def return_mealplan_data(username, password):
     try:
         browser.find_element(By.ID, 'welcome')
     except NoSuchElementException:
-        browser.quit()
         return None
     first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
     transactions = scrape_mealplan_transactions(transactions_href, browser)
@@ -104,7 +103,7 @@ def return_mealplan_data(username, password):
 def launch_selenium_browser(username, password):
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--headless')
+    #chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-dev-shm-usage')
     browser = webdriver.Chrome(options=chrome_options)
     browser.get('https://bing.campuscardcenter.com/ch/login.html')
@@ -155,13 +154,14 @@ def scrape_mealplan_data(browser):
 # object, and add that object to mealplan_transactions[] array. This is done for all transactions on 
 # the current page. Then, iterate to next page by updating Selenium browser with href for next page 
 # and repeat.
-def scrape_mealplan_transactions(transactions_href, browser):
-    browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}")
-    soup = BeautifulSoup(browser.page_source, "html.parser")
-    total_pages = int(soup.find('td', align='center', colspan='7').get_text(strip=True).replace(">>>", '').split(' ')[1].split('/')[1]) 
+def scrape_mealplan_transactions(transactions_href, browser): 
     curr_page = 1
+    total_pages = 1
     mealplan_transactions = []
-    while curr_page <= total_pages:      
+    while curr_page <= total_pages: 
+        browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={curr_page}")        
+        soup = BeautifulSoup(browser.page_source, "html.parser")
+        if curr_page == 1: total_pages = int(soup.find('td', align='center', colspan='7').get_text(strip=True).replace(">>>", '').split(' ')[1].split('/')[1])
         transactions = soup.find_all('tr', {'id': 'EntryRow'})
         for transaction in transactions:
             date = transaction.contents[3].text.strip()
@@ -172,9 +172,6 @@ def scrape_mealplan_transactions(transactions_href, browser):
                 if transaction.contents[5].text.strip() == 'Adj_Credit': location = "Initial Funds"
             mealplan_transactions.append(Transaction(date, location, price))
         curr_page += 1
-        browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={curr_page}")
-        soup = BeautifulSoup(browser.page_source, "html.parser")
-    browser.quit()
     return mealplan_transactions
 ######################################################################################################
 
