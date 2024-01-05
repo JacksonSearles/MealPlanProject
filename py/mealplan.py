@@ -143,9 +143,11 @@ def scrape_mealplan_data(browser):
                     mealplan_balance = float(account.find('div', {'align': 'right'}).text.strip().replace('$', '').replace('  ', ''))
                     mealplan_name = mealplan
                     break
-        if mealplan_balance is not None and carryover_balance is not None:
-            break          
-    return first_name, mealplan_name,  mealplan_balance+carryover_balance if mealplan_balance is not None and carryover_balance is not None else 0, transactions_href
+        if mealplan_balance is not None:
+            break
+    if mealplan_balance is None: mealplan_balance = 0
+    if carryover_balance is None: carryover_balance = 0       
+    return first_name, mealplan_name,  mealplan_balance+carryover_balance, transactions_href
 ######################################################################################################
 
 ######################################################################################################
