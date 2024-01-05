@@ -125,10 +125,10 @@ def launch_selenium_browser(username, password):
 def scrape_mealplan_data(browser):
     soup = BeautifulSoup(browser.page_source, "html.parser")
     first_name = soup.label.text.split()[2]
-    transactions_href = None
     mealplan_name = None
     mealplan_balance = None
     carryover_balance = None
+    transactions_href = None
     mealplan_accounts = soup.find('table', {'width': '500', 'border': '0'}).find_all('tr')[3:]
     mealplans = {'Meal Plan C', 'Meal Plan A', 'Meal Plan B', 'Meal Plan D', 
                  'Meal Plan E', 'Meal Plan F', 'The 25.00 Plan', 'Commuter Semester', 'Commuter Annual'}  
@@ -152,34 +152,28 @@ def scrape_mealplan_data(browser):
 # as 1. Then we scrape the total number of transaction pages and store in total_pages. Then, loop through 
 # every page of transactions and scrape every transaction on the page using BeautifulSoup. For each
 # transaction, we create a Transaction object and add the date, location, and price to the Transaction 
-# object, and add that object to transactions[] array. This is done for all transactions on the current 
-# page. Then, iterate to next page by updating Selenium browser with href for next page and repeat.
-def scrape_mealplan_transactions(transactions_href, browser):
-    browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}")
-    soup = BeautifulSoup(browser.page_source, "html.parser")
+# object, and add that object to mealplan_transactions[] array. This is done for all transactions on 
+# the current page. Then, iterate to next page by updating Selenium browser with href for next page 
+# and repeat.
+def scrape_mealplan_transactions(transactions_href, browser): 
     curr_page = 1
-    total_pages = int(soup.find('td', align='center', colspan='7').get_text(strip=True).replace(">>>", '').split(' ')[1].split('/')[1]) 
-    transactions = []
-    while curr_page <= total_pages:      
-        entry_rows = soup.find_all('tr', {'id': 'EntryRow'})
-        for entry_row in entry_rows:
-            date = entry_row.contents[3].text.strip()
-            location = entry_row.contents[7].text.strip().replace('Dining', '')
-            price = entry_row.contents[9].div.text.strip().replace('(', '').replace(')', '')
-            #When funds are added to account, there is no location
-            if len(location) == 0:
-                #True when current transaction is funds being added to account
-                if entry_row.contents[5].text.strip() == 'ADDVALUE':
-                    location = "Added Funds"
-                #True when current transaction is the intial funds added to account
-                elif entry_row.contents[5].text.strip() == 'Adj_Credit':
-                    location = "Initial Funds"
-            transactions.append(Transaction(date, location, price))
-        curr_page += 1
-        browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={curr_page}")
+    total_pages = 1
+    mealplan_transactions = []
+    while curr_page <= total_pages: 
+        browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={curr_page}")        
         soup = BeautifulSoup(browser.page_source, "html.parser")
+        if curr_page == 1: total_pages = int(soup.find('td', align='center', colspan='7').get_text(strip=True).replace(">>>", '').split(' ')[1].split('/')[1])
+        transactions = soup.find_all('tr', {'id': 'EntryRow'})
+        for transaction in transactions:
+            date = transaction.contents[3].text.strip()
+            location = transaction.contents[7].text.strip().replace('Dining', '')
+            price = transaction.contents[9].div.text.strip().replace('(', '').replace(')', '')
+            if len(location) == 0 and transaction.contents[5].text.strip() == 'ADDVALUE': location = "Added Funds"
+            elif len(location) == 0 and transaction.contents[5].text.strip() == 'Adj_Credit': location = "Initial Funds"
+            mealplan_transactions.append(Transaction(date, location, price))
+        curr_page += 1
     browser.quit()
-    return transactions
+    return mealplan_transactions
 ######################################################################################################
 
 ######################################################################################################
