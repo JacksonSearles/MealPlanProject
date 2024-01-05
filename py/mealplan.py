@@ -103,8 +103,8 @@ def return_mealplan_data(username, password):
 def launch_selenium_browser(username, password):
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--no-sandbox')
-    #chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument("--disable-gpu")
     browser = webdriver.Chrome(options=chrome_options)
     browser.get('https://bing.campuscardcenter.com/ch/login.html')
     browser.find_element(By.NAME, 'username').send_keys(username)
