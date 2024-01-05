@@ -130,7 +130,7 @@ def scrape_mealplan_data(browser):
     mealplan_balance = None
     carryover_balance = None
     mealplan_accounts = soup.find('table', {'width': '500', 'border': '0'}).find_all('tr')
-    mealplans = ['Resident Holding - Carryover'	, 'Off Campus Holding - Carryover', 'Meal Plan A', 'Meal Plan B', 'Meal Plan C', 'Meal Plan D', 
+    mealplans = ['Meal Plan C', 'Resident Holding - Carryover'	, 'Off Campus Holding - Carryover', 'Meal Plan A', 'Meal Plan B', 'Meal Plan D', 
                  'Meal Plan E', 'Meal Plan F', 'The 25.00 Plan', 'Commuter Semester', 'Commuter Annual']
     for account in mealplan_accounts[3:]:
         for mealplan in mealplans:
