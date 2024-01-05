@@ -1,6 +1,9 @@
+import os
 from flask import Flask, render_template, redirect, url_for, request, session, flash
-from py.mealplan import return_mealplan_data, return_demo_mealplan_data
+from py.mealplan import TransactionSerializer, calculate_current_date, calculate_daily_budget, calculate_daily_spending, create_spending_graph, launch_selenium_browser, return_mealplan_data, return_demo_mealplan_data, scrape_academic_calander, scrape_mealplan_data, scrape_mealplan_transactions
 from py.food import return_food_data, return_demo_food_data
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
 import json
 
 ######################################################################################################
@@ -17,12 +20,12 @@ app.config['SECRET_KEY'] = 'binghamtonMealPlanApp'
 # functions manually clear the session to prevent non-loggedin users from acessing certain routes 
 # of the website, we disable this caching to prevent non-loggedin users from returning to routes
 # meant for logged in users such as /mealplan and /food.
+
+######################################################################################################
 @app.after_request
 def add_header(response):
     response.cache_control.no_store = True
     return response
-######################################################################################################
-
 ######################################################################################################
 # Defines the /home route of website, which is the initial route that runs when the app is first 
 # started. This function checks if there is a current session where the user was already logged in,
@@ -47,31 +50,65 @@ def home():
 # arent able to access routes that should only be accessed after logging in. After this, the user will 
 # be redirected to the /mealplan route, which displays all information regarding their mealplan. If 
 # login was not sucessful, user is redirected back to /home route, which is our login page.
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
-    mealplan_data=None
-    food_data=None
-    if request.form['username'] == 'demo':
-        mealplan_data = return_demo_mealplan_data()
-        food_data = return_demo_food_data()
-    else:
-        username = request.form['username']
-        password = request.form['password']
-        mealplan_data = return_mealplan_data(username, password)     
-        food_data = return_food_data()
-    if mealplan_data and food_data: 
+    mealplan_data = None  
+    food_data = None
+    if request.method == 'POST':
+        if request.form['username'] == 'demo':
+            mealplan_data = return_demo_mealplan_data()
+            food_data = return_demo_food_data()
+        else:
+            username = request.form['username']
+            password = request.form['password']
+            #mealplan_data = return_mealplan_data(username, password)
+            browser = launch_selenium_browser(username, password)
+            try:
+                browser.find_element(By.ID, 'welcome')
+            except NoSuchElementException:
+                browser.quit()
+                flash('Incorrect username or password', 'danger')
+                return redirect(url_for('home'))  
+            first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
+            transactions = scrape_mealplan_transactions(transactions_href, browser)
+            fall_start_day, fall_end_day, spring_start_day, spring_end_day = scrape_academic_calander()
+            current_semester, days_left_semester = calculate_current_date(fall_start_day, fall_end_day, spring_start_day, spring_end_day)
+            daily_budget = calculate_daily_budget(mealplan_balance, days_left_semester)
+            daily_spending, funds_added = calculate_daily_spending(transactions)
+            graph = create_spending_graph(daily_spending, current_semester, fall_start_day, fall_end_day, spring_start_day, spring_end_day)
+
+            data_folder = 'data'
+            os.makedirs(data_folder, exist_ok=True)
+            transactions_filename = os.path.join(data_folder, 'transactions.json')
+            daily_spending_filename = os.path.join(data_folder, 'daily_spending.json')
+            graph_filename = os.path.join(data_folder, 'graph.html')
+            with open(transactions_filename, 'w') as file: json.dump(transactions, file, cls=TransactionSerializer)
+            with open(daily_spending_filename,  'w') as file: json.dump(daily_spending, file)
+            with open(graph_filename, 'w', encoding='utf-8') as file: file.write(graph)     
+            food_data = return_food_data()
+    if first_name is not None and mealplan_name is not None and mealplan_balance is not None and mealplan_balance is not None and current_semester is not None and days_left_semester is not None and daily_budget is not None and funds_added is not None and transactions_filename is not None and daily_spending_filename is not None and graph_filename is not None and food_data is not None:
         session.update({
             'logged_in': True,
-            'first_name': mealplan_data[0],
-            'mealplan_name': mealplan_data[1],
-            'mealplan_balance': mealplan_data[2],
-            'current_semester': mealplan_data[3],
-            'days_left_semester': mealplan_data[4],
-            'daily_budget': mealplan_data[5],
-            'funds_added': mealplan_data[6],
-            'transactions': mealplan_data[7],
-            'daily_spending': mealplan_data[8],
-            'graph': mealplan_data[9],
+            'first_name': first_name,
+            'mealplan_name': mealplan_name,
+            'mealplan_balance': mealplan_balance,
+            'current_semester': current_semester,
+            'days_left_semester': days_left_semester,
+            'daily_budget': daily_budget,
+            'funds_added': funds_added,
+            'transactions': transactions_filename,
+            'daily_spending': daily_spending_filename,
+            'graph': graph_filename
+            #'first_name': mealplan_data[0],
+            #'mealplan_name': mealplan_data[1],
+            #'mealplan_balance': mealplan_data[2],
+            #'current_semester': mealplan_data[3],
+            #'days_left_semester': mealplan_data[4],
+            #'daily_budget': mealplan_data[5],
+            #'funds_added': mealplan_data[6],
+            #'transactions': mealplan_data[7],
+            #'daily_spending': mealplan_data[8],
+            #'graph': mealplan_data[9],
             #.....Data about food items at dining fall will be stored here aswell   
         })
         return redirect(url_for('mealplan'))
