@@ -75,6 +75,7 @@ def return_mealplan_data(username, password):
     try:
         browser.find_element(By.ID, 'welcome')
     except NoSuchElementException:
+        browser.quit()
         return None
     first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
     transactions = scrape_mealplan_transactions(transactions_href, browser)
@@ -101,11 +102,11 @@ def return_mealplan_data(username, password):
 # mealplan site. Then Takes username and password gathered from Flask POST method, and sends them to 
 # actual Binghamton meaplan site using .seny_keys, which will attempt to login user.
 def launch_selenium_browser(username, password):
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    browser = webdriver.Chrome(options=options)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    browser = webdriver.Chrome(options=chrome_options)
     browser.get('https://bing.campuscardcenter.com/ch/login.html')
     browser.find_element(By.NAME, 'username').send_keys(username)
     browser.find_element(By.NAME, 'password').send_keys(password + Keys.RETURN)
@@ -179,6 +180,7 @@ def scrape_mealplan_transactions(transactions_href, browser):
         curr_page += 1
         browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={curr_page}")
         soup = BeautifulSoup(browser.page_source, "html.parser")
+    browser.quit()
     return transactions
 ######################################################################################################
 
