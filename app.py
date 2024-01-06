@@ -47,19 +47,17 @@ def home():
 # arent able to access routes that should only be accessed after logging in. After this, the user will 
 # be redirected to the /mealplan route, which displays all information regarding their mealplan. If 
 # login was not sucessful, user is redirected back to /home route, which is our login page.
-@app.route('/login', methods=['POST', 'GET'])
+@app.route('/login', methods=['POST'])
 def login():
-    mealplan_data = None  
-    food_data = None
-    if request.method == 'POST':
-        if request.form['username'] == 'demo':
-            mealplan_data = return_demo_mealplan_data()
-            food_data = return_demo_food_data()
-        else:
-            username = request.form['username']
-            password = request.form['password']
-            mealplan_data = return_mealplan_data(username, password)
-            food_data = return_food_data()
+    mealplan_data = None; food_data = None; 
+    if request.form['username'] == 'demo':
+        mealplan_data = return_demo_mealplan_data()
+        food_data = return_demo_food_data()
+    else:
+        username = request.form['username']
+        password = request.form['password']
+        mealplan_data = return_mealplan_data(username, password)
+        food_data = return_food_data()
     if mealplan_data and food_data:
         session.update({
             'logged_in': True,
