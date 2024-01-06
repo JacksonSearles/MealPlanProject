@@ -40,6 +40,9 @@ Project Idea Proposed by [Josef Schindler](https://www.linkedin.com/in/josef-sch
 
 * BeautifulSoup: Used for scraping HTML code from websites. I.E, how we get the balance, transactions, and all other information from the real Binghamton Mealplan site.
 
+* Requests: Used to send HTTP requests to websites. In our case, we take the username and password entered from our mealplan site, and send a POST request to the real Binghamton Mealplan site, which has a "payload" that contains the username and password. If this request is successful, it means user was logged in successfully, and we
+can scrape the data from the URL returned from this request.
+
 * Flask: At a high level, Flask is how we pass the data scraped from mealplan site using BeautifulSoup into the HTML code to be displayed for the user. Flask allows us to run Python functions based on the current route/url of the website. For example, if the user is at https://bingmealplanhelper.pythonanywhere.com/mealplan, the function named "mealplan" in app.py will run. Overall, we use Flask to handle GET and POST methods made from website. POST allows us to send data from the Python file to the HTML page, such as sending the username and password entered on our login page to the real mealplan site. GET allows the website to request some sort of data. In a majority of the GET requests, we use Flask to return an html page with some data passed through using Flask's render_template function, and display this data on the html page using the Jinja templating engine.
 
 * Plotly: Used to create an interactive graph that displays the users daily spending.
