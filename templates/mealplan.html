@@ -8,18 +8,18 @@
     <!-- Overview Column -->
     <div class="column is-6-desktop">
       <div class="box">
-        <h2 class="binghamton-black">Your Mealplan <br>Overview<br></h2>
-        <p class="has-text-centered data">Mealplan Name: <strong>{{ mealplan_name }}</strong> </p>
-        <p class="has-text-centered data">Mealplan Balance: <strong>${{ mealplan_balance }}</strong> </p>
-        <p class="has-text-centered data">Days Left in Semester: <strong>{{ days_left_semester }}</strong> </p>
-        <p class="has-text-centered data">Daily Budget: <strong>${{ daily_budget }}</strong> </p>
-        <p class="has-text-centered data">Total Funds Added: <strong>${{ funds_added }}</strong> </p>
+        <h2 class="binghamton-black">{{current_semester}} Overview</h2>
+        <p class="has-text-centered data">Mealplan Name: <strong>{{mealplan_name}}</strong> </p>
+        <p class="has-text-centered data">Mealplan Balance: <strong>${{mealplan_balance}}</strong> </p>
+        <p class="has-text-centered data">Days Left in Semester: <strong>{{days_left_semester}}</strong> </p>
+        <p class="has-text-centered data">Daily Budget: <strong>${{daily_budget}}</strong> </p>
         <p class="has-text-centered data add-funds">Running Low? <strong>Click <a href="https://bing.campuscardcenter.com/ch/add_value.html" target="_blank">Here</a> to Add Funds</strong></p>
+        <p class="has-text-centered data">Total Funds Added: <strong>${{funds_added}}</strong> </p>
       </div>
     </div>
     <!-- Transactions Column -->
     <div class="column is-6-desktop recent-transactions">
-      <div class="box">
+      <div class="box" style="padding-bottom: 0px;">
         <h2 class="binghamton-black">{{current_semester}} Transactions</h2>
         <div class="transactions-table-header">
           <p>Date</p>
