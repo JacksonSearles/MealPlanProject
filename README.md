@@ -38,10 +38,8 @@ Project Idea Proposed by [Josef Schindler](https://www.linkedin.com/in/josef-sch
 
 ## Libraries Used
 
-* Selenium: Opens private incognito browser used for scraping data from mealplan site, workaround due to Binghamton Mealplan site having the ability to detect multiple logins in a short period of time
+* BeautifulSoup: Used for scraping HTML code from websites. I.E, how we get the balance, transactions, and all other information from the real Binghamton Mealplan site.
 
-* BeautifulSoup: Used for scraping HTML code from websites launched in Selenium browser. I.E, how we scrape the balance and transactions from the Binghamton Mealplan site
-
-* Flask: At a high level, Flask is how we pass the data scraped from mealplan site using BeautifulSoup into the HTML code to be displayed for the user. Flask allows us to run Python functions based on the current route/url of the website. For example, if the user is at https://bingmealplanhelper.pythonanywhere.com/mealplan, the function named "mealplan" in app.py will run. Overall, we use Flask to handle GET and POST methods made from website. POST allows us to send data from the HTML page to the Python file, such as the username and password entered on our login page. GET allows the website to request some sort of data. In a majority of the GET requests, we use Flask to return an html page with some data passed through using Flask's render_template function, and display this data on the html page using the Jinja templating engine.
+* Flask: At a high level, Flask is how we pass the data scraped from mealplan site using BeautifulSoup into the HTML code to be displayed for the user. Flask allows us to run Python functions based on the current route/url of the website. For example, if the user is at https://bingmealplanhelper.pythonanywhere.com/mealplan, the function named "mealplan" in app.py will run. Overall, we use Flask to handle GET and POST methods made from website. POST allows us to send data from the Python file to the HTML page, such as sending the username and password entered on our login page to the real mealplan site. GET allows the website to request some sort of data. In a majority of the GET requests, we use Flask to return an html page with some data passed through using Flask's render_template function, and display this data on the html page using the Jinja templating engine.
 
 * Plotly: Used to create an interactive graph that displays the users daily spending.
