@@ -1,6 +1,7 @@
 .box { 
     border: 4px solid #006747; 
     height: 100%;
+    padding: 0.7rem;
   }
   
   .is-flex-centered{
@@ -16,7 +17,7 @@
   }
 
   .data{
-    font-size: 20px;
+    font-size: 19px;
   }
   
   .add-funds{
@@ -48,7 +49,7 @@
       flex-direction: column;
       width: 100%;
       overflow-y: auto; 
-      max-height: 200px;
+      max-height: 190px;
       padding-right: 10px;
   }
   
