@@ -73,8 +73,7 @@ def login():
             'graph': mealplan_data[9],
             #.....Data about food items at dining fall will be stored here aswell   
         })
-        try: log_website_interaction(session.get('username'), session.get('first_name'), 'login')
-        except: FileNotFoundError
+        log_website_interaction(session.get('username'), session.get('first_name'), 'login')
         return redirect(url_for('mealplan'))
     else:
         flash('Incorrect username or password', 'danger')
@@ -154,8 +153,7 @@ def food():
 # redirect them back to the /home route (login page)
 @app.route('/logout')
 def logout():
-    try: log_website_interaction(session.get('username'), session.get('first_name'), 'logout')
-    except: FileNotFoundError
+    log_website_interaction(session.get('username'), session.get('first_name'), 'logout')
     session.clear()
     return redirect(url_for('home'))
 ######################################################################################################

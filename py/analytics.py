@@ -11,11 +11,16 @@ from datetime import datetime
 # in website_interactions.txt indicating this is their first time logging in. Also, when user logs out, 
 # we display a message in website_interactions.txt indicating that they have logged out.
 def log_website_interaction(username, first_name, action):
+    #If there is FileNotFoundErorr => Website running locally => dont log interaction (file doesnt exist locally)
+    try: 
+        with open('/home/bingmealplanhelper/data/website_interactions.txt'): pass
+    except FileNotFoundError: 
+        return
+
     date_time = datetime.now().strftime("%B %d, %Y: %I:%M %p")
     if action == 'login':
         with open('/home/bingmealplanhelper/data/website_users.json', 'r') as file: 
             users = json.load(file)
-
         if username in users:
             users[username]['Number of Logins'] += 1
             log_message = f"{date_time}; {username} ({first_name}) has logged in for the {users[username]['Number of Logins']} time.\n"
@@ -27,11 +32,9 @@ def log_website_interaction(username, first_name, action):
                 'Number of Logins': 1    
             }
             users[username] = new_user
-            log_message = f"{date_time}; {username} ({first_name}) logged in for the first time.\n"
-            
+            log_message = f"{date_time}; {username} ({first_name}) logged in for the first time.\n"         
         with open('/home/bingmealplanhelper/data/website_users.json', 'w') as file: json.dump(users, file, indent=4)
         with open('/home/bingmealplanhelper/data/website_interactions.txt', 'a') as file: file.write(log_message)
-
     elif action == 'logout':
         log_message = f"{date_time}; {username} ({first_name}) logged out.\n"
         with open('/home/bingmealplanhelper/data/website_interactions.txt', 'a') as file: file.write(log_message)
