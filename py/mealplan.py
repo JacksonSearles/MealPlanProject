@@ -121,6 +121,7 @@ def launch_selenium_browser(username, password):
 # the next account. If it is, we store the name of the meal plan account in mealplan_name, the balance of 
 # the account in mealplan_balance, and scrape the href that holds the link to the full transactions page 
 # and store in transactions_href.
+<<<<<<< Updated upstream
 def scrape_mealplan_data(browser):
     soup = BeautifulSoup(browser.page_source, "html.parser")
     first_name = soup.label.text.split()[2]
@@ -128,6 +129,12 @@ def scrape_mealplan_data(browser):
     mealplan_balance = None
     carryover_balance = None
     transactions_href = None
+=======
+def scrape_mealplan_data(session_content):
+    soup = BeautifulSoup(session_content, 'html.parser')
+    first_name = soup.label.text.split()[2].replace('!', '')
+    mealplan_name = None; mealplan_balance = None; carryover_balance = None; transactions_href = None
+>>>>>>> Stashed changes
     mealplan_accounts = soup.find('table', {'width': '500', 'border': '0'}).find_all('tr')[3:]
     mealplans = {'Meal Plan C', 'Meal Plan A', 'Meal Plan B', 'Meal Plan D', 
                  'Meal Plan E', 'Meal Plan F', 'The 25.00 Plan', 'Commuter Semester', 'Commuter Annual'}  
