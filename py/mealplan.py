@@ -1,7 +1,3 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
 from datetime import date, timedelta
 from bs4 import BeautifulSoup
 import plotly.graph_objects as go
@@ -57,59 +53,46 @@ def return_demo_mealplan_data():
 ######################################################################################################
 
 ######################################################################################################
-# Takes username and password from our login page. Launches Selenium browser using launch_selenium_browser, 
-# with the url of the actual Binghamton mealplan site. The username and password variables are passed 
-# into actual Binghamton mealplan site to attempt to login the user. If login failed, no data
-# is scraped and nothing is returned. If the user was logged in succesfully, browser.find element will 
-# return true, and the rest of the program will run. scrape_mealplan_data() will scrape the first name
-# of the user, the name of the meaplan they are on, there mealplan balance, and the href link that shows
-# all transactions. scrape_mealplan_transactions() takes this link, and scrapes all transactions.
-# scrape_academic_calendar() will scrape the academic calendar site to find the start and end days of the
-# semester, and calculate_daily_budget() will use these dates and the current mealpan balance to claculate
-# the daily budget that the user could spend. calculate_daily_spending will take the transactions scraped
-# with scrape_mealplan_transactions, and determine how much the user has spent each day. This is done by
-# adding up all the transactions with the same date. Finally, create_spending_graph() will take the result
+# Takes the username and password that user typed into our site, and sends a POST request to the actual
+# Binghamton Mealplan site. This POST request will send the username and password to the login form on 
+# the real site. I.E, this is how we attempt to login the user and scrape their mealplan data. We store
+# the result of this request in session_response. If the resulting url of this request is still the login
+# page of the real site, it means login failed, and we return None. If this isnt the case, it means login
+# was sucessful and we can continue. scrape_mealplan_data() will scrape the first name of the user, the
+# name of the meaplan they are on, mealplan balance, carryover balance, and the href link that leads to all 
+# transactions. scrape_mealplan_transactions() takes this link, and scrapes all transactions. 
+# scrape_academic_calendar() will scrape the academic calendar site to find the start and end days of the 
+# semester, and calculate_daily_budget() will use these dates and the current mealpan balance to claculate 
+# the daily budget that the user could spend. calculate_daily_spending will take the transactions scraped 
+# with scrape_mealplan_transactions, and determine how much the user has spent each day. This is done by 
+# adding up all the transactions with the same date. Finally, create_spending_graph() will take the result 
 # of calculate_daily_spending, and display this data in a graph.
 def return_mealplan_data(username, password):
-    browser = launch_selenium_browser(username, password)
-    try:
-        browser.find_element(By.ID, 'welcome')
-    except NoSuchElementException:
+    session = requests.Session()
+    session_url = 'https://bing.campuscardcenter.com/ch/login.html'
+    session_payload = {'username': username, 'password': password, 'action': 'Login', '__ncforminfo': BeautifulSoup(session.get(session_url).content, 'html.parser').find('input', {'name': '__ncforminfo'})['value']}
+    session_response = session.post(session_url, data=session_payload)
+    if session_response.url == 'https://bing.campuscardcenter.com/ch/login.html': 
         return None
-    first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(browser)
-    transactions = scrape_mealplan_transactions(transactions_href, browser)
+    session_content = session_response.content
+
+    first_name, mealplan_name, mealplan_balance, carryover_balance, transactions_href = scrape_mealplan_data(session_content)
+    transactions = scrape_mealplan_transactions(session, transactions_href, carryover_balance)
     fall_start_day, fall_end_day, spring_start_day, spring_end_day = scrape_academic_calander()
     current_semester, days_left_semester = calculate_current_date(fall_start_day, fall_end_day, spring_start_day, spring_end_day)
     daily_budget = calculate_daily_budget(mealplan_balance, days_left_semester)
     daily_spending, funds_added = calculate_daily_spending(transactions)
     graph = create_spending_graph(daily_spending, current_semester, fall_start_day, fall_end_day, spring_start_day, spring_end_day)
 
-    data_folder = 'data'
-    os.makedirs(data_folder, exist_ok=True)
-    transactions_filename = os.path.join(data_folder, 'transactions.json')
-    daily_spending_filename = os.path.join(data_folder, 'daily_spending.json')
-    graph_filename = os.path.join(data_folder, 'graph.html')
+    os.makedirs('data', exist_ok=True)
+    transactions_filename = os.path.join('data', 'transactions.json')
+    daily_spending_filename = os.path.join('data', 'daily_spending.json')
+    graph_filename = os.path.join('data', 'graph.html')
     with open(transactions_filename, 'w') as file: json.dump(transactions, file, cls=TransactionSerializer)
     with open(daily_spending_filename,  'w') as file: json.dump(daily_spending, file)
     with open(graph_filename, 'w', encoding='utf-8') as file: file.write(graph)
        
     return first_name, mealplan_name, mealplan_balance, current_semester, days_left_semester, daily_budget, funds_added, transactions_filename, daily_spending_filename, graph_filename
-######################################################################################################
-
-######################################################################################################
-# This function uses Selenium to open a headless incognito browser with the url of actual Binghamton
-# mealplan site. Then Takes username and password gathered from Flask POST method, and sends them to 
-# actual Binghamton meaplan site using .seny_keys, which will attempt to login user.
-def launch_selenium_browser(username, password):
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--headless')
-    chrome_options.add_argument("--disable-gpu")
-    browser = webdriver.Chrome(options=chrome_options)
-    browser.get('https://bing.campuscardcenter.com/ch/login.html')
-    browser.find_element(By.NAME, 'username').send_keys(username)
-    browser.find_element(By.NAME, 'password').send_keys(password + Keys.RETURN)
-    return browser
 ######################################################################################################
 
 ######################################################################################################
@@ -139,11 +122,11 @@ def scrape_mealplan_data(session_content):
             transactions_href = account.find('a')['href']
     if mealplan_balance is None: mealplan_balance = 0
     if carryover_balance is None: carryover_balance = 0       
-    return first_name, mealplan_name,  mealplan_balance+carryover_balance, transactions_href
+    return first_name, mealplan_name,  mealplan_balance+carryover_balance, carryover_balance, transactions_href
 ######################################################################################################
 
 ######################################################################################################
-# Updates the Selenium browser to open transactions page. Since all transactions are split between 
+# Updates the session to open transactions page. Since all transactions are split between 
 # multiple pages, we loop through all pages to scrape every transaction. Initially sets the curr_page
 # as 1. Then we scrape the total number of transaction pages and store in total_pages. Then, loop through 
 # every page of transactions and scrape every transaction on the page using BeautifulSoup. For each
@@ -151,13 +134,13 @@ def scrape_mealplan_data(session_content):
 # object, and add that object to mealplan_transactions[] array. This is done for all transactions on 
 # the current page. Then, iterate to next page by updating Selenium browser with href for next page 
 # and repeat.
-def scrape_mealplan_transactions(transactions_href, browser): 
+def scrape_mealplan_transactions(session, transactions_href, carryover_balance): 
     curr_page = 1
     total_pages = 1
     mealplan_transactions = []
-    while curr_page <= total_pages: 
-        browser.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={curr_page}")        
-        soup = BeautifulSoup(browser.page_source, "html.parser")
+    while curr_page <= total_pages:
+        session_content = session.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={curr_page}").content    
+        soup = BeautifulSoup(session_content, "html.parser")
         if curr_page == 1: total_pages = int(soup.find('td', align='center', colspan='7').get_text(strip=True).replace(">>>", '').split(' ')[1].split('/')[1])
         transactions = soup.find_all('tr', {'id': 'EntryRow'})
         for transaction in transactions:
@@ -166,7 +149,10 @@ def scrape_mealplan_transactions(transactions_href, browser):
             price = transaction.contents[9].div.text.strip().replace('(', '').replace(')', '')
             if len(location) == 0:
                 if transaction.contents[5].text.strip() == 'ADDVALUE': location = "Added Funds"
-                if transaction.contents[5].text.strip() == 'Adj_Credit': location = "Initial Funds"
+                if transaction.contents[5].text.strip() == 'Adj_Credit': 
+                    mealplan_transactions.append(Transaction(date, 'Initial Funds', price))
+                    mealplan_transactions.append(Transaction(date, 'Initial Carryover Funds', carryover_balance))
+                    continue
             mealplan_transactions.append(Transaction(date, location, price))
         curr_page += 1
     return mealplan_transactions
@@ -197,6 +183,7 @@ def scrape_academic_calander():
         spring_start_day = spring_start_day_target[0].find_previous_sibling('td').text.split()[-1]
     if len(spring_end_day_target) >= 1:
         spring_end_day = spring_end_day_target[0].find_previous_sibling('td').text.split()[-1] 
+
     if fall_start_day.isdigit() and fall_end_day.isdigit() and spring_start_day.isdigit() and spring_end_day.isdigit():
         return int(fall_start_day), int(fall_end_day), int(spring_start_day), int(spring_end_day)
     else:
@@ -248,7 +235,7 @@ def calculate_daily_spending(transactions):
     funds_added = 0
     daily_spending_dict = {}
     for transaction in transactions:
-        if transaction.location == "Initial Funds":
+        if transaction.location == "Initial Funds" or transaction.location == "Initial Carryover Funds":
             continue 
         elif transaction.location == "Added Funds":
             funds_added += transaction.price
@@ -268,7 +255,7 @@ def calculate_daily_spending(transactions):
 # customizing the appearance of the graph. A Plotly Figure is created out of the Bar and Layout object.
 # The Figure is then returned as an HTML string to be displayed on the website
 def create_spending_graph(daily_spending_dict, current_semester,fall_end_day, spring_end_day, fall_start_day, spring_start_day):
-    #CREATES PANDAS DATAFRAME OUT OF INPUT DICT, THEN SORTS DATES IN CHRONOLOGICAL ORDER
+    #CREATES PANDAS DATAFRAME OUT OF DAILY_SPENDING_DICT, THEN SORTS DICT IN CHRONOLOGICAL ORDER
     df = pd.DataFrame(list(daily_spending_dict.items()), columns=['Date', 'Price'])
     df['Date'] = pd.to_datetime(df['Date'])
     df = df.sort_values(by='Date', ascending=True)
@@ -315,5 +302,4 @@ def create_spending_graph(daily_spending_dict, current_semester,fall_end_day, sp
     )
     fig = go.Figure(data=[bar], layout=layout)
     # plotly has no option to change the hover affect of its buttons. so this changes hover color of graph buttons (super jank fix but it works)
-    return fig.to_html(fig, full_html=False).replace('activeColor:"#F4FAFF"', 'activeColor:"#006747"').replace('hoverColor:"#F4FAFF"', 'hoverColor:"grey"')             
-######################################################################################################
+    return fig.to_html(fig, full_html=False).replace('activeColor:"#F4FAFF"', 'activeColor:"#006747"').replace('hoverColor:"#F4FAFF"', 'hoverColor:"grey"')
