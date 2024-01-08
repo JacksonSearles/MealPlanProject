@@ -55,6 +55,7 @@ def home():
 def login():
     mealplan_data = None; food_data = None; 
     if request.form['username'] == 'demo':
+        username = 'demo'
         mealplan_data = return_demo_mealplan_data()
         food_data = return_demo_food_data()
     else:
