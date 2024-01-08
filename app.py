@@ -4,7 +4,9 @@ from py.mealplan import return_mealplan_data, return_demo_mealplan_data
 from py.food import return_food_data, return_demo_food_data
 import json
 
-all_users = None
+# When working on program locally, comment out calls to log_website_interactions(line 83 and 163). This 
+# function is used by hosted website to log users activity (logins and logouts)
+
 ######################################################################################################
 # Defines the Flask application as "app", and sets the location of the templates folder. The templates 
 # folder contains the html files needed for website.
