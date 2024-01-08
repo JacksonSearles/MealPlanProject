@@ -29,8 +29,8 @@ def log_website_interaction(username, first_name, action):
             users[username] = new_user
             log_message = f"{date_time}; {username} ({first_name}) logged in for the first time.\n"
             
-        with open('/home/bingmealplanhelper/demo_data/website_users.json', 'r', 'w') as file: json.dump(users, file, indent=4)
-        with open('/home/bingmealplanhelper/demo_data/website_interactions.txt', 'r', 'a') as file: file.write(log_message)
+        with open('/home/bingmealplanhelper/data/website_users.json', 'r', 'w') as file: json.dump(users, file, indent=4)
+        with open('/home/bingmealplanhelper/data/website_interactions.txt', 'r', 'a') as file: file.write(log_message)
 
     elif action == 'logout':
         log_message = f"{date_time}; {username} ({first_name}) logged out.\n"
