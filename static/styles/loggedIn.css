@@ -34,7 +34,7 @@ located at the top of the screen used for navigating site*/
   padding: 5px 15px;
   background-color: #006747;
   border-bottom: 3px solid white;
-  min-width: 380px;
+  min-width: 400px;
 }
 
 .navbar i{
@@ -61,6 +61,7 @@ located at the top of the screen used for navigating site*/
   color: white;
   font-size: 25px;
   font-weight: 600;
+  white-space: wrap;
 }
 
 .links{
@@ -120,11 +121,6 @@ located at the top of the screen used for navigating site*/
 /*Start of section for styling the navbar when screen
 size is reduced*/
 @media only screen and (max-width: 800px){
-  .navbar{
-    background-color: transparent;
-    border-bottom: none; 
-  }
-
   .navbar .fas{
     display: block;
     font-size: 35px;
@@ -204,6 +200,12 @@ size is reduced*/
     color: #006747;  
   }
 
+}
+
+@media only screen and (max-width: 500px){
+  .logo span{
+    font-size: 20px;
+  }
 }
 /*End of section for styling the navbar when scren
 size is reduced*/
