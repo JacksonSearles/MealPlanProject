@@ -1,7 +1,11 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash
+from py.analytics import log_website_interaction
 from py.mealplan import return_mealplan_data, return_demo_mealplan_data
 from py.food import return_food_data, return_demo_food_data
 import json
+
+# When working on program locally, comment out calls to log_website_interactions(line 83 and 163). This 
+# function is used by hosted website to log users activity (logins and logouts)
 
 ######################################################################################################
 # Defines the Flask application as "app", and sets the location of the templates folder. The templates 
@@ -61,6 +65,7 @@ def login():
     if mealplan_data and food_data:
         session.update({
             'logged_in': True,
+            'username': username,
             'first_name': mealplan_data[0],
             'mealplan_name': mealplan_data[1],
             'mealplan_balance': mealplan_data[2],
@@ -73,6 +78,7 @@ def login():
             'graph': mealplan_data[9],
             #.....Data about food items at dining fall will be stored here aswell   
         })
+        log_website_interaction(username, session.get('first_name'), 'login')
         return redirect(url_for('mealplan'))
     else:
         flash('Incorrect username or password', 'danger')
@@ -152,6 +158,7 @@ def food():
 # redirect them back to the /home route (login page)
 @app.route('/logout')
 def logout():
+    log_website_interaction(session.get('username'), session.get('first_name'), 'logout')
     session.clear()
     return redirect(url_for('home'))
 ######################################################################################################

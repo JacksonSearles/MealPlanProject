@@ -106,7 +106,7 @@ def return_mealplan_data(username, password):
 # and store in transactions_href.
 def scrape_mealplan_data(session_content):
     soup = BeautifulSoup(session_content, 'html.parser')
-    first_name = soup.label.text.split()[2]
+    first_name = soup.label.text.split()[2].replace('!', '')
     mealplan_name = None; mealplan_balance = None; carryover_balance = None; transactions_href = None
     mealplan_accounts = soup.find('table', {'width': '500', 'border': '0'}).find_all('tr')[3:]
     mealplans = {'Meal Plan C', 'Meal Plan A', 'Meal Plan B', 'Meal Plan D', 
@@ -302,5 +302,4 @@ def create_spending_graph(daily_spending_dict, current_semester,fall_end_day, sp
     )
     fig = go.Figure(data=[bar], layout=layout)
     # plotly has no option to change the hover affect of its buttons. so this changes hover color of graph buttons (super jank fix but it works)
-    return fig.to_html(fig, full_html=False).replace('activeColor:"#F4FAFF"', 'activeColor:"#006747"').replace('hoverColor:"#F4FAFF"', 'hoverColor:"grey"')             
-######################################################################################################
+    return fig.to_html(fig, full_html=False).replace('activeColor:"#F4FAFF"', 'activeColor:"#006747"').replace('hoverColor:"#F4FAFF"', 'hoverColor:"grey"')
