@@ -18,6 +18,8 @@ function changeView(view) {
 function toggle(){
     const toggleSwitch = document.getElementById('toggleSwitch');
     const graphColumn = document.getElementById('graphColumn')
+    const graphContainer = document.querySelector('.graph-container')
+    const graphContainerTitle = document.querySelector('.daily-spending')
     const hideableGraph = document.querySelector('.hideable-graph');
     const hideableTable = document.querySelector('.hideable-table');
 
@@ -27,10 +29,11 @@ function toggle(){
             hideableGraph.style.display = 'none';
             hideableTable.style.display = 'block';
             graphColumn.classList.add('is-flex-centered');
+            graphContainer.style.minWidth = '200px';
+            graphContainerTitle.style.maxWidth = '250px';
         } else {
-            hideableGraph.style.display = 'block';
-            hideableTable.style.display = 'none';
-            graphColumn.classList.remove('is-flex-centered');
+            document.body.style.zoom = 1;
+            location.reload();
         }
     });
 }

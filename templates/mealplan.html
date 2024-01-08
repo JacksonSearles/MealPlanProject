@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="/static/styles/mealplan.css">
 </head>
 <body>
-  <div class="columns is-multiline" style="max-width: 980px;">
+  <div class="columns is-multiline" style="max-width: 980px; min-width: 400px;">
     <!-- Overview Column -->
     <div class="column is-6-desktop">
       <div class="box">
@@ -57,7 +57,7 @@
     <!-- Graph Column -->
     <div class="column is-12" id="graphColumn">
       <div class="graph-container box">
-        <h2 class="binghamton-black">{{current_semester}} Daily Spending</h2>
+        <h2 class="binghamton-black daily-spending">{{current_semester}} Daily Spending</h2>
         <div class="switch-container">
           <p>Graph</p>
           <label class="switch" onclick="toggle()">
