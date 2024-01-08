@@ -13,7 +13,7 @@ from datetime import datetime
 def log_website_interaction(username, first_name, action):
     date_time = datetime.now().strftime("%B %d, %Y: %I:%M %p")
     if action == 'login':
-        with open('/home/bingmealplanhelper/demo_data/website_users.json', 'r') as file: 
+        with open('/home/bingmealplanhelper/data/website_users.json', 'r') as file: 
             users = json.load(file)
 
         if username in users:
