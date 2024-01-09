@@ -1,8 +1,7 @@
 /*Start of section for general styling of loggedIn.html page*/
 html {
-  font-family: 'Arial', sans-serif; 
-  background-color:#052b13;  
-  background-image: url(/static/imgs/Binghamton_Campus.png);
+  font-family: 'Arial', sans-serif;   
+  background-image: url('https://www.usatoday.com/gcdn/-mm-/50cf5bbf732a4dc596a6cd2b25c2d55faffc0cbe/c=0-198-3888-2395/local/-/media/2015/10/07/CNYGroup/Binghamton/635798431224650549-BGMBrd-04-28-2015-Daily-1-A003--2015-04-27-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-L602622216-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-1-.jpg?width=3200&height=1809&fit=crop&format=pjpg&auto=webp');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
