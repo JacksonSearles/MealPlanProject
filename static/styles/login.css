@@ -72,10 +72,6 @@ img{
 }
 
 @media only screen and (max-width: 400px) {
-    .m-6{
-        margin: 1.5rem!important;
-    }    
-
     .account-note{
         font-size: 14px;
     }
