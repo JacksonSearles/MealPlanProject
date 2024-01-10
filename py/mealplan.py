@@ -265,7 +265,7 @@ def create_spending_graph(daily_spending_dict, current_semester,fall_end_day, sp
     dropdown_options = [
         {'label': 'Last 7 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=7), date.today()]}]},
         {'label': 'Last 14 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=14), date.today()]}]},
-        {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]},
+        {'label': 'Last 30 Days', 'method': 'relayout', 'args': [{'xaxis.range': [date.today() - timedelta(days=30), date.today()]}]}, 
     ]
     if 'Fall' in current_semester:
         dropdown_options.append({'label': 'Entire Semester', 'method': 'relayout', 'args': [{'xaxis.range': [date(curr_year, 8, fall_start_day), date(curr_year, 12, fall_end_day)]}]})
@@ -301,5 +301,11 @@ def create_spending_graph(daily_spending_dict, current_semester,fall_end_day, sp
         )],     
     )
     fig = go.Figure(data=[bar], layout=layout)
-    # plotly has no option to change the hover affect of its buttons. so this changes hover color of graph buttons (super jank fix but it works)
-    return fig.to_html(fig, full_html=False).replace('activeColor:"#F4FAFF"', 'activeColor:"#006747"').replace('hoverColor:"#F4FAFF"', 'hoverColor:"grey"')
+    
+    # By default, plotly in python has no default option to change the hover color of the buttons, and no
+    # default option to disable double clicking on the graph. Double clicking the graph resets the zoom on the graph,
+    # which messes up the ranges that we set. So this super shit and jank code takes the html of the graph and manually changes it
+    graph_html = fig.to_html(fig, full_html=False).replace('activeColor:"#F4FAFF"', 'activeColor:"#006747"').replace('hoverColor:"#F4FAFF"', 'hoverColor:"grey"').replace(
+        '{"responsive": true}                    )                };                            </script>        </div>', '{"doubleClick": false, "responsive": true})};</script></div>')
+    
+    return graph_html
