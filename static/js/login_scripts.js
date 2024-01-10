@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
-    if(!window.innerWidth <= 400){
+    if(window.innerWidth > 500){
       usernameInput.focus();
       usernameInput.click();
     }
