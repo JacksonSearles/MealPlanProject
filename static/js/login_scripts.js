@@ -1,4 +1,21 @@
-function showDiv() {
+document.addEventListener("DOMContentLoaded", function() {
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    usernameInput.focus();
+    usernameInput.click();
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        passwordInput.focus();
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        usernameInput.focus();
+      }
+    });
+});
+
+function showLoadIcon() {
     const loader = document.getElementById('loader')
     loader.style.display = "block";
 }
