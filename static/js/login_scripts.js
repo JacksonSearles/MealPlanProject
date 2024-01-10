@@ -4,15 +4,17 @@ document.addEventListener("DOMContentLoaded", function() {
     usernameInput.focus();
     usernameInput.click();
 
-    document.addEventListener("keydown", function(event) {
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        passwordInput.focus();
-      } else if (event.key === "ArrowUp") {
-        event.preventDefault();
-        usernameInput.focus();
-      }
-    });
+    if(!window.innerWidth <= 400){
+      document.addEventListener("keydown", function(event) {
+        if (event.key === "ArrowDown") {
+          event.preventDefault();
+          passwordInput.focus();
+        } else if (event.key === "ArrowUp") {
+          event.preventDefault();
+          usernameInput.focus();
+        }
+      });
+    }
 });
 
 function showLoadIcon() {
