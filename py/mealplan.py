@@ -276,7 +276,7 @@ def create_spending_graph(daily_spending_dict, current_semester,fall_end_day, sp
     hover_text = [f"{date.strftime('%b %d, %Y')}<br>Spent: ${price}" for date, price in zip(df['Date'], df['Price'])]
     bar = go.Bar(x=df['Date'], y=df['Price'], text=hover_text, hoverinfo='text', textposition="none", marker_color='#006747')
     layout = go.Layout(
-        xaxis=dict(title_font=dict(size=30), type='date', showgrid=True, tickformat='%b %Y',tickfont=dict(size=15), range=[date.today() - timedelta(days=7), date.today()]),
+        xaxis=dict(title_font=dict(size=30), type='date', showgrid=True, tickformat='%b %d<br>%Y',tickfont=dict(size=15), range=[date.today() - timedelta(days=7), date.today()]),
         yaxis=dict(tickprefix='$', tickfont=dict(size=15, family="Arial Black, sans-serif"), range=[0, 10], autorange=True),
         hovermode='x',
         template='plotly_dark',
