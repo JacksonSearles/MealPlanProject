@@ -55,12 +55,15 @@ def login():
     if request.form['username'] == 'demo':
         mealplan_data = return_demo_mealplan_data()
         food_data = return_demo_food_data()
+        login_date = date(2023, 12, 16).strftime('%b. %d, %Y')
     else:
         mealplan_data = return_mealplan_data(request.form['username'], request.form['password'])
         food_data = return_food_data()
+        login_date = date.today().strftime('%b. %d, %Y')
     if mealplan_data and food_data:
         session.update({
             'logged_in': True,
+            'login_date': login_date,
             'username': request.form['username'],
             'first_name': mealplan_data[0],
             'mealplan_name': mealplan_data[1],
@@ -125,9 +128,9 @@ def budget():
         else:
             chart_title = 'Budget Chart'
             current_semester = '' 
-        return render_template('loggedIn.html', view='budget',
+        return render_template('loggedIn.html', view='budget', login_date=session.get('login_date'),
                 first_name=session.get('first_name'), chart_title=chart_title,
-                mealplan_balance=session.get('mealplan_balance'), curr_date=date.today().strftime('%b. %d, %Y'), 
+                mealplan_balance=session.get('mealplan_balance'), 
                 current_semester=current_semester)
     else:
         return redirect(url_for('home'))
