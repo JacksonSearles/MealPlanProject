@@ -24,7 +24,18 @@
     text-align: center;
     text-wrap: wrap;
     color: rgb(61, 61, 61);
-    margin-bottom: 20px;
+    margin-bottom: 5px;
+}
+
+.balance{
+    text-align: center;
+    font-size: 20px;   
+}
+
+.date{
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 20px;
 }
 
 @media only screen and (max-width: 450px) {

@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash
+from datetime import date
 from py.analytics import log_website_interaction
 from py.mealplan import return_mealplan_data, return_demo_mealplan_data
 from py.food import return_food_data, return_demo_food_data
@@ -126,6 +127,7 @@ def budget():
             current_semester = '' 
         return render_template('loggedIn.html', view='budget',
                 first_name=session.get('first_name'), chart_title=chart_title,
+                mealplan_balance=session.get('mealplan_balance'), curr_date=date.today().strftime('%b. %d, %Y'), 
                 current_semester=current_semester)
     else:
         return redirect(url_for('home'))
