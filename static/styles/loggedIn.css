@@ -6,6 +6,13 @@ html {
   background-position: center;
   background-attachment: fixed;
 }
+header{
+  overflow-x: hidden!important;
+}
+
+body{
+  overflow-x: hidden!important;
+}
 
 .hero-body{
   padding: 1rem 0.5rem;
@@ -34,7 +41,6 @@ located at the top of the screen used for navigating site*/
   padding: 5px 15px;
   background-color: #006747;
   border-bottom: 3px solid white;
-  min-width: 400px;
 }
 
 .navbar i{
@@ -204,6 +210,13 @@ size is reduced*/
 size is reduced*/
 
 @media only screen and (max-width: 600px){
+  .navbar{
+    padding: 10px 5px;
+  }
+  
+  .logo img{
+    width: 75px;
+  }
   .logo span{
     font-size: 20px;
   }
