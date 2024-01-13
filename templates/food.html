@@ -29,15 +29,15 @@
 <body>
   <div class="box">
 		<h2 class="binghamton-black">Looking For Something To Eat?</h2>
-		<p class="desc">Easily view what food stations at your dining hall are open, and <br>what food is being served. (Displaying food menus still in development)</p>
+		<p class="desc">Easily view what food stations at your dining hall are open, and what food is being served. (Displaying food menus still in development)</p>
 		<h2 class="dropdown-title">Selected Dining Hall:</h2>
 		<div class="dropdown">
 			<button class="dropbtn">
-				<div class="dropbtn-content">C4</div>
+				<div class="dropbtn-content">Select</Select></div>
 				<div class="dropbtn-symbol">&#9660;</div>
 			</button>
 			<div class="dropdown-content">
-				<p id="c4-option" class="dining-hall-option active" onclick="updateStatus('c4-food-container')">C4</p>
+				<p id="c4-option" class="dining-hall-option" onclick="updateStatus('c4-food-container')">C4</p>
 				<p id="c4-kosher-option" class="dining-hall-option" onclick="updateStatus('c4-kosher-food-container')">C4 Kosher</p>
 				<p id="hinman-option" class="dining-hall-option" onclick="updateStatus('hinman-food-container')">Hinman</p>
 				<p id="app-option" class="dining-hall-option" onclick="updateStatus('app-food-container')">Appalachian</p>
@@ -45,7 +45,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="c4-food-container" class="food-container">
+	<div id="c4-food-container" class="food-container" style="display: none;">
 		<div class="box">
 			<h2 class="binghamton-black">Main Breakfest</h2>
 			<p class='js-hours'>Monday: 8:00-10:00, Tuesday: 8:00-10:00, Wednesday: 8:00-10:00, Thursday: 8:00-10:00, Friday: 8:00-10:00, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>

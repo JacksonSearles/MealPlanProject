@@ -21,7 +21,8 @@ body{
 }
 
 .desc{
-
+    padding: 0px 5px;
+    max-width: 450px;
 }
 
 .dropdown-title{

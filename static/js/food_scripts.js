@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById(selectedOptionId).style.display = 'block';
       });
     });
-    updateStatus('c4-food-container');
+    //updateStatus('c4-food-container');
 });
 
 
