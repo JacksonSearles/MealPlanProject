@@ -1,0 +1,95 @@
+html{
+
+}
+
+body{
+    text-align: center;    
+}
+
+
+.box { 
+    border: 4px solid #006747; 
+    height: 100%;
+    padding: 0.7rem;
+    min-width: 400px;  
+  }
+
+.binghamton-black{
+    font-size: 2rem;
+    font-weight: bold;
+    color: black;
+}
+
+.desc{
+
+}
+
+.dropdown-title{
+    font-size: 25px;
+    color: black;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.dropbtn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 115px;
+    padding: 8px;
+    cursor: pointer;
+  }
+
+.dropbtn-content{
+    font-size: 15px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 45px;
+    background-color: #f9f9f9;
+    width: 115px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content p {
+    cursor: pointer;
+    display: block;
+    padding: 8px;
+    text-decoration: none;
+    text-align: left;
+}
+
+.dropdown-content p:hover {
+    background-color: #dddbdb;
+}
+
+.dropdown-content p.active {
+    background-color:#006747;
+    color: white;
+}
+
+
+.food-container{
+    max-width: 980px;
+}
+
+.js-hours{
+    display: none;
+}
+
+.hours{
+    color: black;
+    font-size: 25px;
+}
+
+.current-status{
+    color: black;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+
+
