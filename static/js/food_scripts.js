@@ -10,37 +10,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const dropdownButton = document.querySelector('.dropbtn');
     const dropdownButtonContent = document.querySelector('.dropbtn-content');
     const dropdownButtonSymbol = document.querySelector('.dropbtn-symbol');
-    const dropdownContent = document.querySelector('.dropdown-content');
-    const options = document.querySelectorAll('.dining-hall-option');
+    const dropdownMenu = document.querySelector('.dropdown-content');
+    const dropdownMenuOptions = document.querySelectorAll('.dining-hall-option');
 
     dropdownButton.addEventListener('click', function() {
-      dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
       dropdownButtonSymbol.innerHTML = (dropdownButtonSymbol.innerHTML == '▼') ? '▲' : '▼';
+      dropdownMenu.style.display = (dropdownMenu.style.display === 'block') ? 'none' : 'block';
     });
 
-    options.forEach(function(option) {
-      option.addEventListener('click', function() {
-        dropdownButtonContent.textContent = option.textContent;
-        options.forEach(function(opt) {
-          opt.classList.remove('active');
-        });
-        option.classList.add('active');
-        dropdownContent.style.display = 'none';
+    dropdownMenuOptions.forEach(function(menuOption) {
+      menuOption.addEventListener('click', function() {
+        dropdownMenuOptions.forEach(option => option.classList.remove('active'));
+        document.querySelectorAll('.food-container').forEach(container => container.style.display = 'none');
+        menuOption.classList.add('active');
+
+        const selectedMenuOption = document.getElementById(menuOption.id.replace('-option', '-food-container'));
+        selectedMenuOption.style.display = 'block';
+        selectedMenuOption.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        dropdownMenu.style.display = 'none';
+        dropdownButtonContent.textContent = menuOption.textContent;
         dropdownButtonSymbol.innerHTML = '▼';
-
-        document.querySelectorAll('.food-container').forEach(function(container) {
-          container.style.display = 'none';
-        });
-
-        const selectedOptionId = option.id.replace('-option', '-food-container');
-        document.getElementById(selectedOptionId).style.display = 'block';
       });
     });
-    //updateStatus('c4-food-container');
 });
 
-//Updates Open/Closed Status on each food station at dining hall
-function updateStatus(containerId) {
+//Updates Open/Closed Status of each food station at dining hall
+function updateStatus(containerId){
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const currDate = new Date();
   const currHour = currDate.getHours();
@@ -55,7 +50,7 @@ function updateStatus(containerId) {
     const closingHour = parseInt(closingTime.split(':')[0]);
     const closingMinute = parseInt(closingTime.split(':')[1]);
     return (currHour > openingHour || (currHour === openingHour && currMinute >= openingMinute)) &&
-           (currHour < closingHour || (currHour === closingHour && currMinute < closingMinute));
+          (currHour < closingHour || (currHour === closingHour && currMinute < closingMinute));
   };
 
   const foodStations = document.getElementById(containerId).getElementsByClassName('box');
@@ -73,8 +68,9 @@ function updateStatus(containerId) {
       foodStation.querySelector('strong').innerText = isOpen ? 'Open' : 'Closed';
       foodStation.querySelector('strong').style.color = isOpen ? '#006747' : 'red';
     }
-  } 
+  }
 }
+
 
 
 
