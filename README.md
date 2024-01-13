@@ -34,6 +34,7 @@ Project Idea Proposed by [Josef Schindler](https://www.linkedin.com/in/josef-sch
 * All Recent Transactions (Date, Location, Price)
 * Daily Spending (Graph and Table Format)
 * Budget Chart for Current Semester(Based on BU Dining Service Chart)
+* Food Stations Currently Open in Resident Dining Halls
 * Food Currently Served at Each Dining Hall (In development still)
 
 ## Libraries Used
