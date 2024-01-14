@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-RJ391QTGHG"></script>
+	<script>
+  	window.dataLayer = window.dataLayer || [];
+ 	 	function gtag(){dataLayer.push(arguments);}
+  	gtag('js', new Date());
+  	gtag('config', 'G-RJ391QTGHG');
+	</script>
+	<!-- Google tag (gtag.js) -->
+  <link rel="stylesheet" href="/static/styles/mealplan.css">
+  <title>Binghamton Meaplan Information</title>
+  <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="description" content="Easily view your Binghamton Unversity Mealplan balance, mealplan transactions, daily budget, and daily spending habits.">
+	<meta name="keywords" content="binghamton, binghamton university, binghamton meaplan, binghamton dining services, mealplan, BUDS, binghamton meaplan information, 
+		binghamton mealplan account, mealplan account">
+	<meta name="author" content="BingACM Projects Division Group">
+  <meta property="og:title" content="Binghamton Mealplan Helper">
+  <meta property="og:description" content="Easily view your Binghamton Unversity Mealplan balance, mealplan transactions, daily budget, and daily spending habits.">
+  <meta property="og:image" content="/static/imgs/Preview_Photo.jpg">
+  <meta property="og:url" content="https://bingmealplanhelper.pythonanywhere.com">
+  <meta property="og:type" content="website">
+</head>
+<body>
+  <div class="columns is-multiline" style="max-width: 980px;">
+    <!-- Overview Column -->
+    <div class="column is-6-desktop">
+      <div class="box">
+        <h2 class="binghamton-black">{{current_semester}} Overview</h2>
+        <p class="has-text-centered data">Mealplan Name: <strong>{{mealplan_name}}</strong> </p>
+        <p class="has-text-centered data">Mealplan Balance: <strong>${{mealplan_balance}}</strong> </p>
+        <p class="has-text-centered data">Days Left in Semester: <strong>{{days_left_semester}}</strong> </p>
+        <p class="has-text-centered data">Daily Budget: <strong>${{daily_budget}}</strong> </p>
+        <p class="has-text-centered data add-funds">Running Low? <strong>Click <a href="https://bing.campuscardcenter.com/ch/add_value.html" target="_blank">Here</a> to Add Funds</strong></p>
+        <p class="has-text-centered data">Total Funds Added: <strong>${{funds_added}}</strong> </p>
+      </div>
+    </div>
+    <!-- Transactions Column -->
+    <div class="column is-6-desktop recent-transactions">
+      <div class="box" style="padding-bottom: 5px;">
+        <h2 class="binghamton-black">{{current_semester}} Transactions</h2>
+        <div class="transactions-table-header">
+          <p>Date</p>
+          <p>Amount</p>
+        </div>
+        <table class="transactions-table">
+          <tbody>
+            {% if transactions %}
+            {# The 'transactions' list is not empty #}
+            {% for transaction in transactions %}
+            <tr>
+              <td>{{ transaction.date }}: {{ transaction.location }}</td>
+              <td>${{ transaction.price }}</td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            {# The 'dates' list is empty #}
+            <tr>
+              <td colspan="2">No recent transactions</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Graph Column -->
+    <div class="column is-12" id="graphColumn">
+      <div class="graph-container box">
+        <h2 class="binghamton-black daily-spending">{{current_semester}} Daily Spending</h2>
+        <div class="switch-container">
+          <p>Graph</p>
+          <label class="switch" onclick="toggle()">
+            <input type="checkbox" id="toggleSwitch">
+            <span class="slider round"></span>
+          </label>
+          <p>Table</p>
+        </div>
+        <div class="hideable-graph">
+          {{ graph|safe }}
+        </div>
+        <div class="hideable-table">
+          <div class="transactions-table-header">
+            <p>Date</p>
+            <p>Total Spent</p>
+          </div>
+          <table class="transactions-table">
+            <tbody>
+              {% for date, total in daily_spending.items() %}
+              <tr>
+                <td>{{date}}</td>
+                <td>${{total}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>	

@@ -1,0 +1,96 @@
+html{
+    background-image: url(https://www.usatoday.com/gcdn/-mm-/50cf5bbf732a4dc596a6cd2b25c2d55faffc0cbe/c=0-198-3888-2395/local/-/media/2015/10/07/CNYGroup/Binghamton/635798431224650549-BGMBrd-04-28-2015-Daily-1-A003--2015-04-27-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-L602622216-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-1-.jpg?width=3200&height=1809&fit=crop&format=pjpg&auto=webp);
+    background-size: cover;
+    background-attachment: fixed;
+    background-position:  center;
+}
+
+body{
+    overflow-x: hidden!important;
+}
+
+img{
+    width: 75px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.box{
+    border: 4px solid #006747;
+    padding: .7rem;
+    max-width: 510px;
+}
+
+.m-6{
+    margin: 3rem 1.5rem !important;
+}
+
+.input-field{
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-field i{
+    margin-right: 10px;
+    margin-bottom: 8px;
+    color:#006747;
+    font-size: 23px;
+}
+
+.input{
+    margin-bottom: 10px;
+}
+
+.input:first-child{
+    margin-bottom: 20px;
+}
+
+.input:focus{
+    box-shadow: 0 0 0 0.125em rgba(12, 189, 50, 0.25);   
+}
+
+.fa-eye-slash, .fa-eye{
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+}
+
+.loader{
+    margin: 10px auto;
+    padding: 10px;
+}
+
+.button.is-success{
+    background-color: #006747;
+}
+
+.button.is-success:hover{
+    background-color: #118650;
+}
+
+.account-note{
+    display: block; 
+    font-weight: bold; 
+}
+
+.version{
+    font-size: 12px;
+}
+
+@media only screen and (max-width: 400px) {
+    .account-note{
+        font-size: 14px;
+    }
+
+    .create-account{
+        font-size: 14px;
+    }
+
+    .input-field i{
+        font-size: 18px;
+    }
+    
+}

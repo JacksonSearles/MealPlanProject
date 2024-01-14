@@ -1,0 +1,228 @@
+/*Start of section for general styling of loggedIn.html page*/
+html {
+  font-family: 'Arial', sans-serif;   
+  background-image: url('https://www.usatoday.com/gcdn/-mm-/50cf5bbf732a4dc596a6cd2b25c2d55faffc0cbe/c=0-198-3888-2395/local/-/media/2015/10/07/CNYGroup/Binghamton/635798431224650549-BGMBrd-04-28-2015-Daily-1-A003--2015-04-27-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-L602622216-IMG-SUNY-Binghamton-034.-1-1-QO84E01A-1-.jpg?width=3200&height=1809&fit=crop&format=pjpg&auto=webp');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+header{
+  overflow-x: hidden!important;
+}
+
+body{
+  overflow-x: hidden!important;
+}
+
+.hero-body{
+  padding: 1rem 0.5rem;
+}
+
+.container{
+  flex-direction: column;
+}
+
+.binghamton-white{
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  max-width: 980px;
+}
+/*End of section for general styling of loggedIn.html page*/
+
+/*Start of section for styling the navbar, which is the menu
+located at the top of the screen used for navigating site*/
+.navbar{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: none;
+  padding: 5px 15px;
+  background-color: #006747;
+  border-bottom: 3px solid white;
+}
+
+.navbar i{
+  color: white;
+}
+
+.navbar .fas{
+  display: none;
+}
+
+.logo{
+  display: flex;
+  align-items: center;
+}
+
+.logo img{
+  margin-right: 10px;
+  width: 100px;
+}
+
+.logo span{
+  text-decoration: none;
+  cursor: pointer;
+  color: white;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.links{
+  display: flex;
+  list-style: none;
+  align-items: center;
+}
+
+.links i{
+  margin-right: 5px;
+}
+
+.link{
+  margin-left: 25px;
+  text-wrap: nowrap;
+  cursor: pointer;
+  position: relative;
+}
+
+.link span{
+  text-decoration: none;
+  font-size: 20px;
+  color: white;
+}
+
+.link::after{
+  content: '';
+  background-color: white;
+  width: 0;
+  height: 3px;
+  bottom: -6px;
+  left: 0px;
+  position: absolute;
+  transition: width 0.5s;
+}
+
+.link.active::after{
+  width: 100%;
+}
+
+.link:hover::after {
+  width: 100%;
+}
+
+.button.is-danger { 
+  padding: 0px 15px;
+  font-size: 20px;
+  margin-left: 20px;
+  background-color:#d12d4e;
+}
+
+.button.is-danger:hover{
+  background-color: #d65d76;
+}
+/*End of section for styling the navbar*/
+
+/*Start of section for styling the navbar when screen
+size is reduced*/
+@media only screen and (max-width: 800px){
+  .navbar .fas{
+    display: block;
+    font-size: 35px;
+    cursor: pointer;
+  }
+  
+  .links{
+      display: block;
+      background: #006747;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      right: -230px;
+      width: 180px;
+      padding-top: 70px;
+      z-index: 2;
+      transition: right .4s;
+  }
+
+  .links .fas{
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      cursor: pointer;
+  }
+
+  .link{
+      margin-left: 15px;
+      margin-right: 0;
+      margin-bottom: 30px;
+      display: block;
+      position: relative;
+      transition: color 0.5s;
+  }
+
+  .link i{
+    margin-right: 10px;
+  }
+
+  .link::before{
+      content: '';
+      background-color: white;
+      width: 0px;
+      height: 35px;
+      bottom: -5px;
+      left: -15px;
+      position: absolute;
+      transition: width 0.5s;
+      z-index: -1;
+  }
+
+  .link::after{
+    display: none;
+  }
+
+  .link:hover::before{
+      width: 200px;
+  }
+
+  .link:hover span{
+    color: #006747;
+  }
+
+  .link:hover i{
+    color: #006747;
+  }
+
+  .link.active::before{
+    width: 200px;
+  }
+
+  .link.active span{
+    color: #006747;
+  }
+
+  .link.active i{
+    color: #006747;  
+  }
+
+}
+/*End of section for styling the navbar when scren
+size is reduced*/
+
+@media only screen and (max-width: 600px){
+  .navbar{
+    padding: 10px 5px;
+  }
+  
+  .logo img{
+    width: 75px;
+  }
+  .logo span{
+    font-size: 20px;
+  }
+}
+
+
+
+
+

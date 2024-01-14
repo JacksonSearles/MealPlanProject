@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-RJ391QTGHG"></script>
+	<script>
+  	window.dataLayer = window.dataLayer || [];
+ 	 	function gtag(){dataLayer.push(arguments);}
+  	gtag('js', new Date());
+  	gtag('config', 'G-RJ391QTGHG');
+	</script>
+	<!-- Google tag (gtag.js) -->
+  <link rel="stylesheet" href="/static/styles/food.css">
+	<title>Binghamton Dining Hall Information</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+	<meta name="description" content="Easily view your Binghamton Unversity Mealplan balance, mealplan transactions, daily budget, and daily spending habits.">
+	<meta name="keywords" content="binghamton, binghamton university, binghamton meaplan, binghamton dining services, mealplan, BUDS, binghamton meaplan information, 
+		binghamton mealplan account, mealplan account">
+	<meta name="author" content="BingACM Projects Division Group">
+	<meta property="og:title" content="Binghamton Mealplan Helper">
+  <meta property="og:description" content="Easily view your Binghamton Unversity Mealplan balance, mealplan transactions, daily budget, and daily spending habits.">
+  <meta property="og:image" content="/static/imgs/Preview_Photo.jpg">
+  <meta property="og:url" content="https://bingmealplanhelper.pythonanywhere.com">
+	<meta property="og:type" content="website">
+	<link rel="stylesheet" href="/static/styles/food.css">
+	<script src="/static/js/food_scripts.js"></script>
+</head>
+<body>
+  <div class="box">
+		<h2 class="binghamton-black">Looking For Something To Eat?</h2>
+		<p class="desc">Easily view what food stations at your dining hall are open, and what food is being served. (Displaying food menus still in development)</p>
+		<h2 class="dropdown-title">Selected Dining Hall:</h2>
+		<div class="dropdown">
+			<button class="dropbtn">
+				<div class="dropbtn-content">Select</Select></div>
+				<div class="dropbtn-symbol">&#9660;</div>
+			</button>
+			<div class="dropdown-content">
+				<p id="c4-option" class="dining-hall-option" onclick="updateStatus('c4-food-container')">C4</p>
+				<p id="c4-kosher-option" class="dining-hall-option" onclick="updateStatus('c4-kosher-food-container')">C4 Kosher</p>
+				<p id="hinman-option" class="dining-hall-option" onclick="updateStatus('hinman-food-container')">Hinman</p>
+				<p id="app-option" class="dining-hall-option" onclick="updateStatus('app-food-container')">Appalachian</p>
+				<p id="ciw-option" class="dining-hall-option" onclick="updateStatus('ciw-food-container')">CIW</p>
+			</div>
+		</div>
+	</div>
+	<div id="c4-food-container" class="food-container" style="display: none;">
+		<div class="box">
+			<h2 class="binghamton-black">Main Breakfest</h2>
+			<p class='js-hours'>Monday: 8:00-10:00, Tuesday: 8:00-10:00, Wednesday: 8:00-10:00, Thursday: 8:00-10:00, Friday: 8:00-10:00, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Fri: 8am-10am</p>
+			<p>Sat-Sun: Closed</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Main Lunch/Brunch</h2>
+			<p class='js-hours'>Monday: 11:00-13:30, Tuesday: 11:00-13:30, Wednesday: 11:00-13:30, Thursday: 11:00-13:30, Friday: 11:00-13:30, Saturday: 11:00-13:30, Sunday: 11:00-13:30</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Fri: 11am-1:30pm</p>
+			<p>Sat-Sun: 9am-1:30pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Simple Servings Lunch</h2>
+			<p class='js-hours'>Monday: 11:00-13:30, Tuesday: 11:00-13:30, Wednesday: 11:00-13:30, Thursday: 11:00-13:30, Friday: 11:00-13:30, Saturday: 11:00-13:30, Sunday: 11:00-13:30</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 11am-1:30pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Main Dinner</h2>
+			<p class='js-hours'>Monday: 17:00-20:00, Tuesday: 17:00-20:00, Wednesday: 17:00-20:00, Thursday: 17:00-20:00, Friday: 17:00-20:00, Saturday: 17:00-20:00, Sunday: 17:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 5pm-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>	
+		<div class="box">
+			<h2 class="binghamton-black">Simple Servings Dinner</h2>
+			<p class='js-hours'>Monday: 17:00-20:00, Tuesday: 17:00-20:00, Wednesday: 17:00-20:00, Thursday: 17:00-20:00, Friday: 17:00-20:00, Saturday: 17:00-20:00, Sunday: 17:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 5pm-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Deli Station</h2>
+			<p class='js-hours'>Monday: 11:00-20:00, Tuesday: 11:00-20:00, Wednesday: 11:00-20:00, Thursday: 11:00-20:00, Friday: 11:00-20:00, Saturday: 11:00-20:00, Sunday: 11:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 11am-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Pasta Station</h2>
+			<p class='js-hours'>Monday: 11:00-13:30 and 17:00-20:00, Tuesday: 11:00-13:30 and 17:00-20:00, Wednesday: 11:00-13:30 and 17:00-20:00, Thursday: 11:00-13:30 and 17:00-20:00, Friday: 11:00-13:30 and 17:00-20:00, Saturday: 11:00-13:30 and 17:00-20:00, Sunday: 11:00-13:30 and 17:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 11am-1:30pm, 5pm-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Grill Station</h2>
+			<p class='js-hours'>Monday: 8:00-20:00, Tuesday: 8:00-20:00, Wednesday: 8:00-20:00, Thursday: 8:00-20:00, Friday: 8:00-20:00, Saturday: 8:00-20:00, Sunday: 8:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 8am-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Pizza Station</h2>
+			<p class='js-hours'>Monday: 11:00-20:00, Tuesday: 11:00-20:00, Wednesday: 11:00-20:00, Thursday: 11:00-20:00, Friday: 11:00-20:00, Saturday: 11:00-20:00, Sunday: 11:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 11am-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Salad Station</h2>
+			<p class='js-hours'>Monday: 11:00-20:00, Tuesday: 11:00-20:00, Wednesday: 11:00-20:00, Thursday: 11:00-20:00, Friday: 11:00-20:00, Saturday: 11:00-20:00, Sunday: 11:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 11am-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Expedition Station</h2>
+			<p class='js-hours'>Monday: 11-13:30 and 17-20, Tuesday: 11-13:30 and 17-20, Wednesday: 11-13:30 and 17-20, Thursday: 11-13:30 and 17-20, Friday: 11-13:30 and 17-20, Saturday: 11-13:30, Sunday: 11-13:30</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Fri: 11am-1:30pm, 5pm-8pm</p>
+			<p>Sat-Sun: 11am-1:30pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Late Night</h2>
+			<p class='js-hours'>Monday: 21:00-25:00, Tuesday: 21:00-25:00, Wednesday: 21:00-25:00, Thursday: 21:00-25:00, Friday: 21:00-25:00, Saturday: 21:00-25:00, Sunday: 21:00-25:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 9pm-1am</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+	</div>
+	<div id="c4-kosher-food-container" class="food-container" style="display: none;">
+		<div class="box">
+			<h2 class="binghamton-black">Kosher Lunch</h2>
+			<p class='js-hours'>Monday: 11:00-13:30, Tuesday: 11:00-13:30, Wednesday: 11:00-13:30, Thursday: 11:00-13:30, Friday: 11:00-13:30, Saturday: 0:00-0:00, Sunday: 11:00-13:30</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Fri: 11am-1:30pm</p>
+			<p>Sat: Closed</p>
+			<p>Sun: 11am-1:30pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Kosher Dinner</h2>
+			<p class='js-hours'>Monday: 17:00-20:00, Tuesday: 17:00-20:00, Wednesday: 17:00-20:00, Thursday: 17:00-20:00, Friday: 0:00-0:00, Saturday: 0:00-0:00, Sunday: 17:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Thurs: 5pm-8pm</p>
+			<p>Fri-Sat: Closed</p>
+			<p>Sun: 5pm-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>		
+	</div>
+	<div id="hinman-food-container" class="food-container" style="display: none;">
+		<div class="box">
+			<h2 class="binghamton-black">Main Breakfest</h2>
+			<p class='js-hours'>Monday: 8:00-11:00, Tuesday: 8:00-11:00, Wednesday: 8:00-11:00, Thursday: 8:00-11:00, Friday: 8:00-11:00, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Fri: 8am-11am</p>
+			<p>Sat-Sun: Closed</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Main Lunch/Brunch</h2>
+			<p class='js-hours'>Monday: 11:00-14:00, Tuesday: 11:00-14:00, Wednesday: 11:00-14:00, Thursday: 11:00-14:00, Friday: 11:00-14:00, Saturday: 11:00-14:00, Sunday: 11:00-14:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 11am-2pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Main Dinner</h2>
+			<p class='js-hours'>Monday: 17:00-20:00, Tuesday: 17:00-20:00, Wednesday: 17:00-20:00, Thursday: 17:00-20:00, Friday: 17:00-20:00, Saturday: 17:00-20:00, Sunday: 17:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 5pm-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Garden Grill Station</h2>
+			<p class='js-hours'>Monday: 11:00-14:00 and 17:00-20:00, Tuesday: 11:00-14:00 and 17:00-20:00, Wednesday: 11:00-14:00 and 17:00-20:00, Thursday: 11:00-14:00 and 17:00-20:00, Friday: 11:00-14:00 and 17:00-20:00, Saturday: 11:00-14:00, Sunday: 11:00-14:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Fri: 11am-2pm, 5pm-8pm</p>
+			<p>Sat-Sun: 11am-2pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Noodle House Station</h2>
+			<p class='js-hours'>Monday: 11:00-14:00 and 17:00-20:00, Tuesday: 11:00-14:00 and 17:00-20:00, Wednesday: 11:00-14:00 and 17:00-20:00, Thursday: 11:00-14:00 and 17:00-20:00, Friday: 11:00-14:00 and 17:00-20:00, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Fri: 11am-2pm, 5pm-8pm</p>
+			<p>Sat-Sun: Closed</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Salad Station</h2>
+			<p class='js-hours'>Monday: 8:00-20:00, Tuesday: 8:00-20:00, Wednesday: 8:00-20:00, Thursday: 8:00-20:00, Friday: 8:00-20:00, Saturday: 11:00-20:00, Sunday: 11:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Fri: 8am-8pm</p>
+			<p>Sat-Sun: 11am-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Neopolitan Pizza Station</h2>
+			<p class='js-hours'>Monday: 11:00-20:00, Tuesday: 11:00-20:00, Wednesday: 11:00-20:00, Thursday: 11:00-20:00, Friday: 11:00-20:00, Saturday: 11:00-20:00, Sunday: 11:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 11am-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+	</div>
+	<div id="app-food-container" class="food-container" style="display: none;">
+		<div class="box">
+			<h2 class="binghamton-black">Main Breakfest</h2>
+			<p class='js-hours'>Monday: 8:00-11:00, Tuesday: 8:00-11:00, Wednesday: 8:00-11:00, Thursday: 8:00-11:00, Friday: 8:00-11:00, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Fri: 8am-11am</p>
+			<p>Sat-Sun: Closed</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Main Lunch</h2>
+			<p class='js-hours'>Monday: 11:00-14:00, Tuesday: 11:00-14:00, Wednesday: 11:00-14:00, Thursday: 11:00-14:00, Friday: 11:00-14:00, Saturday: 11:00-14:00, Sunday: 11:00-14:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 11am-2pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Simple Servings Lunch</h2>
+			<p class='js-hours'>Monday: 0:00-0:00, Tuesday: 0:00-0:00, Wednesday: 0:00-0:00, Thursday: 0:00-0:00, Friday: 0:00-0:00, Saturday: 11:00-13:30, Sunday: 11:00-13:30</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Fri: Closed</p>
+			<p>Sat-Sun: 11am-1:30pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Main Dinner</h2>
+			<p class='js-hours'>Monday: 17:00-20:00, Tuesday: 17:00-20:00, Wednesday: 17:00-20:00, Thursday: 17:00-20:00, Friday: 17:00-20:00, Saturday: 17:00-20:00, Sunday: 17:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 5pm-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Simple Servings Dinner</h2>
+			<p class='js-hours'>Monday: 17:00-20:00, Tuesday: 17:00-20:00, Wednesday: 17:00-20:00, Thursday: 17:00-20:00, Friday: 17:00-20:00, Saturday: 17:00-20:00, Sunday: 17:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 5pm-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Pasta Station</h2>
+			<p class='js-hours'>Monday: 17:00-20:00, Tuesday: 17:00-20:00, Wednesday: 17:00-20:00, Thursday: 17:00-20:00, Friday: 17:00-20:00, Saturday: 17:00-20:00, Sunday: 17:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 5pm-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Deli Station</h2>
+			<p class='js-hours'>Monday: 17:00-20:00, Tuesday: 17:00-20:00, Wednesday: 17:00-20:00, Thursday: 17:00-20:00, Friday: 17:00-20:00, Saturday: 17:00-20:00, Sunday: 17:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 5pm-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Grill Station</h2>
+			<p class='js-hours'>Monday: 17:00-20:00, Tuesday: 17:00-20:00, Wednesday: 17:00-20:00, Thursday: 17:00-20:00, Friday: 17:00-20:00, Saturday: 17:00-20:00, Sunday: 17:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 5pm-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Salad Station</h2>
+			<p class='js-hours'>Monday: 11:00-20:00, Tuesday: 11:00-20:00, Wednesday: 11:00-20:00, Thursday: 11:00-20:00, Friday: 11:00-20:00, Saturday: 11:00-20:00, Sunday: 11:00-20:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Sun: 11am-8pm</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+	</div>
+	<div id="ciw-food-container" class="food-container" style="display: none;">
+		<div class="box">
+			<h2 class="binghamton-black">Main Breakfest</h2>
+			<p class='js-hours'>Monday: 7:00-10:00, Tuesday: 7:00-10:00, Wednesday: 7:00-10:00, Thursday: 7:00-10:00, Friday: 7:00-10:00, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Fri: 7am-10am</p>
+			<p>Sat-Sun: Closed</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Main Lunch</h2>
+			<p class='js-hours'>Monday: 11:00-13:30, Tuesday: 11:00-13:30, Wednesday: 11:00-13:30, Thursday: 11:00-13:30, Friday: 11:00-13:30, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Fri: 11am-1:30pm</p>
+			<p>Sat-Sun: Closed</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Main Dinner</h2>
+			<p class='js-hours'>Monday: 17:00-20:30, Tuesday: 17:00-20:30, Wednesday: 17:00-20:30, Thursday: 17:00-20:30, Friday: 0:00-0:00, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Thurs: 5pm-8:30pm</p>
+			<p>Fri-Sun: Closed</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Ultimate Dinner</h2>
+			<p class='js-hours'>Monday: 17:00-20:30, Tuesday: 17:00-20:30, Wednesday: 17:00-20:30, Thursday: 17:00-20:30, Friday: 0:00-0:00, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Thurs: 5pm-8:30pm</p>
+			<p>Fri-Sun: Closed</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Planta (Mexican) Station</h2>
+			<p class='js-hours'>Monday: 11:00-13:30, Tuesday: 11:00-13:30, Wednesday: 11:00-13:30, Thursday: 11:00-13:30, Friday: 11:00-13:30, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Fri: 11am-1:30pm</p>
+			<p>Sat-Sun: Closed</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Deli Station</h2>
+			<p class='js-hours'>Monday: 11:00-20:30, Tuesday: 11:00-20:30, Wednesday: 11:00-20:30, Thursday: 11:00-20:30, Friday: 11:00-13:30, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Thurs: 11am-8:30pm</p>
+			<p>Fri: 11am-1:30pm</p>
+			<p>Sat-Sun: Closed</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Pizza Station</h2>
+			<p class='js-hours'>Monday: 11:00-20:30, Tuesday: 11:00-20:30, Wednesday: 11:00-20:30, Thursday: 11:00-20:30, Friday: 11:00-13:30, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Thurs: 11am-8:30pm</p>
+			<p>Fri: 11am-1:30pm</p>
+			<p>Sat-Sun: Closed</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Grill 86 Station</h2>
+			<p class='js-hours'>Monday: 11:00-20:30, Tuesday: 11:00-20:30, Wednesday: 11:00-20:30, Thursday: 11:00-20:30, Friday: 11:00-13:30, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Thurs: 11am-8:30pm</p>
+			<p>Fri: 11am-1:30pm</p>
+			<p>Sat-Sun: Closed</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+		<div class="box">
+			<h2 class="binghamton-black">Salad Station</h2>
+			<p class='js-hours'>Monday: 7:00-20:30, Tuesday: 7:00-20:30, Wednesday: 7:00-20:30, Thursday: 7:00-20:30, Friday: 7:00-13:30, Saturday: 0:00-0:00, Sunday: 0:00-0:00</p>
+			<p class="hours">Hours:</p>
+			<p>Mon-Thurs: 7am-8:30pm</p>
+			<p>Fri: 7am-1:30pm</p>
+			<p>Sat-Sun: Closed</p>
+			<p class="current-status">Current Status: <strong style="color: red;">Closed</strong></p>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-RJ391QTGHG"></script>
+	<script>
+  	window.dataLayer = window.dataLayer || [];
+ 	 	function gtag(){dataLayer.push(arguments);}
+  	gtag('js', new Date());
+  	gtag('config', 'G-RJ391QTGHG');
+	</script>
+	<!-- Google tag (gtag.js) -->
+  <link rel="stylesheet" href="/static/styles/budget.css">
+  <title>Binghamton Meaplan Budget Chart</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+  <meta name="description" content="Easily view your Binghamton Unversity Mealplan balance, mealplan transactions, daily budget, and daily spending habits.">
+  <meta name="keywords" content="binghamton, binghamton university, binghamton meaplan, binghamton dining services, mealplan, BUDS, binghamton meaplan information, 
+	  binghamton mealplan account, mealplan account">
+  <meta name="author" content="BingACM Projects Division Group">
+  <meta property="og:title" content="Binghamton Mealplan Helper">
+  <meta property="og:description" content="Easily view your Binghamton Unversity Mealplan balance, mealplan transactions, daily budget, and daily spending habits.">
+  <meta property="og:image" content="/static/imgs/Preview_Photo.jpg">
+  <meta property="og:url" content="https://bingmealplanhelper.pythonanywhere.com">
+  <meta property="og:type" content="website">
+</head>
+<body>
+  <div class="mealplan-chart-container box">
+    <h2 class="binghamton-black">{{chart_title}}</h2>
+    <p class="how-to">How It Works:</p>
+    <p class="info">
+      This weekly balance chart was created by the Binghamton Dining Services to help students remain on budget throughout the semester. 
+      To remain on budget, choose the column letter that best represents the total dining dollars
+      you started the semester with. Then, based on the current date and the weekly dates of the chart, find the week you are currently in.
+      This will give a rough estimate of how on budget you are.
+    </p>
+    <p class="balance">Your Balance: <strong style="font-weight: bold;">${{mealplan_balance}}</strong></p>
+    <p class="date">Todays Date: <strong style="font-weight: bold;">{{login_date}}</strong></p>
+    <img src="/static/imgs/{{current_semester}}_Mealplan_Budget_Chart.png" alt="No Budget Chart Currently Available"> 
+  </div>  
+</body>
+</html>
