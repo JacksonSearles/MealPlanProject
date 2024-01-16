@@ -1,3 +1,5 @@
+import os
+import shutil
 from flask import Flask, render_template, redirect, url_for, request, session, flash
 from datetime import date
 from py.analytics import log_website_interaction
@@ -159,6 +161,7 @@ def food():
 @app.route('/logout')
 def logout():
     log_website_interaction(session.get('username'), session.get('first_name'), 'logout')
+    shutil.rmtree(os.path.join('data', session.get('username')))
     session.clear()
     return redirect(url_for('home'))
 ######################################################################################################
