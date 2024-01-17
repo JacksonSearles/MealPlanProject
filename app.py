@@ -39,6 +39,7 @@ def add_header(response):
 @app.route('/home')
 def home():
     if session.get("logged_in"):
+        shutil.rmtree(os.path.join('data', session.get('username')))
         session.clear()
     return render_template('login.html')
 ######################################################################################################
