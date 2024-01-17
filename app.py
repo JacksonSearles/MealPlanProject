@@ -39,7 +39,8 @@ def add_header(response):
 @app.route('/home')
 def home():
     if session.get("logged_in"):
-        shutil.rmtree(os.path.join('data', session.get('username')))
+        try: shutil.rmtree(os.path.join('data', session.get('username')))
+        except: FileNotFoundError
         session.clear()
     return render_template('login.html')
 ######################################################################################################
@@ -162,7 +163,8 @@ def food():
 @app.route('/logout')
 def logout():
     log_website_interaction(session.get('username'), session.get('first_name'), 'logout')
-    shutil.rmtree(os.path.join('data', session.get('username')))
+    try: shutil.rmtree(os.path.join('data', session.get('username')))
+    except: FileNotFoundError
     session.clear()
     return redirect(url_for('home'))
 ######################################################################################################
