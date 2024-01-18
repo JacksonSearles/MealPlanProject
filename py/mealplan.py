@@ -123,7 +123,7 @@ def scrape_mealplan_data(session_content):
             transactions_href = account.find('a')['href']
     if mealplan_balance is None: mealplan_balance = 0
     if carryover_balance is None: carryover_balance = 0       
-    return first_name, mealplan_name,  mealplan_balance+carryover_balance, carryover_balance, transactions_href
+    return first_name, mealplan_name,  round((mealplan_balance + carryover_balance), 2), carryover_balance, transactions_href
 ######################################################################################################
 
 ######################################################################################################

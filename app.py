@@ -55,16 +55,14 @@ def home():
 # login was not sucessful, user is redirected back to /home route, which is our login page.
 @app.route('/login', methods=['POST'])
 def login():
-    mealplan_data = None; food_data = None; 
+    mealplan_data = None
     if request.form['username'] == 'demo':
         mealplan_data = return_demo_mealplan_data()
-        food_data = return_demo_food_data()
         login_date = date(2023, 12, 16).strftime('%b. %d, %Y')
     else:
         mealplan_data = return_mealplan_data(request.form['username'], request.form['password'])
-        food_data = return_food_data()
         login_date = date.today().strftime('%b. %d, %Y')
-    if mealplan_data and food_data:
+    if mealplan_data:
         session.update({
             'logged_in': True,
             'login_date': login_date,
@@ -79,7 +77,6 @@ def login():
             'transactions': mealplan_data[7],
             'daily_spending': mealplan_data[8],
             'graph': mealplan_data[9],
-            #.....Data about food items at dining fall will be stored here aswell   
         })
         log_website_interaction(session.get('username'), session.get('first_name'), 'login')
         return redirect(url_for('mealplan'))
