@@ -136,6 +136,7 @@ def scrape_mealplan_data(session_content):
 # the current page. Then, iterate to next page by updating Selenium browser with href for next page 
 # and repeat.
 def scrape_mealplan_transactions(session, transactions_href, carryover_balance): 
+    if transactions_href is None: return []
     curr_page = 1
     total_pages = 1
     mealplan_transactions = []
