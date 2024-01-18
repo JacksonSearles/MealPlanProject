@@ -4,7 +4,6 @@ from flask import Flask, render_template, redirect, url_for, request, session, f
 from datetime import date
 from py.analytics import log_website_interaction
 from py.mealplan import return_mealplan_data, return_demo_mealplan_data
-from py.food import return_food_data, return_demo_food_data
 import json
 
 ######################################################################################################
