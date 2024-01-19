@@ -9,7 +9,7 @@ def get_c4_menu():
     weekdays = {'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'}
     weekends = {'Saturday', 'Sunday'}
     current_day = date.today().strftime('%A')
-    folder_path = '/home/bingmealplanhelper/food_menus/c4'
+    folder_path = '/home/bingmealplanhelper/MealPlanProject/static/food_menus/c4'
     pdf_path = os.path.join(folder_path, 'c4.pdf')
     pdf_link = None
     
@@ -48,7 +48,7 @@ def get_c4_menu():
 
 def get_c4_kosher_menu():
     current_day = date.today().strftime('%A')
-    folder_path = '/home/bingmealplanhelper/food_menus/c4-kosher'
+    folder_path = '/home/bingmealplanhelper/MealPlanProject/static/food_menus/c4-kosher'
     pdf_path = os.path.join(folder_path, 'c4-kosher.pdf')
     pdf_link = None
 
@@ -77,7 +77,7 @@ def get_hinman_menu():
     weekdays = {'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'}
     weekends = {'Saturday', 'Sunday'}
     current_day = date.today().strftime('%A')
-    folder_path = '/home/bingmealplanhelper/food_menus/hinman'
+    folder_path = '/home/bingmealplanhelper/MealPlanProject/static/food_menus/hinman'
     pdf_path = os.path.join(folder_path, 'hinman.pdf')
     pdf_link = None
 
@@ -120,7 +120,7 @@ def get_app_menu():
     weekdays = {'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'}
     weekends = {'Saturday', 'Sunday'}
     current_day = date.today().strftime('%A')
-    folder_path = '/home/bingmealplanhelper/food_menus/appalachian'
+    folder_path = '/home/bingmealplanhelper/MealPlanProject/static/food_menus/appalachian'
     pdf_path = os.path.join(folder_path, 'app.pdf')
     pdf_link = None
 
@@ -161,7 +161,7 @@ def get_app_menu():
 def get_ciw_menu():
     weekdays = {'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'}
     current_day = date.today().strftime('%A')
-    folder_path = '/home/bingmealplanhelper/food_menus/ciw'
+    folder_path = '/home/bingmealplanhelper/MealPlanProject/static/food_menus/ciw'
     pdf_path = os.path.join(folder_path, 'ciw.pdf')
     pdf_link = None
 
