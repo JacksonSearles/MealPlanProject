@@ -29,6 +29,8 @@ def get_c4_menu():
             page = pdf[page_number]
             image = page.get_pixmap()
             if current_day in weekdays:
+                if os.path.exists(os.path.join(folder_path, 'c4_simple_servings_breakfest.png')):
+                    os.remove(os.path.join(folder_path, 'c4_simple_servings_breakfest.png'))
                 if page_number == 0:
                     image.save(os.path.join(folder_path, 'c4_breakfest.png'))
                 elif page_number == 1:
@@ -179,6 +181,8 @@ def get_app_menu():
             page = pdf[page_number]
             image = page.get_pixmap()
             if current_day in weekdays:
+                if os.path.exists(os.path.join(folder_path, 'app_simple_servings_breakfest.png')):
+                    os.remove(os.path.join(folder_path, 'app_simple_servings_breakfest.png'))
                 if page_number == 0:
                     image.save(os.path.join(folder_path, 'app_breakfest.png'))
                 elif page_number == 1:
@@ -209,8 +213,6 @@ def get_app_menu():
                 elif page_number == 5:
                     image.save(os.path.join(folder_path, 'app_pizza.png'))
                 elif page_number == 6:
-                    image.save(os.path.join(folder_path, 'app_special_soup_breakfest.png'))
-                elif page_number == 7:
                     image.save(os.path.join(folder_path, 'app_special_soup.png'))
                   
 

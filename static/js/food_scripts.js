@@ -69,6 +69,22 @@ function updateStatus(containerId){
       foodStation.querySelector('strong').style.color = isOpen ? '#006747' : 'red';
     }
   }
+
+  for (const foodStation of foodStations) {
+    const currentStatusElement = foodStation.querySelector('.current-status');
+    const imgElements = box.querySelectorAll('img');
+    if (currentStatusElement.textContent.includes('Closed')) {
+        for (const imgElement of imgElements) {
+            imgElement.style.display = 'none';
+        }
+    } else if(currentStatusElement.textContent.includes('Open')){
+      for (const imgElement of imgElements) {
+        imgElement.style.display = 'block';
+      }
+    }
+  }
+
+
 }
 
 
