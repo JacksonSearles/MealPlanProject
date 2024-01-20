@@ -97,8 +97,11 @@ def get_c4_kosher_menu():
                     os.remove(os.path.join(folder_path, 'c4_kosher_dinner.png'))
                 if page_number == 0:
                     image.save(os.path.join(folder_path, 'c4_kosher_lunch.png'))
-                  
-
+            elif current_day == 'Saturday':
+             if os.path.exists(os.path.join(folder_path, 'c4_kosher_lunch.png')):
+                    os.remove(os.path.join(folder_path, 'c4_kosher_lunch.png'))
+             if os.path.exists(os.path.join(folder_path, 'c4_kosher_dinner.png')):
+                    os.remove(os.path.join(folder_path, 'c4_kosher_dinner.png'))
 
 def get_hinman_menu():
     weekdays = {'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'}
