@@ -72,7 +72,7 @@ function updateStatus(containerId){
 
   for (const foodStation of foodStations) {
     const currentStatusElement = foodStation.querySelector('.current-status');
-    const imgElements = box.querySelectorAll('img');
+    const imgElements = foodStation.querySelectorAll('img');
     if (currentStatusElement.textContent.includes('Closed')) {
         for (const imgElement of imgElements) {
             imgElement.style.display = 'none';
