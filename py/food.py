@@ -160,8 +160,7 @@ def get_hinman_menu():
 
 
 def get_app_menu():
-    weekdays = {'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'}
-    weekends = {'Saturday', 'Sunday'}
+    days = {'Monday', 'Tuesday', 'Wednesday', 'Thursday'}
     current_day = date.today().strftime('%A')
     folder_path = '/home/bingmealplanhelper/MealPlanProject/static/food_menus/appalachian'
     pdf_path = os.path.join(folder_path, 'app.pdf')
@@ -183,9 +182,11 @@ def get_app_menu():
         for page_number in range(pdf.page_count):
             page = pdf[page_number]
             image = page.get_pixmap()
-            if current_day in weekdays:
+            if current_day in days:
                 if os.path.exists(os.path.join(folder_path, 'app_simple_servings_breakfest.png')):
                     os.remove(os.path.join(folder_path, 'app_simple_servings_breakfest.png'))
+                if os.path.exists(os.path.join(folder_path, 'app_blunch.png')):
+                    os.remove(os.path.join(folder_path, 'app_blunch.png'))
                 if page_number == 0:
                     image.save(os.path.join(folder_path, 'app_breakfest.png'))
                 elif page_number == 1:
@@ -199,11 +200,30 @@ def get_app_menu():
                 elif page_number == 5:
                     image.save(os.path.join(folder_path, 'app_pizza.png'))
                 elif page_number == 6:
+                    image.save(os.path.join(folder_path, 'app_bdinner.png'))
+                elif page_number == 7:
                     image.save(os.path.join(folder_path, 'app_special_soup.png'))
-            elif current_day in weekends:
+            elif current_day == "Friday":
+                if os.path.exists(os.path.join(folder_path, 'app_bdinner.png')):
+                    os.remove(os.path.join(folder_path, 'app_bdinner.png'))
+                if page_number == 0:
+                    image.save(os.path.join(folder_path, 'app_breakfest.png'))
+                elif page_number == 1:
+                    image.save(os.path.join(folder_path, 'app_lunch.png'))
+                elif page_number == 2:
+                    image.save(os.path.join(folder_path, 'app_dinner.png'))
+                elif page_number == 3:
+                    image.save(os.path.join(folder_path, 'app_simple_servings.png'))
+                elif page_number == 4:
+                    image.save(os.path.join(folder_path, 'app_grill.png'))
+                elif page_number == 5:
+                    image.save(os.path.join(folder_path, 'app_pizza.png'))
+                elif page_number == 6:
+                    image.save(os.path.join(folder_path, 'app_special_soup.png'))   
+            elif current_day == "Saturday":
                 if os.path.exists(os.path.join(folder_path, 'app_breakfest.png')):
-                    os.remove(os.path.join(folder_path, 'app_breakfest.png'))  
-                elif page_number == 0:
+                    os.remove(os.path.join(folder_path, 'app_breakfest.png'))
+                if page_number == 0:
                     image.save(os.path.join(folder_path, 'app_lunch.png'))
                 elif page_number == 1:
                     image.save(os.path.join(folder_path, 'app_dinner.png'))
@@ -216,6 +236,25 @@ def get_app_menu():
                 elif page_number == 5:
                     image.save(os.path.join(folder_path, 'app_pizza.png'))
                 elif page_number == 6:
+                    image.save(os.path.join(folder_path, 'app_special_soup.png'))      
+            else:
+                if page_number == 0:
+                    image.save(os.path.join(folder_path, 'app_lunch.png'))
+                elif page_number == 1:
+                    image.save(os.path.join(folder_path, 'app_dinner.png'))
+                elif page_number == 2:
+                    image.save(os.path.join(folder_path, 'app_simple_servings_breakfest.png'))
+                elif page_number == 3:
+                    image.save(os.path.join(folder_path, 'app_simple_servings.png'))
+                elif page_number == 4:
+                    image.save(os.path.join(folder_path, 'app_grill.png'))
+                elif page_number == 5:
+                    image.save(os.path.join(folder_path, 'app_pizza.png'))
+                elif page_number == 6:
+                    image.save(os.path.join(folder_path, 'app_blunch.png'))
+                elif page_number == 7:
+                    image.save(os.path.join(folder_path, 'app_bdinner.png'))
+                elif page_number == 8:
                     image.save(os.path.join(folder_path, 'app_special_soup.png'))
                   
 
