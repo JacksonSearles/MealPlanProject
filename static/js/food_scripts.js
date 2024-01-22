@@ -79,7 +79,15 @@ function updateStatus(containerId){
         }
     } else if(currentStatusElement.textContent.includes('Open')){
       for (const imgElement of imgElements) {
-        imgElement.style.display = 'block';
+        imgElement.addEventListener('error', function() {
+          imgElement.style.display = 'none';
+        });
+
+        if (imgElement.complete && imgElement.naturalWidth === 0) {
+            imgElement.style.display = 'none';
+        } else {
+            imgElement.style.display = 'block';
+        }
       }
     }
   }
