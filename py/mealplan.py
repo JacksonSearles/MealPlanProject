@@ -76,8 +76,8 @@ def return_mealplan_data(username, password):
         return None
     session_content = session_response.content
 
-    first_name, mealplan_name, mealplan_balance, carryover_balance, transactions_href = scrape_mealplan_data(session_content)
-    transactions = scrape_mealplan_transactions(session, transactions_href, carryover_balance)
+    first_name, mealplan_name, mealplan_balance, transactions_href = scrape_mealplan_data(session_content)
+    transactions = scrape_mealplan_transactions(session, transactions_href)
     fall_start_day, fall_end_day, spring_start_day, spring_end_day = scrape_academic_calander()
     current_semester, days_left_semester = calculate_current_date(fall_start_day, fall_end_day, spring_start_day, spring_end_day)
     daily_budget = calculate_daily_budget(mealplan_balance, days_left_semester)
@@ -123,7 +123,7 @@ def scrape_mealplan_data(session_content):
             transactions_href = account.find('a')['href']
     if mealplan_balance is None: mealplan_balance = 0
     if carryover_balance is None: carryover_balance = 0       
-    return first_name, mealplan_name,  round((mealplan_balance + carryover_balance), 2), carryover_balance, transactions_href
+    return first_name, mealplan_name,  round((mealplan_balance + carryover_balance), 2), transactions_href
 ######################################################################################################
 
 ######################################################################################################
@@ -135,7 +135,7 @@ def scrape_mealplan_data(session_content):
 # object, and add that object to mealplan_transactions[] array. This is done for all transactions on 
 # the current page. Then, iterate to next page by updating Selenium browser with href for next page 
 # and repeat.
-def scrape_mealplan_transactions(session, transactions_href, carryover_balance): 
+def scrape_mealplan_transactions(session, transactions_href): 
     if transactions_href is None: return []
     curr_page = 1
     total_pages = 1
@@ -152,8 +152,7 @@ def scrape_mealplan_transactions(session, transactions_href, carryover_balance):
             if len(location) == 0:
                 if transaction.contents[5].text.strip() == 'ADDVALUE': location = "Added Funds"
                 if transaction.contents[5].text.strip() == 'Adj_Credit': 
-                    mealplan_transactions.append(Transaction(date, 'Initial Funds', price))
-                    mealplan_transactions.append(Transaction(date, 'Initial Carryover Funds', carryover_balance))
+                    mealplan_transactions.append(Transaction(date, 'Initial/Carryover Funds', price))
                     continue
             mealplan_transactions.append(Transaction(date, location, price))
         curr_page += 1
@@ -237,7 +236,7 @@ def calculate_daily_spending(transactions):
     funds_added = 0
     daily_spending_dict = {}
     for transaction in transactions:
-        if transaction.location == "Initial Funds" or transaction.location == "Initial Carryover Funds":
+        if transaction.location == "Initial/Carryover Funds":
             continue 
         elif transaction.location == "Added Funds":
             funds_added += transaction.price
