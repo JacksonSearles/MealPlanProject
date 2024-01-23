@@ -77,7 +77,7 @@ def login():
             'daily_spending': mealplan_data[8],
             'graph': mealplan_data[9],
         })
-        log_website_interaction(session.get('username'), session.get('first_name'), 'login')
+        log_website_interaction(session.get('username'), 'login')
         return redirect(url_for('mealplan'))
     else:
         flash('Incorrect username or password', 'danger')
@@ -158,7 +158,7 @@ def food():
 # redirect them back to the /home route (login page)
 @app.route('/logout')
 def logout():
-    log_website_interaction(session.get('username'), session.get('first_name'), 'logout')
+    log_website_interaction(session.get('username'), 'logout')
     try: shutil.rmtree(os.path.join('data', session.get('username')))
     except: FileNotFoundError
     session.clear()
