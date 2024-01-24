@@ -143,7 +143,7 @@ def scrape_mealplan_transactions(session, transactions_href):
     while curr_page <= total_pages:
         session_content = session.get(f"https://bing.campuscardcenter.com/ch/{transactions_href}&page={curr_page}").content    
         soup = BeautifulSoup(session_content, "html.parser")
-        if curr_page == 1: total_pages = int(soup.find('td', align='center', colspan='7').get_text(strip=True).replace(">>>", '').split(' ')[1].split('/')[1])
+        if curr_page == 1: total_pages = int(soup.find('td', align='center', colspan='7').get_text(strip=True).replace(">", '').split(' ')[1].split('/')[1])
         transactions = soup.find_all('tr', {'id': 'EntryRow'})
         for transaction in transactions:
             date = transaction.contents[3].text.strip()
