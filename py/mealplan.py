@@ -147,7 +147,7 @@ def scrape_mealplan_transactions(session, transactions_href):
         transactions = soup.find_all('tr', {'id': 'EntryRow'})
         for transaction in transactions:
             date = transaction.contents[3].text.strip()
-            location = transaction.contents[7].text.strip().replace('Dining', '')
+            location = transaction.contents[7].text.strip().replace('Dining', '').replace('(pending)', '')
             price = transaction.contents[9].div.text.strip().replace('(', '').replace(')', '')
             if len(location) == 0:
                 if transaction.contents[5].text.strip() == 'ADDVALUE': location = "Added Funds"

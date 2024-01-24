@@ -23,7 +23,7 @@ def log_website_interaction(username, action):
             users = json.load(file)
         if username in users:
             users[username]['Number of Logins'] += 1
-            log_message = f"{date_time}; {username}  has logged in for the {users[username]['Number of Logins']} time.\n"
+            log_message = f"{date_time}; {username} has logged in for the {users[username]['Number of Logins']} time.\n"
         else:
             new_user = {
                 'Username': username,
