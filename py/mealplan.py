@@ -174,21 +174,21 @@ def scrape_academic_calander():
     soup = BeautifulSoup(response.text, "html.parser")
     fall_start_day_target = soup.find_all('td', text='New Student Move-in and Welcome Program')
     fall_end_day_target = soup.find_all('td', text='Residence halls close at 10 a.m.')
-    spring_start_day_target = soup.find_all('td', text='Resident Halls Open for Returning Students at 9am')
+    spring_start_day_target = soup.find_all('td', text='Residence halls open at 9 a.m.')
     spring_end_day_target = soup.find_all('td', text='Residence halls close for non-seniors at 10 a.m.')
     if len(fall_start_day_target) >= 1:
         fall_start_day = fall_start_day_target[0].find_previous_sibling('td').text.split()[-1]
     if len(fall_end_day_target) >= 1:
-        fall_end_day = fall_end_day_target[1].find_previous_sibling('td').text.split()[-1]
+        fall_end_day = fall_end_day_target[2].find_previous_sibling('td').text.split()[-1]
     if len(spring_start_day_target) >= 1:
         spring_start_day = spring_start_day_target[0].find_previous_sibling('td').text.split()[-1]
     if len(spring_end_day_target) >= 1:
         spring_end_day = spring_end_day_target[0].find_previous_sibling('td').text.split()[-1] 
-
+        
     if fall_start_day.isdigit() and fall_end_day.isdigit() and spring_start_day.isdigit() and spring_end_day.isdigit():
         return int(fall_start_day), int(fall_end_day), int(spring_start_day), int(spring_end_day)
     else:
-        return 19, 16, 14, 10
+        return 18, 14, 19, 19
 ######################################################################################################
     
 ######################################################################################################
@@ -258,7 +258,7 @@ def calculate_daily_spending(transactions):
 def create_spending_graph(daily_spending_dict, current_semester,fall_end_day, spring_end_day, fall_start_day, spring_start_day):
     #CREATES PANDAS DATAFRAME OUT OF DAILY_SPENDING_DICT, THEN SORTS DICT IN CHRONOLOGICAL ORDER
     df = pd.DataFrame(list(daily_spending_dict.items()), columns=['Date', 'Price'])
-    df['Date'] = pd.to_datetime(df['Date'])
+    df['Date'] = pd.to_datetime(df['Date'], format='%b %d, %Y')
     df = df.sort_values(by='Date', ascending=True)
 
     #CREATES DROPDOWN MENU FOR RANGE SELECTION
