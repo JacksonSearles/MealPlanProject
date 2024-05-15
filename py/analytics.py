@@ -16,11 +16,22 @@ def log_website_interaction(username, action):
         with open('/home/bingmealplanhelper/data/website_interactions.txt'): pass
     except FileNotFoundError: 
         return
+    
+    try: 
+        with open('/home/bingmealplanhelper/data/website_users.json'): pass
+    except FileNotFoundError: 
+        return
 
     date_time = datetime.now().strftime("%B %d, %Y: %I:%M %p")
     if action == 'login':
-        with open('/home/bingmealplanhelper/data/website_users.json', 'r') as file: 
-            users = json.load(file)
+        users = {}
+        try:
+            if os.path.getsize('/home/bingmealplanhelper/data/website_users.json') > 0:
+                with open('/home/bingmealplanhelper/data/website_users.json', 'r') as file: 
+                    users = json.load(file)
+        except json.JSONDecodeError:
+            users = {}
+                
         if username in users:
             users[username]['Number of Logins'] += 1
             log_message = f"{date_time}; {username} has logged in for the {users[username]['Number of Logins']} time.\n"
